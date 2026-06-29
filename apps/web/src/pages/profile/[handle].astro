@@ -1,0 +1,115 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ProfileActivityTabs from "@/components/profile/ProfileActivityTabs";
+import { apiFetch } from "@/lib/api";
+
+const { handle } = Astro.params;
+if (!handle) return Astro.redirect("/");
+
+const { data: profile } = await apiFetch(`/profiles/${handle}`);
+if (!profile) return Astro.redirect("/404");
+
+const { data: activity } = await apiFetch(`/users/${profile.id}/activity`);
+const createdQuizzes = activity?.created_quizzes || [];
+const playedQuizzes = activity?.played_quizzes || [];
+
+const totalPlays = createdQuizzes.reduce((sum: number, q: any) => sum + (q.attempts_count || 0), 0);
+const totalLikes = createdQuizzes.reduce((sum: number, q: any) => sum + (q.likes_count || 0), 0);
+
+const xpForNextLevel = (profile.level || 1) * 100;
+const xpProgress = Math.min(100, Math.round(((profile.xp || 0) % xpForNextLevel) / xpForNextLevel * 100));
+const userInitial = profile.display_name?.charAt(0).toUpperCase() || "?";
+
+const statItems = [
+  { label: "Quizzes criados", value: createdQuizzes.length.toLocaleString("pt-BR"), icon: "✏️" },
+  { label: "Jogadas recebidas", value: totalPlays.toLocaleString("pt-BR"),           icon: "🎮" },
+  { label: "Curtidas recebidas", value: totalLikes.toLocaleString("pt-BR"),          icon: "❤️" },
+  { label: "XP Total",           value: (profile.xp || 0).toLocaleString("pt-BR"),  icon: "⚡" },
+];
+---
+
+<Layout title={`${profile.display_name} (@${handle}) | FunSona`} description={`Perfil de ${profile.display_name} no FunSona. ${createdQuizzes.length} quizzes criados.`}>
+  <div class="pb-16">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+
+      <!-- ══ PROFILE HEADER ══ -->
+      <!-- No overflow-hidden on outer card so avatar can straddle the banner line -->
+      <div class="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] shadow-xl">
+        <!-- Banner: overflow-hidden + rounded-t-3xl clips image at top corners -->
+        <div class="relative h-44 overflow-hidden rounded-t-3xl bg-slate-900 sm:h-52">
+          {profile.banner_url ? (
+            <>
+              <img src={profile.banner_url} alt="" class="h-full w-full object-cover" />
+              <div class="absolute inset-0 bg-black/30"></div>
+            </>
+          ) : (
+            <div class="absolute inset-0" style="background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%)">
+              <div class="absolute inset-0 opacity-20" style="background-image:radial-gradient(circle at 30% 50%,rgba(99,102,241,0.6) 0%,transparent 50%),radial-gradient(circle at 75% 30%,rgba(139,92,246,0.4) 0%,transparent 45%)"></div>
+            </div>
+          )}
+        </div>
+
+        <!-- Content area: avatar straddling the banner/content boundary via absolute + -translate-y-1/2 -->
+        <div class="relative px-6 pb-6 sm:px-8">
+          <!-- Avatar centered on the banner/content boundary -->
+          <div class="absolute left-6 top-0 z-10 -translate-y-1/2 h-20 w-20 overflow-hidden rounded-2xl border-4 border-[var(--color-surface-elevated)] shadow-xl sm:left-8 sm:h-24 sm:w-24">
+            {profile.avatar_url ? (
+              <img src={profile.avatar_url} alt={profile.display_name} class="h-full w-full object-cover" />
+            ) : (
+              <div class="flex h-full w-full items-center justify-center bg-brand-600 text-3xl font-black text-white">
+                {userInitial}
+              </div>
+            )}
+          </div>
+
+          <!-- Spacer so content starts below avatar (avatar is 96px, half above = 48px → pt-14 ~56px) -->
+          <div class="pt-14 sm:pt-16">
+            <!-- Name + handle + badges -->
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">{profile.display_name}</h1>
+              <span class="rounded-full bg-brand-500/15 px-2.5 py-0.5 text-xs font-bold text-brand-500 ring-1 ring-brand-500/25">Nível {profile.level}</span>
+              {profile.is_premium && (
+                <span class="rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-bold text-amber-500 ring-1 ring-amber-500/25">⭐ Premium</span>
+              )}
+            </div>
+            <p class="mt-0.5 text-sm font-medium text-[var(--color-text-muted)]">@{profile.handle}</p>
+            {profile.bio && <p class="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--color-text-secondary)]">{profile.bio}</p>}
+          </div>
+
+          <!-- XP bar -->
+          <div class="mt-5">
+            <div class="mb-1.5 flex items-center justify-between text-xs font-semibold text-[var(--color-text-muted)]">
+              <span>Nível {profile.level} → {(profile.level || 1) + 1}</span>
+              <span>{profile.xp || 0} / {xpForNextLevel} XP</span>
+            </div>
+            <div class="h-2 w-full overflow-hidden rounded-full bg-[var(--color-surface-muted)]">
+              <div class="h-full rounded-full bg-brand-500 transition-all duration-700" style={`width:${xpProgress}%`}></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STATS ══ -->
+      <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {statItems.map((s) => (
+          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-3.5">
+            <p class="text-xl font-black text-[var(--color-text-primary)]">{s.value}</p>
+            <p class="mt-0.5 flex items-center gap-1.5 text-xs font-semibold text-[var(--color-text-muted)]">
+              <span>{s.icon}</span>{s.label}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <!-- ══ ACTIVITY TABS ══ -->
+      <ProfileActivityTabs
+        userId={profile.id}
+        createdQuizzes={createdQuizzes}
+        playedQuizzes={playedQuizzes}
+        isOwnProfile={false}
+        client:load
+      />
+
+    </div>
+  </div>
+</Layout>

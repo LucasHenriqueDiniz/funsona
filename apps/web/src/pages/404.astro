@@ -1,0 +1,44 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout title="Página não encontrada | FunSona" description="A página que você procura não foi encontrada.">
+  <div class="relative isolate min-h-[74vh] overflow-hidden px-4 py-10">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(circle_at_8%_10%,rgba(14,165,233,0.2),transparent_40%),radial-gradient(circle_at_90%_5%,rgba(147,51,234,0.18),transparent_45%)]"></div>
+
+    <div class="mx-auto max-w-3xl">
+      <section class="relative overflow-hidden rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-6 py-10 text-center shadow-2xl shadow-slate-950/10 sm:px-10">
+        <div class="absolute -left-12 top-12 h-32 w-32 rounded-full bg-cyan-300/20 blur-2xl"></div>
+        <div class="absolute -right-14 -top-10 h-44 w-44 rounded-full bg-fuchsia-400/20 blur-3xl"></div>
+
+        <div class="relative mb-7">
+          <div class="text-[6.5rem] font-black leading-none text-transparent bg-clip-text bg-[linear-gradient(125deg,#06b6d4_0%,#6366f1_45%,#d946ef_100%)] sm:text-[8.5rem]">
+            404
+          </div>
+          <p class="mt-2 text-xs font-black uppercase tracking-[0.24em] text-[var(--color-text-muted)]">Rota nao encontrada</p>
+        </div>
+
+        <h2 class="text-2xl font-black tracking-tight text-[var(--color-text-primary)] sm:text-3xl">Essa pagina saiu do ar ou mudou de endereco</h2>
+        <p class="mx-auto mt-3 max-w-xl text-sm text-[var(--color-text-secondary)] sm:text-base">
+          Voce pode voltar para os caminhos principais e continuar navegando sem perder o ritmo.
+        </p>
+
+        <div class="mt-8 grid gap-3 sm:grid-cols-2">
+          <a href="/" class="rounded-xl bg-brand-600 px-6 py-3 text-sm font-black text-white shadow-lg shadow-brand-500/20 transition hover:-translate-y-0.5 hover:bg-brand-700">Voltar para home</a>
+          <a href="/explore" class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-3 text-sm font-black text-[var(--color-text-secondary)] transition hover:border-brand-300 hover:text-brand-600">Explorar quizzes</a>
+        </div>
+
+        <div class="mt-9 border-t border-[var(--color-border)] pt-6">
+          <p class="mb-4 text-xs font-black uppercase tracking-[0.18em] text-[var(--color-text-muted)]">Atalhos uteis</p>
+          <div class="flex flex-wrap justify-center gap-2.5">
+            <a href="/explore/personality" class="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm font-bold text-[var(--color-text-secondary)] transition hover:border-brand-300 hover:text-brand-600">Personalidade</a>
+            <a href="/explore/trivia" class="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm font-bold text-[var(--color-text-secondary)] transition hover:border-brand-300 hover:text-brand-600">Trivia</a>
+            <a href="/explore/games" class="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm font-bold text-[var(--color-text-secondary)] transition hover:border-brand-300 hover:text-brand-600">Games</a>
+            <a href="/leaderboard" class="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm font-bold text-[var(--color-text-secondary)] transition hover:border-brand-300 hover:text-brand-600">Ranking</a>
+            <a href="/profile/me" class="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm font-bold text-[var(--color-text-secondary)] transition hover:border-brand-300 hover:text-brand-600">Meu perfil</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

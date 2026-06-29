@@ -1,0 +1,27 @@
+{
+  "name": "FunSona v2",
+  "stack": "Astro + Hono + Cloudflare + Supabase",
+  "paths": {
+    "web": "apps/web",
+    "api": "apps/api",
+    "shared": "packages/shared",
+    "migrations": "supabase/migrations",
+    "docs": "docs"
+  },
+  "commands": {
+    "dev": "pnpm dev",
+    "build": "pnpm build",
+    "typecheck": "pnpm typecheck",
+    "db:migrate": "pnpm db:migrate",
+    "db:reset": "pnpm db:reset"
+  },
+  "rules": [
+    "Always use pnpm in this monorepo",
+    "Never use Next.js or direct PostgreSQL connections",
+    "All SQL DDL goes to supabase/migrations/",
+    "All shared types/schemas go to packages/shared/",
+    "SEO-first: Astro pages must generate real HTML, use React islands only for interactivity",
+    "i18n: default pt, support en/es",
+    "No fake data in production"
+  ]
+}

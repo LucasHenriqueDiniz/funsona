@@ -1,0 +1,27 @@
+{
+  "name": "@funsona/quiz-review",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "export": "tsx export-batch.ts",
+    "import": "tsx import-review.ts",
+    "orchestrate": "tsx orchestrate.ts",
+    "images": "tsx generate-images.ts",
+    "review": "tsx review.ts",
+    "apply": "tsx apply.ts"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@supabase/supabase-js": "^2.47.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "better-sqlite3": "^12.10.0",
+    "dotenv": "^16.4.0",
+    "jsonrepair": "^3.14.0",
+    "openai": "^4.77.0",
+    "playwright-core": "^1.60.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,245 @@
+---
+import AuthNav from "@/components/auth/AuthNav";
+
+interface Props {
+  transparent?: boolean;
+}
+
+const { transparent = false } = Astro.props;
+---
+
+<header
+  id="site-header"
+  class="fixed left-0 right-0 top-0 z-40 bg-transparent transition-all duration-300"
+  data-transparent={transparent ? "true" : "false"}
+>
+  <div class="mx-auto max-w-7xl px-3 py-3 sm:px-6 lg:px-8">
+    <div id="site-header-shell" class="relative flex min-h-16 items-center gap-3 rounded-[1.75rem] border border-[var(--color-border)]/70 bg-[var(--color-surface)]/55 px-3 py-2 shadow-sm shadow-slate-950/5 backdrop-blur-xl transition-all duration-300 sm:px-4 dark:shadow-black/20">
+
+      <!-- Logo -->
+      <a href="/" class="group flex shrink-0 items-center gap-3 rounded-2xl pr-1 transition">
+        <div class="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-[var(--color-surface)] shadow-lg shadow-brand-500/15 ring-1 ring-[var(--color-border)] transition group-hover:scale-105">
+          <img src="/favicon-32x32.png" alt="FunSona" class="h-8 w-8" loading="eager" decoding="async" />
+        </div>
+        <div class="leading-none">
+          <span class="block text-xl font-black tracking-tight text-[var(--color-text-primary)]">FunSona</span>
+          <span class="hidden text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)] lg:block">Quiz engine</span>
+        </div>
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden items-center gap-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)]/80 p-1 lg:flex">
+        <a href="/explore" class="rounded-xl px-3.5 py-2 text-sm font-black text-[var(--color-text-secondary)] transition hover:bg-brand-500/10 hover:text-brand-500">Explorar</a>
+        <a href="/leaderboard" class="rounded-xl px-3.5 py-2 text-sm font-black text-[var(--color-text-secondary)] transition hover:bg-brand-500/10 hover:text-brand-500">Ranking</a>
+        <a href="/quiz/new" class="rounded-xl px-3.5 py-2 text-sm font-black text-[var(--color-text-secondary)] transition hover:bg-brand-500/10 hover:text-brand-500">Criar</a>
+      </nav>
+
+      <!-- Desktop search -->
+      <form action="/explore" method="get" class="hidden min-w-0 flex-1 md:block">
+        <div class="relative">
+          <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            name="search"
+            placeholder="Buscar quizzes, temas, criadores..."
+            class="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)]/70 pl-11 pr-4 text-sm font-semibold text-[var(--color-text-primary)] outline-none transition placeholder:text-[var(--color-text-muted)] hover:border-brand-300 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15"
+          />
+        </div>
+      </form>
+
+      <div class="ml-auto flex shrink-0 items-center gap-1.5">
+        <!-- Mobile search icon -->
+        <a href="/explore" class="flex h-10 w-10 items-center justify-center rounded-2xl text-[var(--color-text-secondary)] transition hover:bg-brand-500/10 hover:text-brand-500 md:hidden" aria-label="Buscar">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </a>
+
+        <AuthNav client:load />
+
+        <!-- Hamburger button -->
+        <button
+          id="drawer-open-btn"
+          class="flex h-10 w-10 items-center justify-center rounded-2xl text-[var(--color-text-secondary)] transition hover:bg-brand-500/10 hover:text-brand-500 lg:hidden"
+          aria-label="Abrir menu"
+          aria-expanded="false"
+          aria-controls="mobile-drawer"
+        >
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="h-[5.8rem]"></div>
+
+<!-- ═══════════════════════════════════════════
+     MOBILE DRAWER
+     ═══════════════════════════════════════════ -->
+
+<!-- Backdrop -->
+<div
+  id="drawer-backdrop"
+  class="fixed inset-0 z-50 bg-black/50 opacity-0 backdrop-blur-sm transition-opacity duration-300 pointer-events-none"
+  aria-hidden="true"
+></div>
+
+<!-- Drawer panel -->
+<div
+  id="mobile-drawer"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Menu de navegação"
+  class="fixed right-0 top-0 z-50 flex h-full w-80 max-w-[90vw] translate-x-full flex-col bg-[var(--color-surface)] shadow-2xl shadow-black/30 transition-transform duration-300 ease-in-out"
+>
+  <!-- Drawer header -->
+  <div class="flex items-center justify-between border-b border-[var(--color-border)] px-5 py-4">
+    <a href="/" class="flex items-center gap-2.5">
+      <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--color-surface-elevated)] ring-1 ring-[var(--color-border)] shadow">
+        <img src="/favicon-32x32.png" alt="FunSona" class="h-6 w-6" />
+      </div>
+      <span class="text-lg font-black tracking-tight text-[var(--color-text-primary)]">FunSona</span>
+    </a>
+    <button
+      id="drawer-close-btn"
+      class="flex h-9 w-9 items-center justify-center rounded-xl text-[var(--color-text-muted)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]"
+      aria-label="Fechar menu"
+    >
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="border-b border-[var(--color-border)] px-5 py-4">
+    <form action="/explore" method="get">
+      <div class="relative">
+        <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input
+          name="search"
+          placeholder="Buscar quizzes..."
+          class="h-11 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] pl-10 pr-4 text-sm font-semibold text-[var(--color-text-primary)] outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15"
+        />
+      </div>
+    </form>
+  </div>
+
+  <!-- Nav links -->
+  <nav class="flex-1 overflow-y-auto px-3 py-4">
+    <p class="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-text-muted)]">Navegar</p>
+    <div class="flex flex-col gap-0.5">
+      <a href="/explore" class="drawer-link flex items-center gap-3.5 rounded-xl px-3 py-3 text-sm font-bold text-[var(--color-text-secondary)] transition hover:bg-brand-500/8 hover:text-brand-500">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-surface-muted)] text-base">🔍</span>
+        Explorar quizzes
+      </a>
+      <a href="/leaderboard" class="drawer-link flex items-center gap-3.5 rounded-xl px-3 py-3 text-sm font-bold text-[var(--color-text-secondary)] transition hover:bg-brand-500/8 hover:text-brand-500">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-surface-muted)] text-base">🏆</span>
+        Ranking
+      </a>
+      <a href="/quiz/new" class="drawer-link flex items-center gap-3.5 rounded-xl px-3 py-3 text-sm font-bold text-[var(--color-text-secondary)] transition hover:bg-brand-500/8 hover:text-brand-500">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-surface-muted)] text-base">✏️</span>
+        Criar quiz
+      </a>
+      <a href="/premium" class="drawer-link flex items-center gap-3.5 rounded-xl px-3 py-3 text-sm font-bold text-[var(--color-text-secondary)] transition hover:bg-brand-500/8 hover:text-brand-500">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-surface-muted)] text-base">⭐</span>
+        Premium
+      </a>
+    </div>
+
+    <div class="mt-4 border-t border-[var(--color-border)] pt-4">
+      <p class="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-text-muted)]">Categorias</p>
+      <div class="flex flex-col gap-0.5">
+        <a href="/explore/personality" class="flex items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--color-text-secondary)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]">
+          <span>✨</span> Personalidade
+        </a>
+        <a href="/explore/trivia" class="flex items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--color-text-secondary)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]">
+          <span>🧠</span> Trivia
+        </a>
+        <a href="/explore/games" class="flex items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--color-text-secondary)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]">
+          <span>🎮</span> Games
+        </a>
+        <a href="/explore/movies" class="flex items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--color-text-secondary)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]">
+          <span>🎬</span> Filmes
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Bottom CTA -->
+  <div class="border-t border-[var(--color-border)] px-5 py-5">
+    <a href="/quiz/new" class="flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-4 py-3 font-extrabold text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-600">
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+      </svg>
+      Criar um quiz agora
+    </a>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const openBtn = document.getElementById("drawer-open-btn");
+    const closeBtn = document.getElementById("drawer-close-btn");
+    const backdrop = document.getElementById("drawer-backdrop");
+    const drawer = document.getElementById("mobile-drawer");
+
+    if (!openBtn || !closeBtn || !backdrop || !drawer) return;
+
+    function open() {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = scrollbarWidth + "px";
+      drawer.classList.remove("translate-x-full");
+      backdrop.classList.remove("opacity-0", "pointer-events-none");
+      backdrop.classList.add("opacity-100");
+      openBtn.setAttribute("aria-expanded", "true");
+    }
+
+    function close() {
+      drawer.classList.add("translate-x-full");
+      backdrop.classList.add("opacity-0", "pointer-events-none");
+      backdrop.classList.remove("opacity-100");
+      openBtn.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    }
+
+    openBtn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    backdrop.addEventListener("click", close);
+
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
+
+    // Close on drawer link click
+    drawer.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", close);
+    });
+  })();
+
+  // Scroll shadow on header
+  (function () {
+    const shell = document.getElementById("site-header-shell");
+    if (!shell) return;
+    let ticking = false;
+    window.addEventListener("scroll", () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          shell.classList.toggle("shadow-xl", window.scrollY > 8);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  })();
+</script>

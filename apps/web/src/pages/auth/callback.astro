@@ -1,0 +1,279 @@
+---
+// No React component needed — an inline <script> runs immediately
+// without waiting for framework hydration, making the redirect faster.
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Entrando… | FunSona</title>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100dvh;
+        background: #070b14;
+        font-family: system-ui, -apple-system, sans-serif;
+        overflow: hidden;
+      }
+
+      /* ── ambient glow blobs ── */
+      .blob {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        pointer-events: none;
+        opacity: 0;
+        animation: blob-in 1.2s ease forwards;
+      }
+      .blob-1 {
+        width: 480px; height: 480px;
+        background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%);
+        top: -120px; left: -80px;
+        animation-delay: 0s;
+      }
+      .blob-2 {
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, rgba(139,92,246,0.25) 0%, transparent 70%);
+        bottom: -100px; right: -60px;
+        animation-delay: 0.15s;
+      }
+      .blob-3 {
+        width: 300px; height: 300px;
+        background: radial-gradient(circle, rgba(236,72,153,0.15) 0%, transparent 70%);
+        top: 40%; left: 55%;
+        animation-delay: 0.3s;
+      }
+      @keyframes blob-in {
+        to { opacity: 1; }
+      }
+
+      /* ── card ── */
+      .card {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        width: 100%;
+        max-width: 340px;
+        padding: 44px 32px 40px;
+        background: rgba(15, 20, 35, 0.75);
+        border: 1px solid rgba(99,102,241,0.18);
+        border-radius: 28px;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        box-shadow:
+          0 0 0 1px rgba(255,255,255,0.04) inset,
+          0 32px 80px rgba(0,0,0,0.55),
+          0 0 60px rgba(99,102,241,0.08);
+        animation: card-in 0.5s cubic-bezier(0.22,1,0.36,1) both;
+        animation-delay: 0.05s;
+      }
+      @keyframes card-in {
+        from { opacity: 0; transform: translateY(18px) scale(0.97); }
+        to   { opacity: 1; transform: translateY(0)    scale(1);    }
+      }
+
+      /* ── logo ── */
+      .logo-ring {
+        width: 68px; height: 68px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 32px rgba(99,102,241,0.45);
+        margin-bottom: 24px;
+        animation: pulse-logo 2.4s ease-in-out infinite;
+      }
+      @keyframes pulse-logo {
+        0%, 100% { box-shadow: 0 8px 32px rgba(99,102,241,0.45); }
+        50%       { box-shadow: 0 8px 48px rgba(99,102,241,0.70); }
+      }
+      .logo-ring img { width: 40px; height: 40px; object-fit: contain; }
+
+      /* ── text ── */
+      .eyebrow {
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #6366f1;
+        margin-bottom: 8px;
+      }
+      .heading {
+        font-size: 22px;
+        font-weight: 900;
+        color: #f1f5f9;
+        letter-spacing: -0.02em;
+        margin-bottom: 6px;
+        text-align: center;
+      }
+      .subtext {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 500;
+        text-align: center;
+        margin-bottom: 32px;
+        line-height: 1.5;
+      }
+
+      /* ── progress bar ── */
+      .bar-track {
+        width: 100%;
+        height: 3px;
+        background: rgba(99,102,241,0.15);
+        border-radius: 99px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+      .bar-fill {
+        height: 100%;
+        width: 30%;
+        background: linear-gradient(90deg, #6366f1, #a78bfa, #6366f1);
+        background-size: 200% 100%;
+        border-radius: 99px;
+        animation: shimmer 1.4s linear infinite;
+      }
+      @keyframes shimmer {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+
+      /* ── dots ── */
+      .dots {
+        display: flex;
+        gap: 6px;
+      }
+      .dot {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: rgba(99,102,241,0.35);
+        animation: dot-pulse 1.4s ease-in-out infinite;
+      }
+      .dot:nth-child(2) { animation-delay: 0.2s; }
+      .dot:nth-child(3) { animation-delay: 0.4s; }
+      @keyframes dot-pulse {
+        0%, 80%, 100% { background: rgba(99,102,241,0.25); transform: scale(0.85); }
+        40%            { background: #818cf8;               transform: scale(1.2);  }
+      }
+
+      /* ── error state ── */
+      .error-wrap {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        width: 100%;
+        max-width: 340px;
+        padding: 44px 32px 40px;
+        background: rgba(15, 20, 35, 0.75);
+        border: 1px solid rgba(239,68,68,0.2);
+        border-radius: 28px;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        box-shadow: 0 32px 80px rgba(0,0,0,0.55);
+        position: relative;
+        z-index: 10;
+        text-align: center;
+      }
+      .error-icon {
+        font-size: 40px;
+        margin-bottom: 20px;
+        filter: saturate(0.8);
+      }
+      .error-heading {
+        font-size: 20px;
+        font-weight: 900;
+        color: #f1f5f9;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+      }
+      .error-msg {
+        font-size: 13px;
+        color: #64748b;
+        line-height: 1.55;
+        margin-bottom: 28px;
+      }
+      .retry-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 11px 24px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #fff;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14px;
+        text-decoration: none;
+        box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+        transition: opacity 0.15s;
+      }
+      .retry-btn:hover { opacity: 0.88; }
+    </style>
+  </head>
+  <body>
+    <!-- ambient blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <!-- loading card -->
+    <div id="loading" class="card">
+      <div class="logo-ring">
+        <img src="/favicon-32x32.png" alt="FunSona" />
+      </div>
+      <p class="eyebrow">FunSona</p>
+      <h1 class="heading">Entrando na conta</h1>
+      <p class="subtext">Estamos finalizando o seu acesso…</p>
+      <div class="bar-track">
+        <div class="bar-fill"></div>
+      </div>
+      <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+
+    <!-- error card -->
+    <div id="error" class="error-wrap">
+      <div class="error-icon">😕</div>
+      <h2 class="error-heading">Não conseguimos entrar</h2>
+      <p id="err-msg" class="error-msg">Ocorreu um problema ao finalizar o login.</p>
+      <a href="/login" class="retry-btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v6h6M20 20v-6h-6M4 10a9 9 0 0 1 15.34-6.36M20 14a9 9 0 0 1-15.34 6.36"/>
+        </svg>
+        Tentar novamente
+      </a>
+    </div>
+
+    <script>
+      import { finalizeOAuthLogin } from "@/lib/oauth";
+
+      (async () => {
+        try {
+          const next = await finalizeOAuthLogin();
+          window.history.replaceState({}, "", "/auth/callback");
+          window.location.replace(next);
+        } catch (err) {
+          document.getElementById("loading")!.style.display = "none";
+          const box = document.getElementById("error")! as HTMLElement;
+          box.style.display = "flex";
+          const msg = document.getElementById("err-msg")!;
+          msg.textContent =
+            err instanceof Error ? err.message : "Ocorreu um problema ao finalizar o login.";
+        }
+      })();
+    </script>
+  </body>
+</html>

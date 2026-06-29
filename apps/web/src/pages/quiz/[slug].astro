@@ -1,0 +1,164 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import QuizCard from "@/components/QuizCard.astro";
+import LikeButton from "@/components/quiz/LikeButton";
+import CommentSection from "@/components/quiz/CommentSection";
+import { apiFetch } from "@/lib/api";
+import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/");
+
+const { data: quiz, error } = await apiFetch(`/quizzes/${slug}`);
+
+if (error || !quiz) {
+  return Astro.redirect("/404");
+}
+
+const title = `${quiz.title} | FunSona`;
+const description = quiz.description || `Jogue o quiz ${quiz.title} no FunSona`;
+const image = `${Astro.url.origin}/og/${slug}`;
+
+const { data: related } = await apiFetch(`/quizzes?limit=3&sort=likes`);
+const filteredRelated = related?.filter((q: any) => q.id !== quiz.id).slice(0, 3) || [];
+
+// Fetch current user for comment section
+let currentUserId: string | null = null;
+try {
+  const res = await fetch(`${PUBLIC_API_BASE_URL}/auth/me`, {
+    headers: { cookie: Astro.request.headers.get("cookie") || "" },
+  });
+  const data = await res.json();
+  if (data.success) currentUserId = data.data.id;
+} catch {
+  // ignore
+}
+---
+
+<Layout title={title} description={description} image={image} canonical={`/quiz/${slug}`}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Quiz",
+    name: quiz.title,
+    description: quiz.description,
+    image: image,
+    author: {
+      "@type": "Person",
+      name: quiz.author?.display_name || quiz.author?.handle,
+    },
+    datePublished: quiz.created_at,
+  })} />
+
+  <div class="relative overflow-hidden">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-[34rem] bg-[radial-gradient(circle_at_25%_10%,rgba(99,102,241,0.18),transparent_34%),radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.16),transparent_30%)]"></div>
+
+    <section class="relative mx-auto grid max-w-7xl gap-8 px-4 pb-12 pt-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_26rem] lg:px-8 lg:pb-16 lg:pt-10">
+      <div class="min-w-0">
+        <div class="mb-5 flex flex-wrap items-center gap-2">
+          <span class="rounded-full border border-brand-500/20 bg-brand-500/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-brand-600 dark:text-brand-300">
+            {quiz.type === "TRIVIA" ? "Trivia" : "Personalidade"}
+          </span>
+          {quiz.language && (
+            <span class="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+              {quiz.language}
+            </span>
+          )}
+        </div>
+
+        <h1 class="max-w-4xl text-4xl font-black leading-[0.98] tracking-tight text-[var(--color-text-primary)] sm:text-6xl lg:text-7xl">
+          {quiz.title}
+        </h1>
+        {quiz.description && (
+          <p class="mt-6 max-w-2xl text-lg font-medium leading-relaxed text-[var(--color-text-secondary)] sm:text-xl">
+            {quiz.description}
+          </p>
+        )}
+
+        <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+          <a href={`/quiz/${slug}/play`} class="group inline-flex items-center justify-center gap-3 rounded-[1.4rem] bg-gradient-to-r from-brand-600 via-brand-500 to-accent-600 px-8 py-4 text-lg font-black text-white shadow-2xl shadow-brand-500/25 transition hover:-translate-y-0.5 hover:shadow-brand-500/35">
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/20 transition group-hover:scale-105">
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+            </span>
+            Jogar agora
+          </a>
+          <LikeButton quizId={quiz.id} initialLikes={quiz.likes_count || 0} client:load />
+        </div>
+
+        {quiz.tags?.length > 0 && (
+          <div class="mt-7 flex flex-wrap gap-2">
+            {quiz.tags.map((tag: string) => (
+              <a href={`/explore?tag=${tag}`} class="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-2 text-sm font-bold text-[var(--color-text-secondary)] transition hover:border-brand-300 hover:bg-brand-500/10 hover:text-brand-500">#{tag}</a>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <aside class="lg:sticky lg:top-28 lg:self-start">
+        <div class="overflow-hidden rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl shadow-slate-950/10 dark:shadow-black/30">
+          <div class="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-brand-600 via-brand-500 to-accent-600">
+            {quiz.cover_url ? (
+              <img src={quiz.cover_url} alt={quiz.title} class="h-full w-full object-cover" />
+            ) : (
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.35),transparent_28%)]"></div>
+            )}
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4 grid grid-cols-2 gap-2 text-white">
+              <div class="rounded-2xl border border-white/15 bg-white/15 p-3 backdrop-blur-xl">
+                <p class="text-2xl font-black">{(quiz.attempts_count || 0).toLocaleString("pt-BR")}</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-white/65">jogadas</p>
+              </div>
+              <div class="rounded-2xl border border-white/15 bg-white/15 p-3 backdrop-blur-xl">
+                <p class="text-2xl font-black">{(quiz.likes_count || 0).toLocaleString("pt-BR")}</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-white/65">curtidas</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-5 p-5">
+            <a href={`/profile/${quiz.author?.handle}`} class="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-3 transition hover:border-brand-300">
+              {quiz.author?.avatar_url ? (
+                <img src={quiz.author.avatar_url} alt={quiz.author.display_name} class="h-12 w-12 rounded-2xl object-cover" />
+              ) : (
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-accent-500 text-sm font-black text-white">
+                  {(quiz.author?.display_name || quiz.author?.handle || "?")[0].toUpperCase()}
+                </div>
+              )}
+              <div class="min-w-0">
+                <p class="truncate font-black text-[var(--color-text-primary)]">{quiz.author?.display_name || quiz.author?.handle}</p>
+                <p class="truncate text-sm font-semibold text-[var(--color-text-muted)]">@{quiz.author?.handle}</p>
+              </div>
+            </a>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-2xl bg-[var(--color-surface-elevated)] p-4">
+                <p class="text-xs font-black uppercase tracking-wider text-[var(--color-text-muted)]">Criado em</p>
+                <p class="mt-1 font-black text-[var(--color-text-primary)]">{new Date(quiz.created_at).toLocaleDateString("pt-BR")}</p>
+              </div>
+              <div class="rounded-2xl bg-[var(--color-surface-elevated)] p-4">
+                <p class="text-xs font-black uppercase tracking-wider text-[var(--color-text-muted)]">Tipo</p>
+                <p class="mt-1 font-black text-[var(--color-text-primary)]">{quiz.type === "TRIVIA" ? "Trivia" : "Perfil"}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="relative mx-auto grid max-w-7xl gap-8 px-4 pb-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-8">
+      <div class="min-w-0 rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-xl shadow-slate-950/5 sm:p-6 dark:shadow-black/20">
+        <CommentSection quizSlug={slug} currentUserId={currentUserId} client:load />
+      </div>
+
+      {filteredRelated.length > 0 && (
+        <aside>
+          <h2 class="mb-4 text-2xl font-black text-[var(--color-text-primary)]">Mais para jogar</h2>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+            {filteredRelated.map((q: any) => (
+              <QuizCard {...q} />
+            ))}
+          </div>
+        </aside>
+      )}
+    </section>
+  </div>
+</Layout>

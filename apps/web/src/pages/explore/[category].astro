@@ -1,0 +1,28 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ExploreCatalog from "@/components/explore/ExploreCatalog.astro";
+import { getCategoryText, getExploreCategoryFromAnySlug } from "@/lib/exploreCategories";
+
+const slug = Astro.params.category;
+const category = getExploreCategoryFromAnySlug(slug);
+
+if (!category) {
+  return Astro.redirect("/explore", 302);
+}
+
+if (slug !== category.slug) {
+  return Astro.redirect(`/explore/${category.slug}`, 301);
+}
+
+const sort = Astro.url.searchParams.get("sort") || "";
+const page = parseInt(Astro.url.searchParams.get("page") || "1");
+const search = Astro.url.searchParams.get("search") || "";
+const locale = Astro.currentLocale || "pt";
+const text = getCategoryText(category, locale);
+const title = `Quizzes de ${text.name} | FunSona`;
+const description = `${text.description} Explore quizzes de ${text.name.toLowerCase()} no FunSona.`;
+---
+
+<Layout title={title} description={description} canonical={`/explore/${category.slug}`}>
+  <ExploreCatalog category={category} sort={sort} page={page} search={search} locale={locale} />
+</Layout>

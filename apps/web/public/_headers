@@ -1,0 +1,20 @@
+# Cache explore pages at the edge for fast category switching
+/explore
+  Cache-Control: public, s-maxage=30, stale-while-revalidate=60
+
+/explore/*
+  Cache-Control: public, s-maxage=30, stale-while-revalidate=60
+
+# Cache static assets aggressively (they have content hashes in filenames)
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Never cache auth or user-specific pages
+/auth/*
+  Cache-Control: no-store
+
+/profile/*
+  Cache-Control: no-store
+
+/settings
+  Cache-Control: no-store

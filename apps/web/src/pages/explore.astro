@@ -1,0 +1,13 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ExploreCatalog from "@/components/explore/ExploreCatalog.astro";
+
+const tag = Astro.url.searchParams.get("tag");
+const sort = Astro.url.searchParams.get("sort") || "";
+const page = parseInt(Astro.url.searchParams.get("page") || "1");
+const search = Astro.url.searchParams.get("search") || "";
+---
+
+<Layout title="Explorar Quizzes | FunSona" description="Descubra quizzes incríveis por categoria, tema ou tag.">
+  <ExploreCatalog tag={tag} sort={sort} page={page} search={search} locale={Astro.currentLocale || "pt"} />
+</Layout>

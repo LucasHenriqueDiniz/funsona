@@ -1,0 +1,60 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.astro/
+.output/
+
+# Cloudflare
+.wrangler/
+.dev.vars
+*.dev.vars
+
+# Supabase
+.supabase/
+
+# Env
+.env
+.env.local
+.env.*.local
+temp_secrets.json
+*_secrets.json
+secrets.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.iml
+.claude/settings.local.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temp
+*.tmp
+*.temp
+/~/
+claude-share/
+replit/
+backups/
+scripts/quiz-review/chrome-profile/
+scripts/quiz-review/batches/
+scripts/quiz-review/*.db
+scripts/quiz-review/*.pid
+scripts/quiz-review/*-report.html
+scripts/quiz-review/quiz-preview.html
+scripts/quiz-review/refactored-dump.json
+
+# Astro
+.astro/
+
+# Typescript
+*.tsbuildinfo

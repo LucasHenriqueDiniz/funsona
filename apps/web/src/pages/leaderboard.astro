@@ -1,0 +1,140 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { apiFetch } from "@/lib/api";
+
+const timeWindow = Astro.url.searchParams.get("window") || "all_time";
+const { data: entries } = await apiFetch(`/leaderboard?limit=100&window=${timeWindow}`);
+
+const top3 = entries?.slice(0, 3) || [];
+const rest = entries?.slice(3) || [];
+
+const podiumStyles = [
+  { ring: "ring-amber-400/50", glow: "from-amber-400/15 to-transparent", accent: "bg-amber-400", medal: "🥇", rank: "1º" },
+  { ring: "ring-slate-400/50", glow: "from-slate-400/10 to-transparent", accent: "bg-slate-400", medal: "🥈", rank: "2º" },
+  { ring: "ring-orange-400/50", glow: "from-orange-400/15 to-transparent", accent: "bg-orange-400", medal: "🥉", rank: "3º" },
+];
+
+const tabs = [
+  { label: "Geral", value: "all_time" },
+  { label: "Semanal", value: "weekly" },
+  { label: "Mensal", value: "monthly" },
+];
+
+function getXp(entry: any) {
+  if (timeWindow === "weekly") return entry.xp_weekly ?? 0;
+  if (timeWindow === "monthly") return entry.xp_monthly ?? 0;
+  return entry.xp_all_time ?? 0;
+}
+---
+
+<Layout title="Ranking | FunSona" description="Os jogadores mais ativos do FunSona. Suba no ranking jogando quizzes!">
+
+  <!-- ══════════════════════════════ HERO ══════════════════════════════ -->
+  <div class="bg-slate-900">
+    <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <div class="flex flex-col items-center text-center">
+        <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400/10 text-3xl">🏆</div>
+        <p class="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Hall da Fama</p>
+        <h1 class="mb-3 font-black leading-tight text-white" style="font-size:clamp(1.6rem,3.5vw,2.5rem)">
+          Ranking dos jogadores
+        </h1>
+        <p class="max-w-md text-sm leading-relaxed text-slate-400 sm:text-base">
+          Compare desempenho, acompanhe sua evolução e mire o topo.
+        </p>
+
+        <div class="mt-7 inline-flex gap-1 rounded-2xl border border-slate-700 bg-slate-800 p-1.5">
+          {tabs.map((tab) => (
+            <a
+              href={`?window=${tab.value}`}
+              class={`rounded-xl px-5 py-2 text-sm font-bold transition ${
+                timeWindow === tab.value
+                  ? "bg-brand-500 text-white shadow-md shadow-brand-500/25"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              {tab.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ CONTENT ══════════════════════════════ -->
+  <div class="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
+
+    {entries && entries.length > 0 ? (
+      <>
+        <!-- Podium -->
+        <section class="grid gap-4 md:grid-cols-3">
+          {[top3[1], top3[0], top3[2]].map((entry: any, idx: number) => {
+            if (!entry) return <div />;
+            const style = idx === 0 ? podiumStyles[1] : idx === 1 ? podiumStyles[0] : podiumStyles[2];
+            const isFirst = idx === 1;
+            return (
+              <article class={`relative overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 text-center shadow-lg ${isFirst ? "md:-translate-y-4 shadow-brand-500/10" : ""}`}>
+                <div class={`pointer-events-none absolute inset-0 bg-gradient-to-b ${style.glow}`}></div>
+                <div class="relative">
+                  <div class="mb-2 text-3xl">{style.medal}</div>
+                  <div class={`mx-auto mb-4 overflow-hidden rounded-full ring-4 ${style.ring} ${isFirst ? "h-20 w-20 sm:h-24 sm:w-24" : "h-16 w-16 sm:h-20 sm:w-20"}`}>
+                    {entry.profiles?.avatar_url ? (
+                      <img src={entry.profiles.avatar_url} alt={entry.profiles.display_name} class="h-full w-full object-cover" />
+                    ) : (
+                      <div class="flex h-full w-full items-center justify-center bg-[var(--color-surface-muted)] text-2xl font-black text-[var(--color-text-muted)]">
+                        {entry.profiles?.display_name?.charAt(0).toUpperCase() || "?"}
+                      </div>
+                    )}
+                  </div>
+                  <p class="line-clamp-1 font-black text-[var(--color-text-primary)]">{entry.profiles?.display_name || "Anônimo"}</p>
+                  <p class="mt-0.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Nível {entry.profiles?.level || 1}</p>
+                  <p class="mt-3 text-xl font-black text-[var(--color-text-primary)]">{getXp(entry).toLocaleString("pt-BR")} <span class="text-sm font-bold text-[var(--color-text-muted)]">XP</span></p>
+                  <div class={`mx-auto mt-4 h-1.5 w-16 rounded-full ${style.accent}`}></div>
+                </div>
+              </article>
+            );
+          })}
+        </section>
+
+        <!-- Rest of list -->
+        {rest.length > 0 && (
+          <section class="overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] shadow-lg">
+            <div class="border-b border-[var(--color-border)] px-5 py-4 sm:px-6">
+              <h2 class="text-sm font-black uppercase tracking-widest text-[var(--color-text-muted)]">Demais posições</h2>
+            </div>
+            <div class="divide-y divide-[var(--color-border)]/60">
+              {rest.map((entry: any, index: number) => (
+                <a href={`/profile/${entry.profiles?.handle}`} class="group flex items-center gap-4 px-5 py-3.5 transition hover:bg-brand-500/5 sm:px-6">
+                  <span class="w-8 shrink-0 text-center text-sm font-black tabular-nums text-[var(--color-text-muted)] group-hover:text-brand-500">{index + 4}</span>
+                  <div class="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-surface-muted)]">
+                    {entry.profiles?.avatar_url ? (
+                      <img src={entry.profiles.avatar_url} alt={entry.profiles.display_name} class="h-full w-full object-cover" />
+                    ) : (
+                      <div class="flex h-full w-full items-center justify-center text-sm font-black text-[var(--color-text-muted)]">
+                        {entry.profiles?.display_name?.charAt(0).toUpperCase() || "?"}
+                      </div>
+                    )}
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-black text-[var(--color-text-primary)]">{entry.profiles?.display_name || "Anônimo"}</p>
+                    <p class="truncate text-xs text-[var(--color-text-muted)]">@{entry.profiles?.handle} · Nível {entry.profiles?.level || 1}</p>
+                  </div>
+                  <p class="shrink-0 text-sm font-black tabular-nums text-[var(--color-text-primary)]">{getXp(entry).toLocaleString("pt-BR")} XP</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+      </>
+    ) : (
+      <div class="flex flex-col items-center rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] py-20 text-center">
+        <div class="mb-4 text-5xl">🏆</div>
+        <p class="text-lg font-extrabold text-[var(--color-text-primary)]">Nenhum jogador no ranking ainda.</p>
+        <p class="mt-1 text-sm text-[var(--color-text-muted)]">Seja o primeiro a jogar e subir no ranking.</p>
+        <a href="/explore" class="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-brand-600">
+          Explorar quizzes
+        </a>
+      </div>
+    )}
+
+  </div>
+</Layout>

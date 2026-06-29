@@ -1,0 +1,7 @@
+name = "funsona-web"
+compatibility_date = "2026-05-22"
+pages_build_output_dir = "./dist"
+
+[[kv_namespaces]]
+binding = "SESSION"
+id = "02dbd51b0bac4b67a0edafee77697595"

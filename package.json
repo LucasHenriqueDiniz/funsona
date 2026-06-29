@@ -1,0 +1,19 @@
+{
+  "name": "FunSona-v2",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "lint": "pnpm -r --if-present lint",
+    "release:ready": "node scripts/release/check-readiness.mjs",
+    "typecheck": "pnpm -r typecheck",
+    "db:generate": "supabase db diff -f",
+    "db:migrate": "supabase db push",
+    "db:reset": "supabase db reset",
+    "db:status": "supabase status"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

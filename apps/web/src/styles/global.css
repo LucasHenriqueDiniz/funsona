@@ -1,0 +1,164 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap");
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+
+  --color-accent-400: #c084fc;
+  --color-accent-500: #a855f7;
+  --color-accent-600: #9333ea;
+
+  --color-surface: #ffffff;
+  --color-surface-elevated: #f8fafc;
+  --color-surface-muted: #f1f5f9;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+  --color-border: #e2e8f0;
+  --color-border-subtle: #f1f5f9;
+}
+
+[data-theme="dark"] {
+  --color-surface: #0f172a;
+  --color-surface-elevated: #1e293b;
+  --color-surface-muted: #334155;
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #64748b;
+  --color-border: #334155;
+  --color-border-subtle: #1e293b;
+}
+
+/* ── View Transitions ───────────────────────────────────────────────────── */
+/* Speed up Astro's default cross-fade and add a subtle vertical shift */
+::view-transition-old(root) {
+  animation: 140ms cubic-bezier(0.4, 0, 1, 1) both vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: 200ms cubic-bezier(0, 0, 0.2, 1) both vt-fade-in;
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Navbar and footer are persisted — skip their transitions entirely */
+::view-transition-old(navbar),
+::view-transition-new(navbar),
+::view-transition-old(footer),
+::view-transition-new(footer) {
+  animation: none;
+}
+
+/* ── Legacy animations ──────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+@keyframes fadeInSoft {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeInSoft {
+  animation: fadeInSoft 0.45s ease-out both;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(var(--rotate, 0deg)); }
+  50% { transform: translateY(-12px) rotate(var(--rotate, 0deg)); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Outfit", "Segoe UI", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Sora", "Outfit", "Segoe UI", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Gradient text utility */
+.text-gradient-brand {
+  background: linear-gradient(135deg, var(--color-brand-300), #c084fc, #f0abfc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glass card utility */
+.glass {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+}

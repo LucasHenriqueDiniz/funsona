@@ -1,0 +1,310 @@
+---
+import ExploreEngagementRail from "@/components/explore/ExploreEngagementRail";
+import QuizCard from "@/components/QuizCard.astro";
+import { apiFetch } from "@/lib/api";
+import { exploreCategories, getCategoryText, getExploreCategoryFromAnySlug, getExploreCategoryUrl, sortOptions, type ExploreCategory } from "@/lib/exploreCategories";
+
+interface Props {
+  tag?: string | null;
+  sort?: string;
+  page?: number;
+  search?: string;
+  category?: ExploreCategory;
+  locale?: string;
+}
+
+const { tag = null, sort = "", page = 1, search = "", category, locale = "pt" } = Astro.props;
+const selectedCategory = category || getExploreCategoryFromAnySlug(tag);
+const basePath = selectedCategory ? getExploreCategoryUrl(selectedCategory.slug) : "/explore";
+const categoryText = selectedCategory ? getCategoryText(selectedCategory, locale) : null;
+const headline = categoryText?.headline || "Explore quizzes para qualquer mood.";
+const description = categoryText?.description || "Busque por tema, filtre por categoria e encontre o próximo quiz para jogar ou compartilhar.";
+const eyebrow = categoryText ? `${selectedCategory?.emoji} ${categoryText.name}` : null;
+const limit = 24;
+const pageNum = Math.max(1, page || 1);
+
+function withParams(path: string, params: Record<string, string | undefined>) {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) query.set(key, value);
+  });
+  const queryString = query.toString();
+  return queryString ? `${path}?${queryString}` : path;
+}
+
+const normalize = (value: string) =>
+  value.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+const tokenize = (value: string) =>
+  normalize(value).split(/[^a-z0-9]+/).map((t) => t.trim()).filter((t) => t.length > 1);
+
+const searchTokens = tokenize(search || "");
+const matchesSearch = (quiz: any) => {
+  if (!search) return true;
+  const combined = `${normalize(quiz.title || "")} ${normalize(quiz.description || "")}`;
+  const normalizedSearch = normalize(search);
+  if (combined.includes(normalizedSearch)) return true;
+  if (searchTokens.length === 0) return false;
+  return searchTokens.every((token) => combined.includes(token));
+};
+
+const matchesCategory = (quiz: any, aliases: string[]) => {
+  if (aliases.length === 0) return true;
+  const aliasSet = new Set(aliases.map((alias) => normalize(alias)));
+  const quizTags = (quiz.tags || []).map((value: string) => normalize(String(value)));
+  if (quizTags.some((tagValue: string) => aliasSet.has(tagValue))) return true;
+  const combined = `${normalize(quiz.title || "")} ${normalize(quiz.description || "")}`;
+  return aliases.some((alias) => combined.includes(normalize(alias)));
+};
+
+const isCategoryMode = !!selectedCategory;
+const params = new URLSearchParams();
+if (sort) params.set("sort", sort);
+if (!isCategoryMode && tag) params.set("tag", tag);
+if (!isCategoryMode && search) params.set("search", search);
+if (!isCategoryMode) params.set("page", String(pageNum));
+params.set("limit", isCategoryMode ? "300" : String(limit));
+
+const { data: rawQuizzes, meta: apiMeta } = await apiFetch(`/quizzes?${params.toString()}`);
+const allQuizzes = rawQuizzes || [];
+const filteredQuizzes = isCategoryMode
+  ? allQuizzes.filter((quiz: any) => matchesCategory(quiz, selectedCategory?.aliases || [])).filter(matchesSearch)
+  : allQuizzes;
+const offset = (pageNum - 1) * limit;
+const quizzes = isCategoryMode ? filteredQuizzes.slice(offset, offset + limit) : filteredQuizzes;
+const total = isCategoryMode ? filteredQuizzes.length : Number(apiMeta?.total || quizzes.length || 0);
+const totalPages = Math.max(1, Math.ceil(total / limit));
+
+const currentSortLabel = sortOptions.find((o) => o.value === sort)?.label || "Mais recentes";
+
+// Hero collage: up to 3 quiz covers, fallback to external images
+const fallbackCovers = [
+  "https://quizpanda.com/which-scooby-doo-character-are-you/feature-image.jpg",
+  "https://quizpanda.com/what-color-is-my-aura/feature-image.jpg",
+  "https://quizpanda.com/which-one-piece-character-would-be-your-arch-enemy/feature-image.jpg",
+];
+const heroCovers = [0, 1, 2].map((i) => allQuizzes[i]?.cover_url || fallbackCovers[i]);
+
+const pageNumbers = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+  if (totalPages <= 7) return i + 1;
+  if (i === 0) return 1;
+  if (i === 6) return totalPages;
+  if (pageNum <= 4) return i + 1;
+  if (pageNum >= totalPages - 3) return totalPages - 6 + i;
+  return pageNum - 3 + i;
+});
+---
+
+<!-- ══════════════════════════════ HERO BANNER ══════════════════════════════ -->
+<div class="bg-slate-900 overflow-hidden">
+  <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <div class="flex items-center gap-10 lg:gap-16">
+
+      <!-- Left: text + search -->
+      <div class="min-w-0 flex-1">
+        {eyebrow ? (
+          <div class="mb-4 flex items-center gap-2">
+            <span class="text-2xl">{selectedCategory?.emoji}</span>
+            <span class="text-sm font-bold uppercase tracking-[0.15em] text-brand-400">{categoryText?.name}</span>
+          </div>
+        ) : (
+          <p class="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Catálogo</p>
+        )}
+        <h1 class="mb-3 font-black leading-tight text-white" style="font-size:clamp(1.6rem,3.5vw,2.5rem)">
+          {headline}
+        </h1>
+        <p class="text-sm leading-relaxed text-slate-400 sm:text-base">{description}</p>
+
+        <!-- Search bar -->
+        <form action={basePath} method="get" class="mt-7 flex gap-3">
+          {sort && <input type="hidden" name="sort" value={sort} />}
+          <div class="relative flex-1">
+            <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input
+              type="text"
+              name="search"
+              value={search}
+              placeholder={selectedCategory && categoryText ? `Buscar em ${categoryText.name.toLowerCase()}...` : "Buscar por tema, fandom ou assunto..."}
+              class="h-12 w-full rounded-xl border border-slate-700 bg-slate-800 pl-11 pr-4 text-sm font-medium text-white outline-none transition placeholder:text-slate-500 hover:border-slate-600 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20"
+            />
+          </div>
+          <button type="submit" class="h-12 rounded-xl bg-brand-500 px-6 font-bold text-white transition hover:bg-brand-600 whitespace-nowrap">
+            Buscar
+          </button>
+        </form>
+      </div>
+
+      <!-- Right: quiz cover collage (desktop only) -->
+      <!-- No overflow-hidden on outer container so rotated cards aren't clipped -->
+      <div class="relative hidden h-[300px] w-[280px] shrink-0 lg:block xl:w-[320px]">
+        <!-- ambient glow -->
+        <div class="absolute inset-0 rounded-full" style="background:radial-gradient(ellipse at center,rgba(99,102,241,0.14) 0%,transparent 70%);pointer-events:none"></div>
+
+        <!-- Card back-left -->
+        <div class="absolute" style="left:0px;top:36px;transform:rotate(-11deg);z-index:1">
+          <div class="h-[190px] w-[120px] overflow-hidden rounded-2xl border border-white/10 shadow-xl" style="opacity:0.72">
+            <img src={heroCovers[1]} alt="" class="h-full w-full object-cover" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"></div>
+          </div>
+        </div>
+
+        <!-- Card back-right -->
+        <div class="absolute" style="right:0px;top:28px;transform:rotate(10deg);z-index:1">
+          <div class="h-[190px] w-[120px] overflow-hidden rounded-2xl border border-white/10 shadow-xl" style="opacity:0.72">
+            <img src={heroCovers[2]} alt="" class="h-full w-full object-cover" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"></div>
+          </div>
+        </div>
+
+        <!-- Card front-center -->
+        <div class="absolute" style="left:50%;top:0;transform:translateX(-50%) rotate(-1.5deg);z-index:2">
+          <div class="relative h-[240px] w-[150px] overflow-hidden rounded-2xl border border-white/25 shadow-2xl shadow-black/60">
+            <img src={heroCovers[0]} alt="" class="h-full w-full object-cover" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
+            <div class="absolute bottom-3 left-3 right-3">
+              <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-white/55">Em alta</p>
+              <p class="mt-0.5 text-xs font-black leading-snug text-white">Descubra seu resultado</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ FILTER BAR ══════════════════════════════ -->
+<div class="sticky top-[5.8rem] z-30 border-b border-[var(--color-border)] bg-[var(--color-surface)]/90 backdrop-blur-md">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center gap-3 overflow-x-auto py-3" style="scrollbar-width:none;-webkit-overflow-scrolling:touch">
+      <!-- "Todos" pill -->
+      <a
+        href={withParams("/explore", { sort, search })}
+        data-astro-prefetch="viewport"
+        class={`flex-shrink-0 rounded-full px-4 py-2 text-sm font-bold transition whitespace-nowrap ${!selectedCategory ? "bg-brand-500 text-white shadow-sm shadow-brand-500/30" : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]"}`}
+      >
+        Todos
+      </a>
+
+      <!-- Divider -->
+      <div class="h-5 w-px flex-shrink-0 bg-[var(--color-border)]"></div>
+
+      <!-- Category pills — prefetch on viewport entry so clicking is instant -->
+      {exploreCategories.map((cat) => {
+        const text = getCategoryText(cat, locale);
+        const active = selectedCategory?.slug === cat.slug;
+        return (
+          <a
+            href={withParams(getExploreCategoryUrl(cat.slug), { sort, search })}
+            data-astro-prefetch="viewport"
+            class={`flex-shrink-0 flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-semibold transition whitespace-nowrap ${active ? "bg-brand-500 text-white shadow-sm shadow-brand-500/30" : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]"}`}
+          >
+            <span class="text-base leading-none">{cat.emoji}</span>
+            {text.name}
+          </a>
+        );
+      })}
+
+      <!-- Right: clear filters -->
+      {(selectedCategory || search) && (
+        <>
+          <div class="h-5 w-px flex-shrink-0 bg-[var(--color-border)]"></div>
+          <a href="/explore" class="flex-shrink-0 flex items-center gap-1 rounded-full border border-[var(--color-border)] px-3 py-2 text-xs font-bold text-[var(--color-text-muted)] transition hover:border-red-400/50 hover:text-red-500 whitespace-nowrap">
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+            Limpar
+          </a>
+        </>
+      )}
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ MAIN CONTENT ══════════════════════════════ -->
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
+
+  <!-- Results header: count + sort -->
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <p class="text-sm font-medium text-[var(--color-text-muted)]">
+      <span class="font-extrabold text-[var(--color-text-primary)]">{total.toLocaleString("pt-BR")}</span>
+      {total === 1 ? " quiz encontrado" : " quizzes encontrados"}
+      {search && <span class="ml-1 text-[var(--color-text-muted)]">para "<span class="text-[var(--color-text-primary)]">{search}</span>"</span>}
+    </p>
+
+    <!-- Sort pills -->
+    <div class="flex items-center gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-1">
+      {sortOptions.map((option) => (
+        <a
+          href={withParams(basePath, { sort: option.value || undefined, search: search || undefined })}
+          class={`rounded-lg px-3 py-1.5 text-xs font-bold whitespace-nowrap transition ${sort === option.value ? "bg-brand-500 text-white shadow-sm" : "text-[var(--color-text-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]"}`}
+        >
+          {option.label}
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <!-- Quiz grid -->
+  {quizzes.length > 0 ? (
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {quizzes.map((quiz: any) => <QuizCard {...quiz} />)}
+    </div>
+  ) : (
+    <div class="flex flex-col items-center rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] py-20 text-center">
+      <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-500/10 text-3xl">🔎</div>
+      <p class="text-lg font-extrabold text-[var(--color-text-primary)]">Nenhum quiz encontrado.</p>
+      <p class="mt-1 text-sm text-[var(--color-text-muted)]">Tente outro termo ou limpe os filtros.</p>
+      <a href="/explore" class="mt-5 inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-600">
+        Ver todos os quizzes
+      </a>
+    </div>
+  )}
+
+  <!-- Pagination -->
+  {totalPages > 1 && (
+    <div class="flex items-center justify-center gap-2 pt-2">
+      {pageNum > 1 ? (
+        <a
+          href={withParams(basePath, { sort: sort || undefined, search: search || undefined, page: String(pageNum - 1) })}
+          class="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] text-[var(--color-text-secondary)] transition hover:border-brand-400/50 hover:text-brand-500"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </a>
+      ) : (
+        <div class="h-10 w-10"></div>
+      )}
+
+      <div class="flex items-center gap-1">
+        {pageNumbers.map((p) => {
+          const active = p === pageNum;
+          return (
+            <a
+              href={withParams(basePath, { sort: sort || undefined, search: search || undefined, page: String(p) })}
+              class={`flex h-10 min-w-[2.5rem] items-center justify-center rounded-xl px-2 text-sm font-bold transition ${active ? "bg-brand-500 text-white shadow-sm shadow-brand-500/30" : "border border-[var(--color-border)] bg-[var(--color-surface-elevated)] text-[var(--color-text-secondary)] hover:border-brand-400/50 hover:text-brand-500"}`}
+            >
+              {p}
+            </a>
+          );
+        })}
+      </div>
+
+      {pageNum < totalPages ? (
+        <a
+          href={withParams(basePath, { sort: sort || undefined, search: search || undefined, page: String(pageNum + 1) })}
+          class="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] text-[var(--color-text-secondary)] transition hover:border-brand-400/50 hover:text-brand-500"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      ) : (
+        <div class="h-10 w-10"></div>
+      )}
+    </div>
+  )}
+
+  <!-- Leaderboard rail — below the fold, less intrusive -->
+  <div class="border-t border-[var(--color-border)] pt-8">
+    <ExploreEngagementRail client:visible />
+  </div>
+
+</div>

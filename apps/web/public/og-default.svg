@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="50%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#db2777"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="60" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Decorative orbs -->
+  <circle cx="200" cy="150" r="180" fill="#f472b6" opacity="0.25" filter="url(#glow)"/>
+  <circle cx="1000" cy="500" r="200" fill="#818cf8" opacity="0.25" filter="url(#glow)"/>
+  <circle cx="900" cy="100" r="120" fill="#c084fc" opacity="0.2" filter="url(#glow)"/>
+
+  <!-- Logo icon -->
+  <g transform="translate(540, 180)" fill="none" stroke="white" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 48h32"/>
+    <path d="M40 8v8"/>
+    <path d="M73 26l-7 7"/>
+    <path d="M96 40h-8"/>
+    <path d="M16 40H8"/>
+    <path d="M25 18l-7-7"/>
+    <path d="M30 55l-6 6A22 22 0 0054 74l6-6"/>
+    <path d="M54 37A16 16 0 1030 55"/>
+  </g>
+
+  <!-- Brand name -->
+  <text x="600" y="340" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="900" fill="white" letter-spacing="-2">FunSona</text>
+
+  <!-- Tagline -->
+  <text x="600" y="400" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="500" fill="rgba(255,255,255,0.85)">Crie e jogue quizzes incríveis</text>
+
+  <!-- URL -->
+  <text x="600" y="560" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="rgba(255,255,255,0.6)">funsona.com</text>
+</svg>

@@ -1,0 +1,40 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ProfileSettingsForm from "@/components/profile/ProfileSettingsForm";
+
+const user = Astro.locals.user;
+if (!user) return Astro.redirect("/login");
+---
+
+<Layout title="Configurações | FunSona" description="Gerencie sua conta e preferências no FunSona.">
+
+  <!-- ══ HERO ══ -->
+  <div class="bg-slate-900 border-b border-slate-800">
+    <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-4">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-500/15 text-2xl">⚙️</div>
+        <div>
+          <p class="mb-0.5 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Conta</p>
+          <h1 class="text-2xl font-black leading-tight text-white sm:text-3xl">Configurações</h1>
+        </div>
+        <a href="/profile/me" class="ml-auto hidden items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-bold text-slate-300 transition hover:border-slate-600 hover:text-white sm:inline-flex">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Ver perfil
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 shadow-lg sm:p-8">
+      <ProfileSettingsForm
+        client:load
+        initialDisplayName={user.display_name || ""}
+        initialBio={user.bio || ""}
+        initialAvatarUrl={user.avatar_url || ""}
+        initialBannerUrl={user.banner_url || ""}
+      />
+    </div>
+  </div>
+
+</Layout>

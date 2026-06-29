@@ -1,0 +1,16 @@
+{
+  "name": "@FunSona/migration",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "export": "tsx export-valid-quizzes.ts",
+    "import": "tsx import-quizzes.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.47.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

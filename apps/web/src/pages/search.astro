@@ -1,0 +1,60 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { apiFetch } from "@/lib/api";
+
+const q = Astro.url.searchParams.get("q");
+let quizzes = [];
+let meta = null;
+
+if (q) {
+  const res = await apiFetch(`/quizzes?search=${encodeURIComponent(q)}&limit=24`);
+  quizzes = res.data || [];
+  meta = res.meta;
+}
+---
+
+<Layout title={`${q ? `"${q}"` : "Buscar"} | FunSona`} description="Busque quizzes por título, tema ou tag.">
+  <h1 class="text-3xl font-bold text-gray-900 mb-8">Buscar Quizzes</h1>
+
+  <form method="get" class="mb-8">
+    <div class="flex gap-2">
+      <input
+        type="search"
+        name="q"
+        value={q || ""}
+        placeholder="Busque por título, tema..."
+        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+      />
+      <button type="submit" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
+        Buscar
+      </button>
+    </div>
+  </form>
+
+  {q && (
+    <>
+      <p class="text-gray-600 mb-4">{meta?.total ?? 0} resultados para "{q}"</p>
+      {quizzes.length > 0 ? (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {quizzes.map((quiz: any) => (
+            <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+              <a href={`/quiz/${quiz.slug}`} class="block">
+                {quiz.cover_url && (
+                  <img src={quiz.cover_url} alt={quiz.title} class="w-full h-40 object-cover" loading="lazy" />
+                )}
+                <div class="p-4">
+                  <h3 class="font-semibold text-gray-900 text-sm mb-1">{quiz.title}</h3>
+                  <p class="text-xs text-gray-500">{quiz.attempts_count} plays</p>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12 text-gray-500">
+          <p>Nenhum resultado encontrado.</p>
+        </div>
+      )}
+    </>
+  )}
+</Layout>

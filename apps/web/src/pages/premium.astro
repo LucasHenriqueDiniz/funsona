@@ -1,0 +1,78 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+
+const { data: settings } = await fetch(`${PUBLIC_API_BASE_URL}/settings/public`).then(r => r.json()).catch(() => null);
+---
+
+<Layout title="Premium | FunSona" description="Remova anúncios e desbloqueie recursos exclusivos com o FunSona Premium.">
+  <div class="max-w-3xl mx-auto text-center py-12">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">FunSona Premium</h1>
+    <p class="text-xl text-gray-600 mb-8">
+      A melhor experiência de quizzes, sem anúncios e com recursos exclusivos.
+    </p>
+
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+      <div class="text-5xl font-bold text-indigo-600 mb-2">R$ 19,90<span class="text-lg text-gray-500 font-normal">/mês</span></div>
+      <p class="text-gray-500 mb-8">Cancele a qualquer momento</p>
+
+      <ul class="text-left space-y-4 mb-8 max-w-md mx-auto">
+        {(settings?.data?.features || [
+          "Remover anúncios em todas as páginas",
+          "Badge premium no seu perfil",
+          "Estatísticas avançadas de quizzes",
+          "Suporte prioritário",
+        ]).map((feature: string) => (
+          <li class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-gray-700">{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <button
+        id="checkout-btn"
+        class="w-full max-w-md mx-auto px-8 py-4 bg-indigo-600 text-white text-lg font-bold rounded-xl hover:bg-indigo-700 transition shadow-lg"
+      >
+        Assinar Premium
+      </button>
+    </div>
+
+    <p class="text-sm text-gray-500">
+      Pagamento processado com segurança pelo Stripe. 
+      <a href="/terms" class="text-indigo-600 hover:underline">Termos de uso</a> aplicáveis.
+    </p>
+  </div>
+</Layout>
+
+<script is:inline define:vars={{ PUBLIC_API_BASE_URL }}>
+  const btn = document.getElementById('checkout-btn');
+  if (btn instanceof HTMLButtonElement) {
+    btn.addEventListener('click', async () => {
+      btn.textContent = 'Redirecionando...';
+      btn.disabled = true;
+      
+      try {
+        const res = await fetch(`${PUBLIC_API_BASE_URL}/stripe/checkout`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+        const data = await res.json();
+        
+        if (data.success && data.data?.url) {
+          window.location.href = data.data.url;
+        } else {
+          alert(data.error || 'Erro ao iniciar checkout');
+          btn.textContent = 'Assinar Premium';
+          btn.disabled = false;
+        }
+      } catch {
+        alert('Erro de conexão. Tente novamente.');
+        btn.textContent = 'Assinar Premium';
+        btn.disabled = false;
+      }
+    });
+  }
+</script>

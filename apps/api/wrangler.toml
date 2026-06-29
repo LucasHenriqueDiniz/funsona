@@ -1,0 +1,25 @@
+name = "funsona-api"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+# Secrets (set via `wrangler secret put` or .dev.vars locally)
+# SUPABASE_URL
+# SUPABASE_ANON_KEY
+# SUPABASE_SERVICE_ROLE_KEY
+# STRIPE_SECRET_KEY
+# STRIPE_WEBHOOK_SECRET
+# JWT_SECRET
+
+[[kv_namespaces]]
+binding = "FUNSONA_CACHE"
+id = "02dbd51b0bac4b67a0edafee77697595"
+
+[vars]
+ENVIRONMENT = "production"
+
+# Local dev vars
+[env.dev]
+name = "funsona-api-dev"
+
+[env.dev.vars]
+ENVIRONMENT = "development"

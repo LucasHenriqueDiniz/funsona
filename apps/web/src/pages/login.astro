@@ -1,0 +1,124 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import LoginForm from "@/components/auth/LoginForm";
+
+// Real quiz covers from the database for the visual collage
+const quizImages = [
+  "https://quizpanda.com/which-scary-story-would-you-tell-around-the-campfire/feature-image.jpg",
+  "https://quizpanda.com/which-scooby-doo-character-are-you/feature-image.jpg",
+  "https://quizpanda.com/which-piece-of-furniture-are-you/feature-image.jpg",
+  "https://quizpanda.com/which-shameless-character-are-you/feature-image.jpg",
+  "https://quizpanda.com/which-phineas-and-ferb-character-are-you/feature-image.jpg",
+  "https://quizpanda.com/which-one-piece-character-would-be-your-arch-enemy/feature-image.jpg",
+  "https://quizpanda.com/what-color-is-my-aura/feature-image.jpg",
+  "https://res.cloudinary.com/dnql7wfjq/image/upload/v1763503932/quizhub/banners/rgdk0yyo9mgan0p5x98j.jpg",
+  "https://res.cloudinary.com/dnql7wfjq/image/upload/v1766094277/quizhub/banners/jdkwpldcd5zbkqtga6xm.jpg",
+];
+---
+
+<Layout title="Entrar | FunSona" description="Entre na sua conta FunSona para criar e jogar quizzes." hideNav={true} hideFooter={true}>
+  <div class="min-h-screen flex bg-[var(--color-surface)]">
+    <!-- Left side - Editorial panel (hidden on mobile) -->
+    <div class="hidden lg:flex lg:w-1/2 xl:w-[55%] relative overflow-hidden bg-gradient-to-br from-slate-950 via-brand-900 to-slate-900 p-10 xl:p-14">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(168,85,247,0.28),transparent_34%),radial-gradient(circle_at_80%_80%,rgba(99,102,241,0.24),transparent_38%)]"></div>
+      <div class="relative flex min-h-full w-full flex-col justify-between">
+        <a href="/" class="inline-flex items-center gap-3 text-white">
+          <div class="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-white/12 border border-white/15 shadow-lg shadow-black/20">
+            <img src="/favicon-32x32.png" alt="FunSona" class="h-8 w-8" />
+          </div>
+          <div>
+            <p class="text-2xl font-black leading-none">FunSona</p>
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-white/55">Seu universo de quizzes</p>
+          </div>
+        </a>
+
+        <div class="grid gap-8 xl:grid-cols-[0.9fr_1.1fr] xl:items-end">
+          <div class="max-w-md">
+            <p class="mb-4 hidden xl:inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-white/80">Quizzes, rankings e muito mais</p>
+            <h2 class="text-4xl font-black leading-tight text-white xl:text-6xl">Entre e volte para suas descobertas.</h2>
+            <p class="mt-5 text-lg leading-relaxed text-white/70">Acesse seus quizzes favoritos, acompanhe suas jogadas e crie novas experiencias para compartilhar.</p>
+          </div>
+
+          <div class="relative h-[520px]">
+            <div class="absolute left-0 top-10 h-72 w-56 overflow-hidden rounded-[2rem] border border-white/15 shadow-2xl shadow-black/40 rotate-[-7deg]">
+              <img src={quizImages[0]} alt="" class="h-full w-full object-cover" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+            </div>
+            <div class="absolute right-0 top-0 h-80 w-64 overflow-hidden rounded-[2rem] border border-white/15 shadow-2xl shadow-black/40 rotate-[4deg]">
+              <img src={quizImages[1]} alt="" class="h-full w-full object-cover" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+            </div>
+            <div class="absolute bottom-10 left-20 h-72 w-64 overflow-hidden rounded-[2rem] border border-white/15 shadow-2xl shadow-black/40 rotate-[2deg]">
+              <img src={quizImages[6]} alt="" class="h-full w-full object-cover" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent"></div>
+              <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold uppercase tracking-[0.14em] text-white/60">Em alta</p>
+                <p class="mt-1 text-xl font-black leading-tight text-white">Descubra seu resultado em minutos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid max-w-xl grid-cols-3 gap-3 text-white/75">
+          <div class="rounded-2xl border border-white/10 bg-white/8 p-4">
+            <p class="text-2xl font-black text-white">+18k</p>
+            <p class="text-xs font-semibold">jogadas diarias</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/8 p-4">
+            <p class="text-2xl font-black text-white">+3k</p>
+            <p class="text-xs font-semibold">criadores</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/8 p-4">
+            <p class="text-2xl font-black text-white">24/7</p>
+            <p class="text-xs font-semibold">novos quizzes</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right side - Login form -->
+    <div class="relative w-full lg:w-1/2 xl:w-[45%] flex items-center justify-center px-6 py-12 bg-[var(--color-surface)] overflow-hidden">
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(circle_at_70%_10%,rgba(99,102,241,0.16),transparent_45%)]"></div>
+      <div class="w-full max-w-md">
+        <!-- Mobile header (visible only on mobile) -->
+        <div class="lg:hidden text-center mb-8">
+          <a href="/" class="inline-flex flex-col items-center gap-2">
+            <div class="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-[var(--color-surface-elevated)] shadow-lg ring-1 ring-[var(--color-border)]">
+              <img src="/favicon-32x32.png" alt="FunSona" class="h-9 w-9" />
+            </div>
+            <span class="text-xl font-black text-[var(--color-text-primary)]">FunSona</span>
+          </a>
+        </div>
+
+        <!-- Card -->
+        <div class="relative bg-[var(--color-surface-elevated)] rounded-[2rem] shadow-2xl shadow-slate-950/10 border border-[var(--color-border)] p-8 sm:p-10">
+          <!-- Header -->
+          <div class="text-center mb-8">
+            <p class="text-xs font-bold uppercase tracking-[0.16em] text-brand-500 mb-3">Entrar na conta</p>
+            <h1 class="text-2xl sm:text-3xl font-black text-[var(--color-text-primary)]">Bem-vindo de volta</h1>
+            <p class="text-[var(--color-text-muted)] mt-2">Continue jogando, curtindo e criando quizzes.</p>
+          </div>
+
+          <LoginForm client:load />
+
+          <div class="text-center">
+            <p class="text-sm text-[var(--color-text-secondary)]">
+              Ainda não tem uma conta?{" "}
+              <a href="/register" class="font-bold text-brand-500 hover:text-brand-600 transition hover:underline">
+                Criar conta
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <p class="text-center text-xs text-[var(--color-text-muted)] mt-8">
+          Ao entrar, você concorda com nossos{" "}
+          <a href="/terms" class="hover:text-gray-600 underline">Termos</a>{" "}
+          e{" "}
+          <a href="/privacy" class="hover:text-gray-600 underline">Privacidade</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>

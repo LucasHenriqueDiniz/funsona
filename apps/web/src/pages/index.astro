@@ -1,0 +1,343 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import QuizCard from "@/components/QuizCard.astro";
+import { apiFetch } from "@/lib/api";
+
+const categories = [
+  { name: "Personalidade", emoji: "✨", slug: "personality", ring: "ring-amber-300/40 dark:ring-amber-500/30", bg: "bg-amber-500/10 text-amber-700 dark:text-amber-300" },
+  { name: "Trivia", emoji: "🧠", slug: "trivia", ring: "ring-cyan-300/40 dark:ring-cyan-500/30", bg: "bg-cyan-500/10 text-cyan-700 dark:text-cyan-300" },
+  { name: "Amor", emoji: "💕", slug: "love", ring: "ring-rose-300/40 dark:ring-rose-500/30", bg: "bg-rose-500/10 text-rose-700 dark:text-rose-300" },
+  { name: "Games", emoji: "🎮", slug: "games", ring: "ring-emerald-300/40 dark:ring-emerald-500/30", bg: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" },
+  { name: "Filmes", emoji: "🎬", slug: "movies", ring: "ring-sky-300/40 dark:ring-sky-500/30", bg: "bg-sky-500/10 text-sky-700 dark:text-sky-300" },
+  { name: "Musica", emoji: "🎵", slug: "music", ring: "ring-orange-300/40 dark:ring-orange-500/30", bg: "bg-orange-500/10 text-orange-700 dark:text-orange-300" },
+  { name: "TV", emoji: "📺", slug: "tv", ring: "ring-indigo-300/40 dark:ring-indigo-500/30", bg: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-300" },
+  { name: "Conhecimentos", emoji: "📚", slug: "knowledge", ring: "ring-lime-300/40 dark:ring-lime-500/30", bg: "bg-lime-500/10 text-lime-700 dark:text-lime-300" },
+];
+
+const SAMPLE_QUIZZES = [
+  { slug: "qual-personagem-anime", title: "Qual personagem de anime você seria?", description: "Descubra qual herói do mundo anime combina com a sua personalidade.", cover_url: null, type: "PERSONALITY", likes_count: 312, attempts_count: 4820 },
+  { slug: "conhecimentos-gerais-brasil", title: "Conhecimentos Gerais: Brasil", description: "Teste seus conhecimentos sobre história, cultura e geografia do Brasil.", cover_url: null, type: "TRIVIA", likes_count: 198, attempts_count: 2150 },
+  { slug: "qual-era-voce-pertence", title: "Qual era você realmente pertence?", description: "Anos 80, 90, 2000 ou 2010? Descubra onde sua alma realmente vive.", cover_url: null, type: "PERSONALITY", likes_count: 87, attempts_count: 1340 },
+  { slug: "jogos-classicos-trivia", title: "Trivia: Jogos Clássicos dos Anos 90", description: "Você realmente conhece os maiores clássicos dos videogames?", cover_url: null, type: "TRIVIA", likes_count: 145, attempts_count: 980 },
+  { slug: "qual-tipo-de-amigo-voce-e", title: "Que tipo de amigo você é?", description: "O conselheiro, o animador ou o que some quando precisa? Descubra!", cover_url: null, type: "PERSONALITY", likes_count: 523, attempts_count: 7200 },
+];
+
+// Accent colors per carousel slot — used for "Jogar" button + fallback gradient
+const CARD_ACCENTS = [
+  { bar: "bg-brand-500",   gradient: "from-brand-900 via-violet-900 to-slate-900",   emoji: "✨" },
+  { bar: "bg-sky-500",     gradient: "from-sky-900 via-cyan-900 to-slate-900",       emoji: "🧠" },
+  { bar: "bg-rose-500",    gradient: "from-rose-900 via-pink-900 to-slate-900",      emoji: "💫" },
+  { bar: "bg-emerald-500", gradient: "from-emerald-900 via-teal-900 to-slate-900",   emoji: "🎬" },
+  { bar: "bg-amber-500",   gradient: "from-amber-900 via-orange-900 to-slate-900",   emoji: "🎵" },
+];
+
+const [{ data: topQuizzes }, { data: trendingQuizzes }, { data: recentQuizzes }] = await Promise.all([
+  apiFetch("/quizzes?limit=8&sort=likes"),
+  apiFetch("/quizzes?limit=6&sort=plays&min_attempts=1"),
+  apiFetch("/quizzes?limit=6"),
+]);
+
+const heroQuizzes = (topQuizzes?.length ? topQuizzes : SAMPLE_QUIZZES).slice(0, 5);
+const displayTrending = trendingQuizzes?.length ? trendingQuizzes : SAMPLE_QUIZZES.slice(0, 3);
+const displayRecent = recentQuizzes?.length ? recentQuizzes : SAMPLE_QUIZZES.slice(2, 5);
+---
+
+<Layout title="FunSona - Crie e jogue quizzes incriveis" description="A maior plataforma de quizzes da internet. Crie seus proprios quizzes, descubra novos e compartilhe com amigos.">
+  <div class="relative isolate overflow-hidden pb-20">
+
+    <!-- ══════════════════════════════ HERO ══════════════════════════════ -->
+    <section class="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="relative overflow-hidden rounded-3xl bg-slate-900">
+        <!-- Subtle warm vignette — not neon, just depth -->
+        <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 90% 70% at 55% 0%,rgba(99,102,241,0.12) 0%,transparent 60%)"></div>
+
+        <div class="relative grid items-center gap-8 px-8 py-14 sm:px-12 sm:py-16 md:grid-cols-[1fr_1fr] md:gap-10">
+
+          <!-- Left: headline + CTAs -->
+          <div>
+            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-brand-400">Plataforma de quizzes</p>
+
+            <h1 class="mb-5 font-black leading-[1.08] text-white" style="font-size:clamp(2.1rem,4vw,3rem)">
+              Quizzes para jogar,<br/>criar e compartilhar.
+            </h1>
+
+            <p class="mb-8 max-w-sm text-base leading-relaxed text-slate-400">
+              Testes de personalidade, trivia e cultura pop. Rápidos, gratuitos e prontos para viralizar.
+            </p>
+
+            <div class="flex flex-wrap gap-3">
+              <a href="/explore" class="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3.5 font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:-translate-y-0.5 hover:bg-brand-600 hover:shadow-xl">
+                Explorar quizzes
+              </a>
+              <a href="/quiz/new" class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-6 py-3.5 font-bold text-slate-200 transition hover:border-slate-600 hover:bg-slate-700">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                Criar quiz
+              </a>
+            </div>
+
+            <div class="mt-10 flex items-center gap-7 border-t border-slate-800 pt-8">
+              <div>
+                <div class="text-xl font-black text-white">+1.000</div>
+                <div class="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Quizzes</div>
+              </div>
+              <div class="h-6 w-px bg-slate-800"></div>
+              <div>
+                <div class="text-xl font-black text-white">+10k</div>
+                <div class="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Jogadas</div>
+              </div>
+              <div class="h-6 w-px bg-slate-800"></div>
+              <div>
+                <div class="text-xl font-black text-white">100%</div>
+                <div class="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Grátis</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: carousel — cover image cards -->
+          <div id="hero-carousel" class="relative select-none">
+
+            <div class="relative overflow-hidden rounded-2xl shadow-2xl shadow-black/50" style="height:330px">
+              {heroQuizzes.map((quiz: any, i: number) => {
+                const acc = CARD_ACCENTS[i % CARD_ACCENTS.length];
+                const isHot = quiz.likes_count > 50 || quiz.attempts_count > 100;
+                return (
+                  <a
+                    href={`/quiz/${quiz.slug}`}
+                    class="carousel-slide absolute inset-0 overflow-hidden transition-opacity duration-500 focus:outline-none"
+                    data-slide={i}
+                    style={i === 0 ? "opacity:1;z-index:1" : "opacity:0;z-index:0;pointer-events:none"}
+                    aria-hidden={i !== 0}
+                  >
+                    <!-- Background: cover image or gradient fallback -->
+                    {quiz.cover_url ? (
+                      <img src={quiz.cover_url} alt={quiz.title} class="absolute inset-0 h-full w-full object-cover" loading={i === 0 ? "eager" : "lazy"} />
+                    ) : (
+                      <div class={`absolute inset-0 bg-gradient-to-br ${acc.gradient}`}></div>
+                    )}
+
+                    <!-- Scrim: stronger at bottom for text readability -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/15"></div>
+
+                    <!-- Content -->
+                    <div class="relative flex h-full flex-col justify-between p-6">
+                      <!-- Top: type + HOT badges -->
+                      <div class="flex items-start justify-between gap-3">
+                        <div class="flex flex-wrap gap-2">
+                          <span class="rounded-full border border-white/20 bg-black/45 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
+                            {quiz.type === "TRIVIA" ? "🧠 Trivia" : "✨ Personalidade"}
+                          </span>
+                          {isHot && (
+                            <span class="rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-black text-white shadow-md shadow-amber-500/40">🔥 HOT</span>
+                          )}
+                        </div>
+                        <span class="text-2xl leading-none drop-shadow-lg">{acc.emoji}</span>
+                      </div>
+
+                      <!-- Bottom: title + description + stats + CTA -->
+                      <div>
+                        <h2 class="mb-1.5 line-clamp-2 text-xl font-black leading-snug text-white drop-shadow">{quiz.title}</h2>
+                        {quiz.description && (
+                          <p class="mb-4 line-clamp-2 text-sm leading-relaxed text-white/65">{quiz.description}</p>
+                        )}
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center gap-3 text-xs font-semibold text-white/55">
+                            <span>▶ {quiz.attempts_count?.toLocaleString("pt-BR")}</span>
+                            <span>♥ {quiz.likes_count?.toLocaleString("pt-BR")}</span>
+                          </div>
+                          <span class={`rounded-xl px-4 py-2 text-xs font-extrabold text-white shadow-lg ${acc.bar}`}>
+                            Jogar →
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+
+            <!-- Dots + arrows -->
+            <div class="mt-4 flex items-center justify-between px-1">
+              <button id="hero-prev" class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-700 bg-slate-800 text-slate-400 transition hover:bg-slate-700 hover:text-white" aria-label="Anterior">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+              </button>
+
+              <div class="flex items-center gap-1.5" id="hero-dots">
+                {heroQuizzes.map((_: any, i: number) => (
+                  <button
+                    class={`carousel-dot h-2 rounded-full transition-all duration-300 ${i === 0 ? "w-6 bg-white" : "w-2 bg-white/30"}`}
+                    data-dot={i}
+                    aria-label={`Quiz ${i + 1}`}
+                  ></button>
+                ))}
+              </div>
+
+              <button id="hero-next" class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-700 bg-slate-800 text-slate-400 transition hover:bg-slate-700 hover:text-white" aria-label="Próximo">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ CATEGORIES ══════════════════════════════ -->
+    <section class="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mb-8 flex items-end justify-between">
+        <div>
+          <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] sm:text-3xl">Escolha seu mood</h2>
+          <p class="mt-1 text-sm text-[var(--color-text-muted)]">Temos quizzes para todos os gostos</p>
+        </div>
+        <a href="/explore" class="hidden items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold text-brand-500 transition hover:bg-brand-500/10 hover:text-brand-600 sm:inline-flex">
+          Ver todas
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+      <div class="grid grid-cols-4 gap-3 lg:grid-cols-8">
+        {categories.map((cat) => (
+          <a href={`/explore/${cat.slug}`} class={`group flex flex-col items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-4 ring-1 ${cat.ring} transition-all duration-300 hover:-translate-y-1.5 hover:border-transparent hover:shadow-lg`}>
+            <div class={`flex h-14 w-14 items-center justify-center rounded-2xl text-2xl transition-transform duration-300 group-hover:scale-110 ${cat.bg}`}>{cat.emoji}</div>
+            <span class="text-center text-xs font-bold leading-tight text-[var(--color-text-primary)]">{cat.name}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ TRENDING ══════════════════════════════ -->
+    <section class="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mb-7 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-400 to-red-500 text-xl shadow-lg shadow-orange-500/30">🔥</div>
+          <div>
+            <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)]">Em alta</h2>
+            <p class="text-xs font-medium text-[var(--color-text-muted)]">Os mais jogados agora</p>
+          </div>
+        </div>
+        <a href="/explore?sort=plays" class="hidden items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold text-brand-500 transition hover:bg-brand-500/10 hover:text-brand-600 sm:inline-flex">
+          Ver todos
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {displayTrending.map((quiz: any) => <QuizCard {...quiz} />)}
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ RECENT ══════════════════════════════ -->
+    <section class="mx-auto mt-14 max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mb-7 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-accent-500 text-xl shadow-lg shadow-brand-500/30">✨</div>
+          <div>
+            <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)]">Lançamentos</h2>
+            <p class="text-xs font-medium text-[var(--color-text-muted)]">Fresquinhos do forno</p>
+          </div>
+        </div>
+        <a href="/explore" class="hidden items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold text-brand-500 transition hover:bg-brand-500/10 hover:text-brand-600 sm:inline-flex">
+          Ver todos
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {displayRecent.map((quiz: any) => <QuizCard {...quiz} />)}
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ CTA ══════════════════════════════ -->
+    <section class="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="relative overflow-hidden rounded-3xl bg-[#13112a] px-8 py-14 sm:px-12 sm:py-16">
+        <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 60% 70% at 90% 20%,rgba(168,85,247,0.22) 0%,transparent 55%),radial-gradient(ellipse 50% 60% at 5% 80%,rgba(34,211,238,0.12) 0%,transparent 55%)"></div>
+        <div class="absolute inset-0 opacity-[0.035] pointer-events-none" style="background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);background-size:40px 40px"></div>
+
+        <div class="relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
+          <div class="max-w-xl">
+            <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white/70">
+              <svg class="h-3.5 w-3.5 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Publicação instantânea
+            </div>
+            <h2 class="mb-4 text-3xl font-black leading-tight text-white sm:text-4xl">Crie um quiz memorável<br/>ainda hoje.</h2>
+            <p class="text-base leading-relaxed text-white/60">Escolha um tema, monte as perguntas e compartilhe seu link com a galera em poucos minutos.</p>
+            <div class="mt-6 flex flex-wrap gap-4">
+              {["Sem cadastro pra jogar", "Compartilhe em 1 clique", "Analytics grátis"].map((feat) => (
+                <div class="flex items-center gap-1.5 text-sm text-white/55">
+                  <svg class="h-4 w-4 flex-shrink-0 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  {feat}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div class="flex flex-col gap-3 sm:min-w-[230px]">
+            <a href="/quiz/new" class="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-white px-7 py-4 font-extrabold text-brand-800 shadow-xl shadow-white/10 transition hover:-translate-y-0.5 hover:bg-brand-50">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              Criar quiz agora
+            </a>
+            <a href="/explore" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/18 bg-white/8 px-7 py-4 font-bold text-white backdrop-blur-sm transition hover:bg-white/15">
+              Ver quizzes em alta
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</Layout>
+
+<script>
+(function () {
+  const carousel = document.getElementById("hero-carousel");
+  if (!carousel) return;
+
+  const slides = Array.from(carousel.querySelectorAll<HTMLElement>(".carousel-slide"));
+  const dots = Array.from(carousel.querySelectorAll<HTMLElement>(".carousel-dot"));
+  const prevBtn = document.getElementById("hero-prev");
+  const nextBtn = document.getElementById("hero-next");
+
+  if (!slides.length) return;
+
+  let current = 0;
+  let timer: ReturnType<typeof setInterval>;
+
+  function goTo(index: number) {
+    const prev = current;
+    current = (index + slides.length) % slides.length;
+
+    slides[prev].style.opacity = "0";
+    slides[prev].style.zIndex = "0";
+    slides[prev].style.pointerEvents = "none";
+    slides[prev].setAttribute("aria-hidden", "true");
+
+    slides[current].style.opacity = "1";
+    slides[current].style.zIndex = "1";
+    slides[current].style.pointerEvents = "auto";
+    slides[current].setAttribute("aria-hidden", "false");
+
+    dots.forEach((d, i) => {
+      if (i === current) {
+        d.classList.add("w-6", "bg-white");
+        d.classList.remove("w-2", "bg-white/30");
+      } else {
+        d.classList.remove("w-6", "bg-white");
+        d.classList.add("w-2", "bg-white/30");
+      }
+    });
+  }
+
+  function startTimer() {
+    clearInterval(timer);
+    timer = setInterval(() => goTo(current + 1), 4500);
+  }
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener("click", () => { goTo(i); startTimer(); });
+  });
+
+  prevBtn?.addEventListener("click", () => { goTo(current - 1); startTimer(); });
+  nextBtn?.addEventListener("click", () => { goTo(current + 1); startTimer(); });
+
+  // Pause on hover
+  carousel.addEventListener("mouseenter", () => clearInterval(timer));
+  carousel.addEventListener("mouseleave", startTimer);
+
+  startTimer();
+})();
+</script>
