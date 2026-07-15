@@ -302,14 +302,31 @@ const pageNumbers = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
     </div>
   )}
 
-  <!-- Category editorial content — below the fold, crawlable, non-intrusive -->
-  {categoryText?.longDescription && (
+  <!-- Editorial content — below the fold, crawlable, non-intrusive -->
+  {categoryText?.longDescription ? (
     <div class="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 sm:p-8">
       <h2 class="mb-3 text-lg font-extrabold text-[var(--color-text-primary)]">
         Sobre os quizzes de {categoryText.name}
       </h2>
       <p class="text-sm leading-relaxed text-[var(--color-text-secondary)]">
         {categoryText.longDescription}
+      </p>
+    </div>
+  ) : (
+    <div class="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 sm:p-8">
+      <h2 class="mb-3 text-lg font-extrabold text-[var(--color-text-primary)]">
+        Sobre o catálogo de quizzes do FunSona
+      </h2>
+      <p class="text-sm leading-relaxed text-[var(--color-text-secondary)]">
+        Esta página reúne todos os quizzes publicados no FunSona, de todas as categorias, em um catálogo único
+        que você pode filtrar por tema, ordenar por mais recentes, mais curtidos ou mais jogados, e pesquisar
+        por palavra-chave. Diferente de uma lista estática, o catálogo é atualizado constantemente conforme
+        novos criadores publicam seus testes — então sempre há algo novo pra descobrir, seja um teste de
+        personalidade recém-lançado, uma trivia sobre um assunto do momento, ou um clássico que voltou a bombar
+        entre os usuários. Se você já sabe o que procura, use a busca ou os filtros de categoria no topo da
+        página; se está só passeando, role pra baixo e deixe a ordenação por "Mais jogados" te mostrar o que
+        está bombando agora. Cada quiz listado aqui leva direto pra sua página própria, com descrição completa,
+        estatísticas de jogadas e curtidas, e o link pra jogar.
       </p>
     </div>
   )}
