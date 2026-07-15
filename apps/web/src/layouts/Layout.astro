@@ -119,13 +119,29 @@ const adsenseClient = import.meta.env.PUBLIC_GOOGLE_ADSENSE_CLIENT;
     url: siteUrl.toString(),
   })} />
 
+  <!-- Consent Mode v2 defaults — must be set before GA/AdSense load.
+       Denied by default for EEA/UK visitors until they interact with the
+       AdSense Privacy & Messaging (Funding Choices) banner, which updates
+       these values automatically once enabled in the AdSense dashboard. -->
+  {(gaId || adsenseClient) && (
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'analytics_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'wait_for_update': 500
+      });
+    </script>
+  )}
+
   <!-- Google Analytics -->
   {gaId && (
     <>
       <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
       <script is:inline define:vars={{ gaId }}>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', gaId, {
           'anonymize_ip': true,
