@@ -302,6 +302,18 @@ const pageNumbers = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
     </div>
   )}
 
+  <!-- Category editorial content — below the fold, crawlable, non-intrusive -->
+  {categoryText?.longDescription && (
+    <div class="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 sm:p-8">
+      <h2 class="mb-3 text-lg font-extrabold text-[var(--color-text-primary)]">
+        Sobre os quizzes de {categoryText.name}
+      </h2>
+      <p class="text-sm leading-relaxed text-[var(--color-text-secondary)]">
+        {categoryText.longDescription}
+      </p>
+    </div>
+  )}
+
   <!-- Leaderboard rail — below the fold, less intrusive -->
   <div class="border-t border-[var(--color-border)] pt-8">
     <ExploreEngagementRail client:visible />

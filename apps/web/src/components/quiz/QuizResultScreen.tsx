@@ -1,3 +1,5 @@
+import AdSlot from "@/components/ads/AdSlot";
+
 interface QuizResultScreenProps {
   title: string;
   description?: string;
@@ -121,6 +123,10 @@ export default function QuizResultScreen({
                 Voltar ao quiz
               </button>
             </div>
+      </div>
+
+      <div className="mt-8 border-t border-white/10 pt-6">
+        <AdSlot slot="quiz-result" />
       </div>
     </div>
   );

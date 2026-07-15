@@ -1,0 +1,135 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ContactForm from "@/components/contact/ContactForm";
+---
+
+<Layout
+  title="Contato | FunSona"
+  description="Entre em contato conosco. Estamos prontos para responder suas dúvidas, sugestões e feedback sobre o FunSona."
+  canonical="/contact"
+>
+  <main class="flex-1">
+    <div class="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+      <!-- Header -->
+      <div class="mb-16 text-center">
+        <h1 class="mb-4 text-4xl font-black text-[var(--color-text-primary)] sm:text-5xl">
+          Entre em Contato
+        </h1>
+        <p class="text-lg text-[var(--color-text-secondary)]">
+          Tem uma dúvida, sugestão ou feedback? Adoraríamos ouvir de você.
+        </p>
+      </div>
+
+      <!-- Main Content -->
+      <div class="grid gap-12 lg:grid-cols-3">
+        <!-- Contact Form -->
+        <div class="lg:col-span-2">
+          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-8">
+            <h2 class="mb-6 text-2xl font-bold text-[var(--color-text-primary)]">
+              Enviar Mensagem
+            </h2>
+            <ContactForm client:visible />
+          </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="space-y-6">
+          <!-- Email -->
+          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6">
+            <div class="mb-3 text-2xl">📧</div>
+            <h3 class="mb-2 font-bold text-[var(--color-text-primary)]">
+              Email
+            </h3>
+            <a
+              href="mailto:contato@funsona.com"
+              class="text-brand-500 transition hover:text-brand-600"
+            >
+              contato@funsona.com
+            </a>
+          </div>
+
+          <!-- Response Time -->
+          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6">
+            <div class="mb-3 text-2xl">⏱️</div>
+            <h3 class="mb-2 font-bold text-[var(--color-text-primary)]">
+              Tempo de Resposta
+            </h3>
+            <p class="text-sm text-[var(--color-text-secondary)]">
+              Respondemos entre 24 a 48 horas
+            </p>
+          </div>
+
+          <!-- Business Hours -->
+          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6">
+            <div class="mb-3 text-2xl">🕐</div>
+            <h3 class="mb-2 font-bold text-[var(--color-text-primary)]">
+              Horário de Atendimento
+            </h3>
+            <p class="text-sm text-[var(--color-text-secondary)]">
+              Segunda a sexta<br />
+              9h00 às 18h00<br />
+              (Horário de Brasília)
+            </p>
+          </div>
+
+          <!-- FAQ Link -->
+          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6">
+            <div class="mb-3 text-2xl">❓</div>
+            <h3 class="mb-2 font-bold text-[var(--color-text-primary)]">
+              Dúvidas Comuns?
+            </h3>
+            <p class="mb-3 text-sm text-[var(--color-text-secondary)]">
+              Confira nossa página de Política de Privacidade e Termos de Uso.
+            </p>
+            <div class="space-y-1">
+              <a
+                href="/privacy"
+                class="block text-sm text-brand-500 transition hover:text-brand-600"
+              >
+                → Política de Privacidade
+              </a>
+              <a
+                href="/terms"
+                class="block text-sm text-brand-500 transition hover:text-brand-600"
+              >
+                → Termos de Uso
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Info -->
+      <section class="mt-16 border-t border-[var(--color-border)] pt-12">
+        <h2 class="mb-6 text-2xl font-bold text-[var(--color-text-primary)]">
+          Sobre o FunSona
+        </h2>
+        <p class="mb-4 text-[var(--color-text-secondary)]">
+          O FunSona é a maior plataforma de quizzes do Brasil. Criamos um espaço seguro e divertido
+          para pessoas descobrirem mais sobre si mesmas através de testes de personalidade, trivia
+          e conteúdo interativo de qualidade.
+        </p>
+        <p class="text-[var(--color-text-secondary)]">
+          Se deseja saber mais sobre nossa história e missão, visite nossa{" "}
+          <a href="/about" class="font-bold text-brand-500 hover:text-brand-600">
+            página sobre o FunSona
+          </a>
+          .
+        </p>
+      </section>
+
+      <!-- CTA -->
+      <section class="mt-12 rounded-2xl bg-gradient-to-r from-brand-500/10 to-accent-500/10 p-8 text-center">
+        <h3 class="mb-4 text-xl font-bold text-[var(--color-text-primary)]">
+          Pronto para explorar?
+        </h3>
+        <a
+          href="/explore"
+          class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-6 py-3 font-bold text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-600 hover:shadow-xl"
+        >
+          Voltar aos Quizzes →
+        </a>
+      </section>
+    </div>
+  </main>
+</Layout>

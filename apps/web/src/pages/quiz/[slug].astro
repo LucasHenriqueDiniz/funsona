@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import QuizCard from "@/components/QuizCard.astro";
 import LikeButton from "@/components/quiz/LikeButton";
 import CommentSection from "@/components/quiz/CommentSection";
+import AdSlot from "@/components/ads/AdSlot";
 import { apiFetch } from "@/lib/api";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
 
@@ -142,6 +143,10 @@ try {
           </div>
         </div>
       </aside>
+    </section>
+
+    <section class="relative mx-auto mb-8 max-w-7xl px-4 sm:px-6 lg:px-8">
+      <AdSlot slot="quiz-landing" client:visible />
     </section>
 
     <section class="relative mx-auto grid max-w-7xl gap-8 px-4 pb-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-8">

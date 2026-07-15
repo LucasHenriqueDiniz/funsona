@@ -40,6 +40,39 @@ const [{ data: topQuizzes }, { data: trendingQuizzes }, { data: recentQuizzes }]
 const heroQuizzes = (topQuizzes?.length ? topQuizzes : SAMPLE_QUIZZES).slice(0, 5);
 const displayTrending = trendingQuizzes?.length ? trendingQuizzes : SAMPLE_QUIZZES.slice(0, 3);
 const displayRecent = recentQuizzes?.length ? recentQuizzes : SAMPLE_QUIZZES.slice(2, 5);
+
+const faqs = [
+  {
+    question: "O que é o FunSona?",
+    answer:
+      "FunSona é uma plataforma gratuita de quizzes onde você pode jogar testes de personalidade, trivia e curiosidades, além de criar e publicar seus próprios quizzes para compartilhar com amigos. Temos mais de 1.000 quizzes organizados em categorias como personalidade, trivia, amor, games, filmes, música, TV e conhecimentos gerais.",
+  },
+  {
+    question: "Preciso pagar para jogar os quizzes?",
+    answer:
+      "Não. Jogar qualquer quiz do FunSona é 100% gratuito e não exige cadastro. Criamos uma conta opcional para quem quer salvar seu histórico, aparecer no ranking ou criar e publicar seus próprios quizzes, mas você pode jogar à vontade sem se registrar.",
+  },
+  {
+    question: "Como faço para criar meu próprio quiz?",
+    answer:
+      "Clique em \"Criar quiz\", escolha entre um teste de personalidade ou trivia, escreva suas perguntas e opções, defina os resultados possíveis e publique. O quiz fica disponível instantaneamente com um link que você pode compartilhar em redes sociais, grupos ou diretamente com amigos.",
+  },
+  {
+    question: "Quem cria os quizzes da plataforma?",
+    answer:
+      "A maioria dos quizzes é criada pela própria comunidade de usuários do FunSona, usando nosso editor gratuito. Também mantemos uma seleção de quizzes editoriais criados pela nossa equipe, especialmente nas categorias de trivia e conhecimentos gerais.",
+  },
+  {
+    question: "Meus dados e resultados ficam salvos com segurança?",
+    answer:
+      "Sim. Usamos conexão criptografada (HTTPS) em todo o site e seguimos as práticas descritas na nossa Política de Privacidade, incluindo como cookies, Google Analytics e anúncios são usados na plataforma. Você pode conferir todos os detalhes na página de Privacidade.",
+  },
+  {
+    question: "Posso sugerir melhorias ou reportar um problema?",
+    answer:
+      "Com certeza. Use nossa página de Contato para enviar sugestões, relatar bugs ou reportar um quiz que viole nossas diretrizes. Respondemos em até 24 a 48 horas e levamos o feedback da comunidade em conta nas próximas atualizações da plataforma.",
+  },
+];
 ---
 
 <Layout title="FunSona - Crie e jogue quizzes incriveis" description="A maior plataforma de quizzes da internet. Crie seus proprios quizzes, descubra novos e compartilhe com amigos.">
@@ -242,6 +275,40 @@ const displayRecent = recentQuizzes?.length ? recentQuizzes : SAMPLE_QUIZZES.sli
         {displayRecent.map((quiz: any) => <QuizCard {...quiz} />)}
       </div>
     </section>
+
+    <!-- ══════════════════════════════ FAQ ══════════════════════════════ -->
+    <section class="mx-auto mt-16 max-w-3xl px-4 sm:px-6 lg:px-8">
+      <div class="mb-8 text-center">
+        <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] sm:text-3xl">Perguntas frequentes</h2>
+        <p class="mt-1 text-sm text-[var(--color-text-muted)]">Tudo o que você precisa saber sobre o FunSona</p>
+      </div>
+      <div class="space-y-3">
+        {faqs.map((faq) => (
+          <details class="group rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-5 open:pb-5">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-bold text-[var(--color-text-primary)]">
+              {faq.question}
+              <svg class="h-5 w-5 flex-shrink-0 text-[var(--color-text-muted)] transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </summary>
+            <p class="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)]">{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqs.map((faq) => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer,
+        },
+      })),
+    })} />
 
     <!-- ══════════════════════════════ CTA ══════════════════════════════ -->
     <section class="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">

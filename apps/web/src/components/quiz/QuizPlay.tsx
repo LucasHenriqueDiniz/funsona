@@ -3,7 +3,13 @@ import QuizProgressBar from "./QuizProgressBar";
 import QuizQuestionCard from "./QuizQuestionCard";
 import QuizOptionButton from "./QuizOptionButton";
 import QuizResultScreen from "./QuizResultScreen";
+import AdSlot from "@/components/ads/AdSlot";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+
+// Show a manual ad slot every N questions instead of every screen, to
+// avoid the "low value content" ad-serving pattern flagged by AdSense
+// review (a bare question + 4 buttons is a thin screen on its own).
+const AD_EVERY_N_QUESTIONS = 4;
 
 // Support both old imported data format and new schema format
 interface RawOption {
@@ -111,6 +117,8 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
 
   const question = questions[currentQuestion];
   const isLast = currentQuestion === questions.length - 1;
+  const showAdThisQuestion =
+    (currentQuestion + 1) % AD_EVERY_N_QUESTIONS === 0 && !isLast;
 
   const selectAnswer = useCallback((optionId: string) => {
     if (!question) return;
@@ -308,6 +316,10 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
             </div>
           );
         })()}
+
+        {showAdThisQuestion && (
+          <AdSlot slot="quiz-play-interval" className="pt-1" />
+        )}
 
         <div className="flex gap-3 pt-2">
           <button
