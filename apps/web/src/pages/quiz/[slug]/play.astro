@@ -1,15 +1,23 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import QuizExitControl from "@/components/quiz/QuizExitControl";
-import QuizPlayLoader from "@/components/quiz/QuizPlayLoader";
+import QuizPlay from "@/components/quiz/QuizPlay";
+import { apiFetch } from "@/lib/api";
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/");
 
-const title = "Jogando quiz | FunSona";
+const { data: quiz, error } = await apiFetch(`/quizzes/${slug}`);
+
+if (error || !quiz) {
+  return Astro.redirect("/404");
+}
+
+const title = `${quiz.title} | FunSona`;
+const description = quiz.description || `Jogue o quiz ${quiz.title} no FunSona`;
 ---
 
-<Layout title={title} canonical={`/quiz/${slug}/play`} hideFooter>
+<Layout title={title} description={description} canonical={`/quiz/${slug}/play`} hideFooter>
   <div class="relative min-h-screen overflow-hidden bg-[#070816] text-white">
     <div class="pointer-events-none absolute inset-0">
       <div class="absolute -top-28 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-brand-500/30 blur-[110px]"></div>
@@ -22,7 +30,7 @@ const title = "Jogando quiz | FunSona";
       <main class="flex flex-1 items-center px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
         <div class="mx-auto w-full max-w-6xl">
           <QuizExitControl href={`/quiz/${slug}`} client:load />
-          <QuizPlayLoader slug={slug} client:load />
+          <QuizPlay quiz={quiz} client:load />
         </div>
       </main>
     </div>
