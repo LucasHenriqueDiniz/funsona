@@ -18,6 +18,7 @@ interface QuizGridLoaderProps {
   seeAllHref?: string;
   limit?: number;
   emptyMessage?: string;
+  excludeId?: string;
 }
 
 function SkeletonCard() {
@@ -109,7 +110,7 @@ function QuizCard({ quiz }: { quiz: QuizCardData }) {
 
 type ErrorWithNameAndMessage = { name?: string; message?: string };
 
-export default function QuizGridLoader({ apiUrl, title, seeAllHref, limit = 6, emptyMessage = "Nenhum quiz encontrado." }: QuizGridLoaderProps) {
+export default function QuizGridLoader({ apiUrl, title, seeAllHref, limit = 6, emptyMessage = "Nenhum quiz encontrado.", excludeId }: QuizGridLoaderProps) {
   const [quizzes, setQuizzes] = useState<QuizCardData[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -121,7 +122,13 @@ export default function QuizGridLoader({ apiUrl, title, seeAllHref, limit = 6, e
     const controller = new AbortController();
 
     try {
-      const res = await fetch(`${apiBaseUrl}${apiUrl}`, {
+      // Fetch one extra item when excluding by id, so the list still has
+      // `limit` entries after filtering out the current quiz.
+      const fetchLimit = excludeId ? limit + 1 : limit;
+      const url = new URL(`${apiBaseUrl}${apiUrl}`, window.location.origin);
+      url.searchParams.set("limit", String(fetchLimit));
+
+      const res = await fetch(url.toString(), {
         signal: controller.signal,
         headers: { "Accept": "application/json" },
       });
@@ -130,7 +137,9 @@ export default function QuizGridLoader({ apiUrl, title, seeAllHref, limit = 6, e
       }
       const data = await res.json();
       if (data.success) {
-        setQuizzes(data.data?.slice(0, limit) || []);
+        const items: QuizCardData[] = data.data || [];
+        const filtered = excludeId ? items.filter((q) => q.id !== excludeId) : items;
+        setQuizzes(filtered.slice(0, limit));
       } else {
         throw new Error(data.error || "Erro ao carregar quizzes");
       }
@@ -148,7 +157,7 @@ export default function QuizGridLoader({ apiUrl, title, seeAllHref, limit = 6, e
     }
 
     return () => controller.abort();
-  }, [apiUrl, limit, apiBaseUrl]);
+  }, [apiUrl, limit, apiBaseUrl, excludeId]);
 
   useEffect(() => {
     fetchQuizzes();

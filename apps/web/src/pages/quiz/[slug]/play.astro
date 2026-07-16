@@ -1,6 +1,5 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import QuizExitControl from "@/components/quiz/QuizExitControl";
 import QuizPlay from "@/components/quiz/QuizPlay";
 import { apiFetch } from "@/lib/api";
 
@@ -29,7 +28,6 @@ const description = quiz.description || `Jogue o quiz ${quiz.title} no FunSona`;
     <div class="relative z-10 flex min-h-[calc(100vh-5.8rem)] flex-col">
       <main class="flex flex-1 items-center px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
         <div class="mx-auto w-full max-w-6xl">
-          <QuizExitControl href={`/quiz/${slug}`} client:load />
           <QuizPlay quiz={quiz} client:load />
         </div>
       </main>

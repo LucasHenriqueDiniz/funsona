@@ -81,17 +81,21 @@ const faqs = [
     <!-- ══════════════════════════════ HERO ══════════════════════════════ -->
     <section class="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="relative overflow-hidden rounded-3xl bg-slate-900">
-        <!-- Subtle warm vignette — not neon, just depth -->
-        <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 90% 70% at 55% 0%,rgba(99,102,241,0.12) 0%,transparent 60%)"></div>
+        <!-- Vignette: indigo depth + a touch of the brand's cyan-accent glow -->
+        <div class="pointer-events-none absolute inset-0" style="background:radial-gradient(ellipse 90% 70% at 55% 0%,rgba(99,102,241,0.14) 0%,transparent 60%),radial-gradient(ellipse 55% 50% at 95% 100%,rgba(34,211,238,0.12) 0%,transparent 55%)"></div>
 
         <div class="relative grid items-center gap-8 px-8 py-14 sm:px-12 sm:py-16 md:grid-cols-[1fr_1fr] md:gap-10">
 
           <!-- Left: headline + CTAs -->
           <div>
-            <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-brand-400">Plataforma de quizzes</p>
+            <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 backdrop-blur-sm">
+              <div class="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-300"></div>
+              <span class="text-xs font-bold uppercase tracking-[0.18em] text-white/60">Plataforma de quizzes</span>
+            </div>
 
             <h1 class="mb-5 font-black leading-[1.08] text-white" style="font-size:clamp(2.1rem,4vw,3rem)">
-              Quizzes para jogar,<br/>criar e compartilhar.
+              Quizzes para jogar,<br/>
+              <span class="bg-gradient-to-r from-cyan-300 via-brand-400 to-accent-400 bg-clip-text text-transparent">criar e compartilhar.</span>
             </h1>
 
             <p class="mb-8 max-w-sm text-base leading-relaxed text-slate-400">
@@ -99,10 +103,10 @@ const faqs = [
             </p>
 
             <div class="flex flex-wrap gap-3">
-              <a href="/explore" class="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3.5 font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:-translate-y-0.5 hover:bg-brand-600 hover:shadow-xl">
+              <a href="/explore" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-300 via-brand-500 to-accent-500 px-6 py-3.5 font-extrabold text-white shadow-lg shadow-brand-500/30 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand-500/40">
                 Explorar quizzes
               </a>
-              <a href="/quiz/new" class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-6 py-3.5 font-bold text-slate-200 transition hover:border-slate-600 hover:bg-slate-700">
+              <a href="/quiz/new" class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-6 py-3.5 font-bold text-slate-200 backdrop-blur-sm transition hover:border-white/20 hover:bg-white/10">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                 Criar quiz
               </a>
@@ -136,14 +140,14 @@ const faqs = [
                 return (
                   <a
                     href={`/quiz/${quiz.slug}`}
-                    class="carousel-slide absolute inset-0 overflow-hidden transition-opacity duration-500 focus:outline-none"
+                    class="carousel-slide group absolute inset-0 overflow-hidden transition-opacity duration-500 focus:outline-none"
                     data-slide={i}
                     style={i === 0 ? "opacity:1;z-index:1" : "opacity:0;z-index:0;pointer-events:none"}
                     aria-hidden={i !== 0}
                   >
                     <!-- Background: cover image or gradient fallback -->
                     {quiz.cover_url ? (
-                      <img src={quiz.cover_url} alt={quiz.title} class="absolute inset-0 h-full w-full object-cover" loading={i === 0 ? "eager" : "lazy"} />
+                      <img src={quiz.cover_url} alt={quiz.title} class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" loading={i === 0 ? "eager" : "lazy"} />
                     ) : (
                       <div class={`absolute inset-0 bg-gradient-to-br ${acc.gradient}`}></div>
                     )}
@@ -177,7 +181,7 @@ const faqs = [
                             <span>▶ {quiz.attempts_count?.toLocaleString("pt-BR")}</span>
                             <span>♥ {quiz.likes_count?.toLocaleString("pt-BR")}</span>
                           </div>
-                          <span class={`rounded-xl px-4 py-2 text-xs font-extrabold text-white shadow-lg ${acc.bar}`}>
+                          <span class={`rounded-xl px-4 py-2 text-xs font-extrabold text-white shadow-lg transition-transform duration-300 group-hover:translate-x-1 ${acc.bar}`}>
                             Jogar →
                           </span>
                         </div>
@@ -190,21 +194,21 @@ const faqs = [
 
             <!-- Dots + arrows -->
             <div class="mt-4 flex items-center justify-between px-1">
-              <button id="hero-prev" class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-700 bg-slate-800 text-slate-400 transition hover:bg-slate-700 hover:text-white" aria-label="Anterior">
+              <button id="hero-prev" class="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-cyan-300/40 hover:bg-white/10 hover:text-white" aria-label="Anterior">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
               </button>
 
               <div class="flex items-center gap-1.5" id="hero-dots">
                 {heroQuizzes.map((_: any, i: number) => (
                   <button
-                    class={`carousel-dot h-2 rounded-full transition-all duration-300 ${i === 0 ? "w-6 bg-white" : "w-2 bg-white/30"}`}
+                    class={`carousel-dot h-2 rounded-full transition-all duration-300 ${i === 0 ? "w-6 bg-gradient-to-r from-cyan-300 to-accent-400" : "w-2 bg-white/25 hover:bg-white/40"}`}
                     data-dot={i}
                     aria-label={`Quiz ${i + 1}`}
                   ></button>
                 ))}
               </div>
 
-              <button id="hero-next" class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-700 bg-slate-800 text-slate-400 transition hover:bg-slate-700 hover:text-white" aria-label="Próximo">
+              <button id="hero-next" class="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-cyan-300/40 hover:bg-white/10 hover:text-white" aria-label="Próximo">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               </button>
             </div>
@@ -380,11 +384,11 @@ const faqs = [
 
     dots.forEach((d, i) => {
       if (i === current) {
-        d.classList.add("w-6", "bg-white");
-        d.classList.remove("w-2", "bg-white/30");
+        d.classList.add("w-6", "bg-gradient-to-r", "from-cyan-300", "to-accent-400");
+        d.classList.remove("w-2", "bg-white/25", "hover:bg-white/40");
       } else {
-        d.classList.remove("w-6", "bg-white");
-        d.classList.add("w-2", "bg-white/30");
+        d.classList.remove("w-6", "bg-gradient-to-r", "from-cyan-300", "to-accent-400");
+        d.classList.add("w-2", "bg-white/25", "hover:bg-white/40");
       }
     });
   }

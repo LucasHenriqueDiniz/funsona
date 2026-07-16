@@ -1,15 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import QuizProgressBar from "./QuizProgressBar";
 import QuizQuestionCard from "./QuizQuestionCard";
 import QuizOptionButton from "./QuizOptionButton";
 import QuizResultScreen from "./QuizResultScreen";
+import QuizExitControl from "./QuizExitControl";
 import AdSlot from "@/components/ads/AdSlot";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
-
-// Show a manual ad slot every N questions instead of every screen, to
-// avoid the "low value content" ad-serving pattern flagged by AdSense
-// review (a bare question + 4 buttons is a thin screen on its own).
-const AD_EVERY_N_QUESTIONS = 4;
 
 // Support both old imported data format and new schema format
 interface RawOption {
@@ -64,6 +60,7 @@ export interface QuizPayload {
   description?: string;
   type: "TRIVIA" | "PERSONALITY";
   content: QuizContent;
+  tags?: string[];
 }
 
 interface TriviaResult {
@@ -117,14 +114,26 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
 
   const question = questions[currentQuestion];
   const isLast = currentQuestion === questions.length - 1;
-  const showAdThisQuestion =
-    (currentQuestion + 1) % AD_EVERY_N_QUESTIONS === 0 && !isLast;
 
   const selectAnswer = useCallback((optionId: string) => {
     if (!question) return;
     setSelectedOption(optionId);
     setAnswers((prev) => ({ ...prev, [question.id]: optionId }));
   }, [question]);
+
+  // Warm the browser cache for the current and next question's images so
+  // navigating between questions doesn't show a blank/stale image while the
+  // new one downloads.
+  useEffect(() => {
+    const toPreload = [questions[currentQuestion], questions[currentQuestion + 1]]
+      .filter((q): q is NormalizedQuestion => Boolean(q))
+      .flatMap((q) => [q.imageUrl, ...q.options.map((o) => o.imageUrl)])
+      .filter((src): src is string => Boolean(src));
+    toPreload.forEach((src) => {
+      const img = new window.Image();
+      img.src = src;
+    });
+  }, [currentQuestion, questions]);
 
   function calculateTriviaResult(): TriviaResult {
     const rawQuestions = quiz.content.questions || [];
@@ -233,6 +242,8 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
           xpGained={result.xpGained}
           quizType={quizType}
           resultValue={result.value}
+          quizId={quiz.id}
+          tags={quiz.tags}
           onRestart={restart}
           onShare={shareResult}
           onBackToQuiz={() => window.location.href = `/quiz/${quiz.slug}`}
@@ -243,22 +254,27 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
 
   if (!question) {
     return (
-      <div className="rounded-[2rem] border border-white/10 bg-white/[0.06] px-6 py-16 text-center shadow-2xl shadow-black/20 backdrop-blur-xl">
-        <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/10">
-          <svg className="h-10 w-10 text-white/55" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-          </svg>
+      <div className="mx-auto w-full max-w-6xl">
+        <QuizExitControl href={`/quiz/${quiz.slug}`} />
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.06] px-6 py-16 text-center shadow-2xl shadow-black/20 backdrop-blur-xl">
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/10">
+            <svg className="h-10 w-10 text-white/55" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </div>
+          <p className="mb-2 text-lg font-bold text-white">Este quiz não possui perguntas.</p>
+          <a href={`/quiz/${quiz.slug}`} className="text-sm font-bold text-cyan-300 transition hover:text-cyan-200">
+            Voltar ao quiz
+          </a>
         </div>
-        <p className="mb-2 text-lg font-bold text-white">Este quiz não possui perguntas.</p>
-        <a href={`/quiz/${quiz.slug}`} className="text-sm font-bold text-cyan-300 transition hover:text-cyan-200">
-          Voltar ao quiz
-        </a>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto grid w-full max-w-6xl gap-5 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
+    <div className="mx-auto w-full max-w-6xl">
+      <QuizExitControl href={`/quiz/${quiz.slug}`} />
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
       <div className="space-y-5 lg:sticky lg:top-28 lg:col-start-2 lg:row-start-1">
         <QuizProgressBar
           current={currentQuestion}
@@ -272,6 +288,7 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
             <p className="mt-3 line-clamp-4 text-sm font-medium leading-relaxed text-white/55">{quiz.description}</p>
           )}
         </div>
+        <AdSlot slot="quiz-play-interval" />
       </div>
 
       <section className="space-y-5 lg:col-start-1 lg:row-start-1">
@@ -283,20 +300,17 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
 
         {(() => {
           const hasAnyImages = question.options.some(opt => opt.imageUrl);
-          const gridCols = hasAnyImages
-            ? question.options.length <= 2
-              ? "grid-cols-2"
-              : "grid-cols-2 xl:grid-cols-3"
-            : "";
+          const count = question.options.length;
+          // Keep columns evenly filled instead of jumping breakpoints mid-grid
+          // (e.g. 4 options briefly becoming a 3-col grid with an orphan row).
+          const gridCols =
+            count === 3 ? "grid-cols-1 sm:grid-cols-3" :
+            count <= 4 ? "grid-cols-2" :
+            "grid-cols-2 sm:grid-cols-3";
 
           return (
             <div
-              className={`duration-300 ${
-                hasAnyImages
-                  ? `grid ${gridCols} gap-3 sm:gap-4`
-                  : "space-y-3"
-              }`}
-              style={{ animationDelay: animating ? "0ms" : "100ms" }}
+              className={hasAnyImages ? `grid ${gridCols} gap-3 sm:gap-4` : "space-y-3"}
             >
               {question.options.map((option, idx) => {
                 const letter = letters[idx] || String(idx + 1);
@@ -316,10 +330,6 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
             </div>
           );
         })()}
-
-        {showAdThisQuestion && (
-          <AdSlot slot="quiz-play-interval" className="pt-1" />
-        )}
 
         <div className="flex gap-3 pt-2">
           <button
@@ -388,6 +398,7 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
           )}
         </div>
       </section>
+      </div>
     </div>
   );
 }
