@@ -1,8 +1,14 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { CreateQuizSchema, UpdateQuizSchema, CreateQuizResultSchema } from "@FunSona/shared";
 import type { Env } from "../index.js";
 import { createServiceClient } from "../lib/supabase.js";
 import { authMiddleware } from "../middleware/auth.js";
+import { requireAdmin } from "../middleware/admin.js";
+
+const ReportQuizSchema = z.object({
+  reason: z.string().max(500).optional(),
+});
 
 const quizzesApp = new Hono<Env>();
 const DEFAULT_SETTINGS = {
@@ -37,14 +43,33 @@ function uniqueById(items: QuizSummary[]) {
   });
 }
 
+// Explicit transliteration map for characters common in pt/es titles.
+// Applied before Unicode normalization so encoding quirks that break NFD
+// decomposition (e.g. mojibake) can't silently drop the base letter.
+const TRANSLITERATION_MAP: Record<string, string> = {
+  \u00e1: "a", \u00e0: "a", \u00e2: "a", \u00e3: "a", \u00e4: "a", \u00e5: "a",
+  \u00e9: "e", \u00e8: "e", \u00ea: "e", \u00eb: "e",
+  \u00ed: "i", \u00ec: "i", \u00ee: "i", \u00ef: "i",
+  \u00f3: "o", \u00f2: "o", \u00f4: "o", \u00f5: "o", \u00f6: "o",
+  \u00fa: "u", \u00f9: "u", \u00fb: "u", \u00fc: "u",
+  \u00e7: "c", \u00f1: "n", \u00fd: "y", \u00ff: "y",
+};
+
 // Generate slug from title
 function slugify(title: string) {
-  return title
+  const transliterated = title
     .toLowerCase()
+    .replace(/[\u00e1\u00e0\u00e2\u00e3\u00e4\u00e5\u00e9\u00e8\u00ea\u00eb\u00ed\u00ec\u00ee\u00ef\u00f3\u00f2\u00f4\u00f5\u00f6\u00fa\u00f9\u00fb\u00fc\u00e7\u00f1\u00fd\u00ff]/g, (char) => TRANSLITERATION_MAP[char] ?? char);
+
+  const slug = transliterated
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "");
+
+  // Titles that are entirely emoji/symbols/non-Latin script can collapse to "".
+  // Never return an empty slug \u2014 fall back to a short random suffix.
+  return slug || `quiz-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 function normalizeTags(tags: unknown): string[] {
@@ -139,6 +164,25 @@ quizzesApp.get("/", async (c) => {
     data,
     meta: { page: pageNum, limit: limitNum, total: count ?? 0 },
   });
+});
+
+// Look up a redirect target for a slug that no longer resolves directly
+// (e.g. after the slugify() transliteration fix corrected broken slugs).
+quizzesApp.get("/redirect/:oldSlug", async (c) => {
+  const oldSlug = c.req.param("oldSlug");
+  const service = createServiceClient(c.env);
+
+  const { data, error } = await service
+    .from("quiz_slug_redirects")
+    .select("new_slug")
+    .eq("old_slug", oldSlug)
+    .maybeSingle();
+
+  if (error || !data) {
+    return c.json({ success: false, error: "No redirect found" }, 404);
+  }
+
+  return c.json({ success: true, data: { new_slug: data.new_slug } });
 });
 
 // Get single quiz by slug
@@ -484,6 +528,59 @@ quizzesApp.get("/:id/like", authMiddleware, async (c) => {
     .maybeSingle();
 
   return c.json({ success: true, liked: !!data });
+});
+
+// Report a quiz (auth required)
+quizzesApp.post("/:id/report", authMiddleware, async (c) => {
+  const userId = c.get("userId");
+  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+
+  const quizId = c.req.param("id");
+  const body = await c.req.json().catch(() => ({}));
+  const parsed = ReportQuizSchema.safeParse(body);
+  if (!parsed.success) {
+    return c.json({ success: false, error: "Invalid input" }, 400);
+  }
+
+  const service = createServiceClient(c.env);
+
+  const { data: quiz } = await service.from("quizzes").select("id").eq("id", quizId).maybeSingle();
+  if (!quiz) {
+    return c.json({ success: false, error: "Quiz not found" }, 404);
+  }
+
+  const { error } = await service.from("content_reports").insert({
+    target_type: "quiz",
+    target_id: quizId,
+    reporter_id: userId,
+    reason: parsed.data.reason || null,
+  });
+
+  if (error && error.code !== "23505") {
+    return c.json({ success: false, error: error.message }, 500);
+  }
+
+  return c.json({ success: true }, 201);
+});
+
+// Hide a quiz by archiving it (admin only)
+quizzesApp.post("/:id/hide", authMiddleware, requireAdmin, async (c) => {
+  const quizId = c.req.param("id");
+  const service = createServiceClient(c.env);
+
+  const { error } = await service.from("quizzes").update({ status: "ARCHIVED" }).eq("id", quizId);
+  if (error) {
+    return c.json({ success: false, error: error.message }, 500);
+  }
+
+  await service
+    .from("content_reports")
+    .update({ resolved_at: new Date().toISOString(), resolved_action: "hidden" })
+    .eq("target_type", "quiz")
+    .eq("target_id", quizId)
+    .is("resolved_at", null);
+
+  return c.json({ success: true });
 });
 
 export { quizzesApp };

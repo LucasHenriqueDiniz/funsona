@@ -31,6 +31,7 @@ export default function CommentSection({ quizSlug, currentUserId }: CommentSecti
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
+  const [reportedIds, setReportedIds] = useState<Set<string>>(new Set());
 
   const API_URL = PUBLIC_API_BASE_URL;
 
@@ -102,6 +103,24 @@ export default function CommentSection({ quizSlug, currentUserId }: CommentSecti
       setError("Erro ao excluir comentário");
     } finally {
       setDeletingId(null);
+    }
+  }
+
+  async function handleReport(commentId: string) {
+    if (reportedIds.has(commentId)) return;
+    try {
+      const res = await fetch(`${API_URL}/quizzes/${quizSlug}/comments/${commentId}/report`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setReportedIds((prev) => new Set(prev).add(commentId));
+      }
+    } catch {
+      // silent — reporting isn't critical-path, don't block the user on failure
     }
   }
 
@@ -209,7 +228,7 @@ export default function CommentSection({ quizSlug, currentUserId }: CommentSecti
                   {comment.content}
                 </p>
               </div>
-              {currentUserId === comment.user.id && (
+              {currentUserId === comment.user.id ? (
                 <button
                   onClick={() => handleDelete(comment.id)}
                   disabled={deletingId === comment.id}
@@ -227,7 +246,16 @@ export default function CommentSection({ quizSlug, currentUserId }: CommentSecti
                     </svg>
                   )}
                 </button>
-              )}
+              ) : currentUserId ? (
+                <button
+                  onClick={() => handleReport(comment.id)}
+                  disabled={reportedIds.has(comment.id)}
+                  className="shrink-0 text-xs font-semibold text-[var(--color-text-muted)] hover:text-red-500 transition disabled:text-red-500 disabled:opacity-70"
+                  title="Denunciar comentário"
+                >
+                  {reportedIds.has(comment.id) ? "Denunciado" : "Denunciar"}
+                </button>
+              ) : null}
             </div>
           ))}
         </div>

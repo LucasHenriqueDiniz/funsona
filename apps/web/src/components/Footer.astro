@@ -1,4 +1,6 @@
 ---
+import { BRAND_DISCLAIMER } from "@/lib/legal";
+
 const footerLinks = {
   product: {
     title: "Produto",
@@ -7,6 +9,7 @@ const footerLinks = {
       { label: "Ranking", href: "/leaderboard" },
       { label: "Premium", href: "/premium" },
       { label: "Criar Quiz", href: "/quiz/new" },
+      { label: "Guias", href: "/guides" },
     ],
   },
   categories: {
@@ -82,8 +85,8 @@ const footerLinks = {
 
     <!-- Bottom bar -->
     <div class="border-t border-[var(--color-border)] py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p class="text-xs text-[var(--color-text-muted)]">
-        &copy; {new Date().getFullYear()} FunSona. Todos os direitos reservados.
+      <p class="text-xs text-[var(--color-text-muted)] max-w-xl">
+        &copy; {new Date().getFullYear()} FunSona. Todos os direitos reservados. {BRAND_DISCLAIMER}
       </p>
       <div class="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]">
         <span>Feito com</span>

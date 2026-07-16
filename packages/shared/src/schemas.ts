@@ -62,6 +62,16 @@ export const QuizSettingsSchema = z.object({
   time_limit_seconds: z.number().int().nullable().optional(),
 });
 
+// Original editorial context shown on the quiz's indexable landing page
+// (apps/web/src/pages/quiz/[slug].astro), separate from the short
+// `description`. Encouraged but not required, so existing quizzes aren't
+// blocked from updates while authors haven't backfilled it yet.
+export const QuizIntroContentSchema = z.object({
+  context: z.string().max(2000).optional(),
+  what_youll_learn: z.string().max(1000).optional(),
+  how_scoring_works: z.string().max(1000).optional(),
+});
+
 // Quiz
 export const QuizSchema = z.object({
   id: z.string().uuid(),
@@ -72,6 +82,7 @@ export const QuizSchema = z.object({
   type: QuizTypeSchema,
   status: QuizStatusSchema,
   content: QuizContentSchema,
+  intro_content: QuizIntroContentSchema.nullable().optional(),
   settings: QuizSettingsSchema.default({}),
   author_id: z.string().uuid(),
   language: QuizLanguageSchema.default("pt"),
@@ -160,6 +171,7 @@ export type QuizType = z.infer<typeof QuizTypeSchema>;
 export type QuizStatus = z.infer<typeof QuizStatusSchema>;
 export type Profile = z.infer<typeof ProfileSchema>;
 export type Quiz = z.infer<typeof QuizSchema>;
+export type QuizIntroContent = z.infer<typeof QuizIntroContentSchema>;
 export type CreateQuiz = z.infer<typeof CreateQuizSchema>;
 export type UpdateQuiz = z.infer<typeof UpdateQuizSchema>;
 export type QuizResult = z.infer<typeof QuizResultSchema>;

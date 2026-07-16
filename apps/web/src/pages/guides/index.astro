@@ -1,0 +1,67 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+
+const locale = (Astro.currentLocale || "pt") as "pt" | "en" | "es";
+const allGuides = await getCollection("guides", (entry: CollectionEntry<"guides">) => entry.data.locale === locale);
+const guides: CollectionEntry<"guides">[] = allGuides.sort(
+  (a: CollectionEntry<"guides">, b: CollectionEntry<"guides">) =>
+    b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf()
+);
+
+const titleByLocale = {
+  pt: "Guias | FunSona",
+  en: "Guides | FunSona",
+  es: "Guias | FunSona",
+};
+const headingByLocale = {
+  pt: "Guias do FunSona",
+  en: "FunSona Guides",
+  es: "Guias de FunSona",
+};
+const subtitleByLocale = {
+  pt: "Artigos sobre como os quizzes funcionam, como criar os seus e como aproveitar melhor a plataforma.",
+  en: "Articles about how quizzes work, how to create your own, and how to get the most out of the platform.",
+  es: "Articulos sobre como funcionan los quizzes, como crear los tuyos y como sacarle mas provecho a la plataforma.",
+};
+const descriptionByLocale = {
+  pt: "Guias e artigos originais do FunSona sobre pontuação de quizzes, criação de quizzes e categorias da plataforma.",
+  en: "Original FunSona guides and articles about quiz scoring, quiz creation, and platform categories.",
+  es: "Guias y articulos originales de FunSona sobre puntuacion de quizzes, creacion de quizzes y categorias de la plataforma.",
+};
+const guidesPath = locale === "pt" ? "/guides" : `/${locale}/guides`;
+---
+
+<Layout
+  title={titleByLocale[locale]}
+  description={descriptionByLocale[locale]}
+  canonical={guidesPath}
+>
+  <main class="flex-1">
+    <div class="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+      <div class="mb-12 text-center">
+        <h1 class="mb-4 text-4xl font-black text-[var(--color-text-primary)] sm:text-5xl">
+          {headingByLocale[locale]}
+        </h1>
+        <p class="text-lg text-[var(--color-text-secondary)]">
+          {subtitleByLocale[locale]}
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        {guides.map((guide) => {
+          const href = locale === "pt" ? `/guides/${guide.id.split("/")[1]}` : `/${locale}/guides/${guide.id.split("/")[1]}`;
+          return (
+            <a
+              href={href}
+              class="block rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 transition hover:border-brand-300 hover:bg-brand-500/5"
+            >
+              <h2 class="mb-2 text-xl font-bold text-[var(--color-text-primary)]">{guide.data.title}</h2>
+              <p class="text-[var(--color-text-secondary)]">{guide.data.description}</p>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </main>
+</Layout>

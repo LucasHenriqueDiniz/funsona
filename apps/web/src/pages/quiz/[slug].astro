@@ -2,10 +2,12 @@
 import Layout from "@/layouts/Layout.astro";
 import QuizCard from "@/components/QuizCard.astro";
 import LikeButton from "@/components/quiz/LikeButton";
+import QuizReportButton from "@/components/quiz/QuizReportButton";
 import CommentSection from "@/components/quiz/CommentSection";
 import AdSlot from "@/components/ads/AdSlot";
 import { apiFetch } from "@/lib/api";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { BRAND_DISCLAIMER } from "@/lib/legal";
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/");
@@ -13,6 +15,10 @@ if (!slug) return Astro.redirect("/");
 const { data: quiz, error } = await apiFetch(`/quizzes/${slug}`);
 
 if (error || !quiz) {
+  const { data: redirectData } = await apiFetch(`/quizzes/redirect/${slug}`);
+  if (redirectData?.new_slug) {
+    return Astro.redirect(`/quiz/${redirectData.new_slug}`, 301);
+  }
   return Astro.redirect("/404");
 }
 
@@ -92,6 +98,11 @@ try {
             ))}
           </div>
         )}
+
+        <div class="mt-6 flex flex-wrap items-center gap-4">
+          <p class="max-w-2xl text-xs text-[var(--color-text-muted)]">{BRAND_DISCLAIMER}</p>
+          <QuizReportButton quizId={quiz.id} currentUserId={currentUserId} client:load />
+        </div>
       </div>
 
       <aside class="lg:sticky lg:top-28 lg:self-start">
@@ -144,6 +155,17 @@ try {
         </div>
       </aside>
     </section>
+
+    {quiz.intro_content?.context && (
+      <section class="relative mx-auto mb-8 max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div class="rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 sm:p-8">
+          <h2 class="mb-4 text-xl font-black text-[var(--color-text-primary)]">Sobre este quiz</h2>
+          <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
+            {quiz.intro_content.context}
+          </div>
+        </div>
+      </section>
+    )}
 
     <section class="relative mx-auto mb-8 max-w-7xl px-4 sm:px-6 lg:px-8">
       <AdSlot slot="quiz-landing" client:visible />

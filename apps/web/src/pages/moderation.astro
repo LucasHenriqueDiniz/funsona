@@ -1,0 +1,30 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ModerationQueue from "@/components/moderation/ModerationQueue";
+import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+
+// Server-side gate: only is_admin profiles can view this page at all.
+let isAdmin = false;
+try {
+  const res = await fetch(`${PUBLIC_API_BASE_URL}/auth/me`, {
+    headers: { cookie: Astro.request.headers.get("cookie") || "" },
+  });
+  const data = await res.json();
+  isAdmin = !!(data.success && data.data?.is_admin);
+} catch {
+  isAdmin = false;
+}
+
+if (!isAdmin) {
+  return Astro.redirect("/404");
+}
+---
+
+<Layout title="Moderação | FunSona" description="Fila de denúncias de conteúdo." hideFooter>
+  <main class="flex-1">
+    <div class="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+      <h1 class="mb-8 text-3xl font-black text-[var(--color-text-primary)]">Fila de moderação</h1>
+      <ModerationQueue client:load />
+    </div>
+  </main>
+</Layout>

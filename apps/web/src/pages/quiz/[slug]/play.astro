@@ -9,6 +9,10 @@ if (!slug) return Astro.redirect("/");
 const { data: quiz, error } = await apiFetch(`/quizzes/${slug}`);
 
 if (error || !quiz) {
+  const { data: redirectData } = await apiFetch(`/quizzes/redirect/${slug}`);
+  if (redirectData?.new_slug) {
+    return Astro.redirect(`/quiz/${redirectData.new_slug}/play`, 301);
+  }
   return Astro.redirect("/404");
 }
 

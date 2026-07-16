@@ -22,6 +22,7 @@ interface Outcome {
 export default function QuizEditor() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [introContext, setIntroContext] = useState("");
   const [coverUrl, setCoverUrl] = useState("");
   const [quizType, setQuizType] = useState<QuizType>("TRIVIA");
   const [questions, setQuestions] = useState<Question[]>([
@@ -82,6 +83,7 @@ export default function QuizEditor() {
     const quizData: CreateQuiz = {
       title,
       description: description || null,
+      intro_content: introContext.trim() ? { context: introContext.trim() } : null,
       cover_url: coverUrl || null,
       type: quizType,
       status: "PUBLISHED",
@@ -171,6 +173,22 @@ export default function QuizEditor() {
             className="w-full px-4 py-3.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 outline-none transition font-medium h-24 resize-none"
               placeholder="Descreva seu quiz em poucas palavras..." />
           </div>
+
+          <div>
+            <label className="block text-sm font-bold text-[var(--color-text-secondary)] mb-2">
+              Contexto do quiz <span className="font-normal text-[var(--color-text-muted)]">(recomendado)</span>
+            </label>
+            <textarea maxLength={2000} value={introContext} onChange={(e) => setIntroContext(e.target.value)}
+              className="w-full px-4 py-3.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 outline-none transition font-medium h-32 resize-none"
+              placeholder="Conte o que inspirou este quiz, o que ele revela, ou por que vale a pena jogar. Esse texto aparece na página do quiz e ajuda as pessoas a entenderem do que se trata antes de jogar." />
+            <p className="mt-1.5 text-xs font-medium text-[var(--color-text-muted)]">
+              {introContext.trim() ? introContext.trim().split(/\s+/).length : 0} palavras — quizzes com mais contexto original tendem a ser descobertos com mais facilidade.
+            </p>
+          </div>
+
+          <p className="text-xs font-medium text-[var(--color-text-muted)]">
+            Se seu quiz mencionar marcas, produtos ou pessoas reais, lembre-se: o FunSona não tem afiliação com essas marcas. Evite alegar endosso ou parceria oficial.
+          </p>
 
           <ImageUpload label="Imagem de capa" onUpload={setCoverUrl} currentUrl={coverUrl} />
 

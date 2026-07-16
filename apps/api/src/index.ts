@@ -11,6 +11,7 @@ import { stripeApp } from "./routes/stripe.js";
 import { usersApp } from "./routes/users.js";
 import { settingsApp } from "./routes/settings.js";
 import { profilesApp } from "./routes/profiles.js";
+import { moderationApp } from "./routes/moderation.js";
 
 export type Env = {
   Bindings: {
@@ -85,6 +86,7 @@ app.route("/api/users", usersApp);
 app.route("/api/profiles", profilesApp);
 app.route("/api/settings", settingsApp);
 app.route("/api/stripe", stripeApp);
+app.route("/api/moderation", moderationApp);
 
 app.onError((err, c) => {
   console.error("[ERROR]", err.message, err.stack);

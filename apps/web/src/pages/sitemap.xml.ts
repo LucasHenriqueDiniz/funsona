@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { getCollection, type CollectionEntry } from "astro:content";
 import { apiFetch } from "@/lib/api";
 import { exploreCategories, getExploreCategoryUrl } from "@/lib/exploreCategories";
 
@@ -40,6 +41,7 @@ export const GET: APIRoute = async ({ site }) => {
   };
   
   const quizzes = await fetchAllPublishedQuizzes();
+  const guides = await getCollection("guides");
   const basePaths = [
     { path: "/", changefreq: "daily", priority: 1.0 },
     { path: "/explore", changefreq: "daily", priority: 0.9 },
@@ -49,6 +51,7 @@ export const GET: APIRoute = async ({ site }) => {
       priority: 0.8,
     })),
     { path: "/search", changefreq: "weekly", priority: 0.5 },
+    { path: "/guides", changefreq: "weekly", priority: 0.6 },
   ] as const;
 
   const localizedStaticUrls = locales.flatMap((locale) =>
@@ -68,8 +71,21 @@ export const GET: APIRoute = async ({ site }) => {
     }))
   );
 
+  // Guide entries carry their own locale in the collection id (`<locale>/<slug>`),
+  // so each one maps to exactly one localized URL rather than being repeated
+  // across all locales like the static paths above.
+  const guideUrls = guides.map((guide: CollectionEntry<"guides">) => {
+    const [locale, slug] = guide.id.split("/");
+    return {
+      loc: `${baseUrl}${withLocale(`/guides/${slug}`, locale as (typeof locales)[number])}`,
+      changefreq: "monthly",
+      priority: 0.6,
+      lastmod: (guide.data.updatedDate || guide.data.publishedDate).toISOString().split("T")[0],
+    };
+  });
+
   const uniqueUrls = new Map<string, { loc: string; changefreq: string; priority: number; lastmod?: string }>();
-  for (const entry of [...localizedStaticUrls, ...localizedQuizUrls]) {
+  for (const entry of [...localizedStaticUrls, ...localizedQuizUrls, ...guideUrls]) {
     uniqueUrls.set(entry.loc, entry);
   }
   const urls = Array.from(uniqueUrls.values());
