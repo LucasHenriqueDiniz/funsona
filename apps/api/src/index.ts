@@ -12,15 +12,15 @@ import { usersApp } from "./routes/users.js";
 import { settingsApp } from "./routes/settings.js";
 import { profilesApp } from "./routes/profiles.js";
 import { moderationApp } from "./routes/moderation.js";
+import { clerkWebhookApp } from "./routes/webhooks/clerk.js";
 
 export type Env = {
   Bindings: {
-    SUPABASE_URL: string;
-    SUPABASE_ANON_KEY: string;
-    SUPABASE_SERVICE_ROLE_KEY: string;
+    CLERK_PUBLISHABLE_KEY: string;
+    CLERK_SECRET_KEY: string;
+    CLERK_WEBHOOK_SECRET: string;
     STRIPE_SECRET_KEY: string;
     STRIPE_WEBHOOK_SECRET: string;
-    JWT_SECRET: string;
     FUNSONA_CACHE: KVNamespace;
     DB: D1Database;
     QUIZ_IMAGES: R2Bucket;
@@ -69,7 +69,7 @@ app.use(
 );
 
 app.use(async (c, next) => {
-  const required = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY", "JWT_SECRET"] as const;
+  const required = ["CLERK_PUBLISHABLE_KEY", "CLERK_SECRET_KEY"] as const;
   for (const key of required) {
     if (!c.env[key]) {
       console.error(`Missing required environment variable: ${key}`);
@@ -90,6 +90,7 @@ app.route("/api/profiles", profilesApp);
 app.route("/api/settings", settingsApp);
 app.route("/api/stripe", stripeApp);
 app.route("/api/moderation", moderationApp);
+app.route("/api/webhooks/clerk", clerkWebhookApp);
 
 app.onError((err, c) => {
   console.error("[ERROR]", err.message, err.stack);

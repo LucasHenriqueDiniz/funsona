@@ -74,6 +74,69 @@ export async function isAdmin(env: Env["Bindings"], userId: string) {
   return !!row?.is_admin;
 }
 
+function normalizeHandle(input: string) {
+  return input
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9_]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 30);
+}
+
+async function generateUniqueHandle(env: Env["Bindings"], base: string, selfId: string) {
+  const db = getDb(env);
+  const baseHandle = normalizeHandle(base) || `user_${Date.now().toString(36)}`;
+  for (let i = 0; i < 5; i++) {
+    const candidate = i === 0 ? baseHandle : `${baseHandle}_${Math.random().toString(36).slice(2, 6)}`;
+    const existing = await db.prepare("SELECT id FROM profiles WHERE handle = ?").bind(candidate).first<{ id: string }>();
+    if (!existing || existing.id === selfId) return candidate;
+  }
+  return `${baseHandle}_${crypto.randomUUID().slice(0, 6)}`;
+}
+
+// Lazily creates a `profiles` row for a Clerk user the first time they're
+// seen (e.g. before the user.created webhook lands, or if it's ever missed).
+// Safe to call on every authenticated request — it's a no-op once the row
+// exists.
+export async function ensureProfileExists(
+  env: Env["Bindings"],
+  id: string,
+  defaults: { handleSeed: string; displayName: string; email: string | null; avatarUrl: string | null }
+) {
+  const existing = await getDb(env).prepare("SELECT id FROM profiles WHERE id = ?").bind(id).first();
+  if (existing) return;
+
+  const handle = await generateUniqueHandle(env, defaults.handleSeed, id);
+  const now = nowIso();
+  await getDb(env)
+    .prepare(
+      "INSERT INTO profiles (id, handle, display_name, avatar_url, avatar_source, email, created_at, updated_at) VALUES (?, ?, ?, ?, 'external', ?, ?, ?)"
+    )
+    .bind(id, handle, defaults.displayName || handle, defaults.avatarUrl, defaults.email, now, now)
+    .run();
+}
+
+export async function upsertProfileFromClerk(
+  env: Env["Bindings"],
+  id: string,
+  fields: { handleSeed: string; displayName: string; email: string | null; avatarUrl: string | null }
+) {
+  const existing = await getProfileById(env, id);
+  if (!existing) {
+    await ensureProfileExists(env, id, fields);
+    return;
+  }
+  const updates: Record<string, unknown> = { display_name: fields.displayName || existing.display_name };
+  if (fields.email) updates.email = fields.email;
+  if (fields.avatarUrl && existing.avatar_source !== "storage") updates.avatar_url = fields.avatarUrl;
+  await updateProfile(env, id, updates);
+}
+
+export async function deleteProfile(env: Env["Bindings"], id: string) {
+  await getDb(env).prepare("DELETE FROM profiles WHERE id = ?").bind(id).run();
+}
+
 export async function updateProfile(env: Env["Bindings"], id: string, updates: Record<string, unknown>) {
   const cols = Object.keys(updates);
   if (cols.length === 0) return getProfileById(env, id);
