@@ -1,0 +1,106 @@
+{
+  "outcomes": [
+    {
+      "key": "fogo",
+      "title": "Dragão de Fogo",
+      "description": "Dentro de você vive um dragão de fogo: intenso, apaixonado e movido por impulsos que não sabem esperar. Você age antes de pensar duas vezes, encara conflitos de frente e prefere queimar rápido a viver na indiferença. Sua energia contagia quem está por perto, mas também pode assustar quem não aguenta o calor da sua presença."
+    },
+    {
+      "key": "gelo",
+      "title": "Dragão de Gelo",
+      "description": "Seu dragão interior é de gelo: frio na aparência, mas com uma mente que nunca para de calcular. Você prefere observar, entender o cenário todo e só então agir com precisão cirúrgica. Isso te torna confiável em crises, mesmo que às vezes pareça distante demais para quem só vê a superfície congelada."
+    },
+    {
+      "key": "sombra",
+      "title": "Dragão das Sombras",
+      "description": "Você carrega um dragão das sombras: misterioso, intuitivo e mais confortável nos bastidores do que sob os holofotes. Prefere guardar segredos a expor tudo, e enxerga camadas onde os outros só veem superfície. Isso faz de você alguém imprevisível, difícil de decifrar e impossível de ignorar quando finalmente mostra as garras."
+    },
+    {
+      "key": "terra",
+      "title": "Dragão da Terra",
+      "description": "No fundo, você é um dragão da terra: estável, leal e movido por uma força tranquila que raramente precisa se provar. Protege quem ama sem alarde, prefere construir algo duradouro a buscar brilho passageiro, e é o tipo de presença que os outros sabem que podem procurar quando o chão começa a tremer."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "title": "Como você reage quando alguém te desafia em público?",
+      "answers": [
+        { "id": "a1", "label": "Respondo na hora, sem filtro e com toda a intensidade", "outcomeWeights": { "fogo": 3 } },
+        { "id": "a2", "label": "Analiso a situação antes de decidir se vale a pena responder", "outcomeWeights": { "gelo": 3 } },
+        { "id": "a3", "label": "Deixo passar, mas guardo tudo para lidar do meu próprio jeito depois", "outcomeWeights": { "sombra": 3 } },
+        { "id": "a4", "label": "Mantenho a calma e resolvo o desafio sem criar mais conflito", "outcomeWeights": { "terra": 3 } }
+      ]
+    },
+    {
+      "id": "q2",
+      "title": "Qual ambiente combina mais com o seu jeito de ser?",
+      "answers": [
+        { "id": "a1", "label": "Um vulcão ativo, cheio de energia e imprevisibilidade", "outcomeWeights": { "fogo": 3 } },
+        { "id": "a2", "label": "Um pico congelado, silencioso e isolado do resto do mundo", "outcomeWeights": { "gelo": 3 } },
+        { "id": "a3", "label": "Uma caverna profunda, escura e cheia de segredos", "outcomeWeights": { "sombra": 3 } },
+        { "id": "a4", "label": "Uma floresta antiga, firme e enraizada há séculos", "outcomeWeights": { "terra": 3 } }
+      ]
+    },
+    {
+      "id": "q3",
+      "title": "Como as pessoas mais próximas descreveriam você?",
+      "answers": [
+        { "id": "a1", "label": "Apaixonado(a), intenso(a) e impossível de ignorar", "outcomeWeights": { "fogo": 3 } },
+        { "id": "a2", "label": "Racional, calculista e sempre um passo à frente", "outcomeWeights": { "gelo": 3 } },
+        { "id": "a3", "label": "Misterioso(a), reservado(a) e difícil de decifrar", "outcomeWeights": { "sombra": 3 } },
+        { "id": "a4", "label": "Leal, presente e confiável em qualquer situação", "outcomeWeights": { "terra": 3 } }
+      ]
+    },
+    {
+      "id": "q4",
+      "title": "Numa crise em grupo, qual é o seu papel natural?",
+      "answers": [
+        { "id": "a1", "label": "Tomo a frente e ajo antes que alguém pense duas vezes", "outcomeWeights": { "fogo": 3 } },
+        { "id": "a2", "label": "Analiso as opções com frieza e proponho o plano mais lógico", "outcomeWeights": { "gelo": 3 } },
+        { "id": "a3", "label": "Observo tudo de fora até encontrar a brecha que ninguém viu", "outcomeWeights": { "sombra": 3 } },
+        { "id": "a4", "label": "Mantenho o grupo unido e protejo quem está mais vulnerável", "outcomeWeights": { "terra": 3 } }
+      ]
+    },
+    {
+      "id": "q5",
+      "title": "Qual seria seu maior poder como dragão lendário?",
+      "answers": [
+        { "id": "a1", "label": "Cuspir fogo capaz de mudar o rumo de uma batalha inteira", "outcomeWeights": { "fogo": 3 } },
+        { "id": "a2", "label": "Congelar qualquer ameaça antes que ela perceba o perigo", "outcomeWeights": { "gelo": 3 } },
+        { "id": "a3", "label": "Desaparecer nas sombras e reaparecer onde ninguém espera", "outcomeWeights": { "sombra": 3 } },
+        { "id": "a4", "label": "Erguer montanhas e proteger um território inteiro sozinho(a)", "outcomeWeights": { "terra": 3 } }
+      ]
+    },
+    {
+      "id": "q6",
+      "title": "O que mais te irrita em outras pessoas?",
+      "answers": [
+        { "id": "a1", "label": "Gente lenta demais para decidir e agir", "outcomeWeights": { "fogo": 3 } },
+        { "id": "a2", "label": "Decisões tomadas puramente pela emoção, sem pensar", "outcomeWeights": { "gelo": 3 } },
+        { "id": "a3", "label": "Quem se acha no direito de saber tudo sobre sua vida", "outcomeWeights": { "sombra": 3 } },
+        { "id": "a4", "label": "Quem abandona um grupo ou promessa no meio do caminho", "outcomeWeights": { "terra": 3 } }
+      ]
+    },
+    {
+      "id": "q7",
+      "title": "Como você lida com mudanças repentinas de planos?",
+      "answers": [
+        { "id": "a1", "label": "Me adapto na hora, com energia para virar o jogo", "outcomeWeights": { "fogo": 3 } },
+        { "id": "a2", "label": "Recalculo tudo com calma antes de dar o próximo passo", "outcomeWeights": { "gelo": 3 } },
+        { "id": "a3", "label": "Recuo e observo antes de revelar minha próxima jogada", "outcomeWeights": { "sombra": 3 } },
+        { "id": "a4", "label": "Sigo firme no que já estava combinado, sem me abalar", "outcomeWeights": { "terra": 3 } }
+      ]
+    },
+    {
+      "id": "q8",
+      "title": "Qual tesouro um dragão como você guardaria com mais orgulho?",
+      "answers": [
+        { "id": "a1", "label": "Uma chama eterna que nunca se apaga", "outcomeWeights": { "fogo": 3 } },
+        { "id": "a2", "label": "Um cristal capaz de revelar qualquer verdade escondida", "outcomeWeights": { "gelo": 3 } },
+        { "id": "a3", "label": "Um segredo que só você e mais ninguém conhece", "outcomeWeights": { "sombra": 3 } },
+        { "id": "a4", "label": "Um vale inteiro que você jurou proteger para sempre", "outcomeWeights": { "terra": 3 } }
+      ]
+    }
+  ]
+}

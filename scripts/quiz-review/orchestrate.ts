@@ -2,6 +2,7 @@ import { chromium, Browser, Page } from "playwright-core";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { jsonrepair } from "jsonrepair";
 import { getDb, upsertQuiz, upsertBatch, getBatch, getStats, getRefactorQueue, QuizRow } from "./db.js";
+import { getImageQueueDb, enqueueImage, DEFAULT_NEGATIVE_PROMPT } from "./db-image-queue.js";
 import fs from "fs/promises";
 import readline from "readline";
 import path from "path";
@@ -35,6 +36,9 @@ const NEXT_BATCH  = args.includes("--next");
 const REFACTOR_PENDING = args.includes("--refactor-pending");
 const FIX_WEIGHTS   = args.includes("--fix-weights");
 const FIX_QUESTIONS = args.includes("--fix-questions");
+const BACKFILL_IMAGES = args.includes("--backfill-images");
+const limitArg = args.indexOf("--limit");
+const LIMIT: number | null = limitArg !== -1 ? parseInt(args[limitArg + 1]) : null;
 
 const BATCH_SZ   = sizeArg  !== -1 ? parseInt(args[sizeArg  + 1]) : 3;
 const ONLY_BATCH = batchArg !== -1 ? parseInt(args[batchArg + 1]) : null;
@@ -76,13 +80,32 @@ interface Quiz {
   language: string; tags: string[];
   content: { questions: Question[]; outcomes?: Outcome[]; coverUrl?: string };
 }
+interface ImagePlanSettings {
+  width?: number; height?: number; steps?: number; cfg_scale?: number;
+  sampler?: string; seed?: number; alternate_cover_size?: string;
+}
+interface ImagePlan {
+  image_generation_strategy?: "full" | "light" | "cover_only" | "skip";
+  visual_style?: string;
+  safety_notes?: string[];
+  image_settings?: ImagePlanSettings;
+  negative_prompt?: string;
+  cover?: { filename?: string; prompt: string };
+  questions?: Array<{ question_id: string; filename?: string; prompt: string }>;
+  outcomes?: Array<{ outcome_key: string; filename?: string; prompt: string }>;
+}
 interface ReviewEntry {
   id: string; new_title: string; new_description: string; score: number;
   issues: string[];
   missing_images?: { cover: boolean; questions: string[]; options: string[]; outcomes: string[] };
   new_questions: Array<{ id: string; text: string; options: Array<{ id: string; text: string }> }>;
   new_outcomes?: Array<{ key: string; title: string; description: string }>;
+  image_plan?: ImagePlan;
   summary: string;
+}
+interface ImagePlanBackfillEntry {
+  id: string;
+  image_plan: ImagePlan;
 }
 interface FixWeightsEntry {
   id: string;
@@ -187,6 +210,85 @@ function quizToMarkdown(quiz: Quiz, index: number, total: number): string {
   return lines.join("\n");
 }
 
+// Regras de plano de imagens — compartilhadas entre o prompt de revisão/refactor
+// completo e o prompt de backfill (só image_plan, para quizzes já revisados).
+function imagePlanInstructions(): string {
+  return `## Plano de imagens (image_plan) — gere para CADA quiz
+
+Crie prompts para Stable Diffusion local que representem o TEMA do quiz, não apenas uma personagem genérica. Regras de segurança:
+- Evite sexualização, poses sensuais, foco em corpo, decote, bikini, lingerie, nudez ou roupa transparente
+- Evite aparência infantil em contexto sugestivo
+- Para temas de comida, objetos, lugares ou conceitos abstratos, **prefira ilustrações sem personagens humanos** (cena/objeto)
+- Se usar personagens, devem estar totalmente vestidos, pose neutra, safe-for-work
+- Não gerar texto legível, logos ou marcas dentro da imagem
+- Não imitar exatamente personagens protegidos por copyright — use "inspired by the theme"
+
+Escolha **um** \`visual_style\` por quiz:
+- \`editorial_flat_vector\` — quizzes gerais, comida, personalidade, lifestyle (visual limpo, colorido, seguro)
+- \`editorial_flat_vector_no_people\` — comida/objetos/lugares onde personagens humanos não fazem sentido
+- \`playful_3d_clay\` — objetos, comida, animais, miniaturas 3D fofas
+- \`anime_safe\` — **apenas** se o tema for anime/mangá; personagens totalmente vestidos, pose neutra, sem sexualização
+- \`game_ui_illustration\` — jogos, RPG, fantasia, classes/escolhas
+- \`cinematic_poster_safe\` — filmes, séries, suspense (sem imitar pôster oficial, sem logos)
+- \`educational_infographic\` — trivia, ciência, história, geografia (ícones, mapas abstratos)
+
+Escolha \`image_generation_strategy\`: use **"light"** como padrão (capa + 3 perguntas principais + todos os outcomes). Use "cover_only" se o tema for sensível, "skip" se houver risco editorial real.
+
+Cada prompt de imagem deve ser construído a partir do CONTEÚDO REAL daquele item específico, nunca um prompt genérico repetido com a palavra trocada:
+- **cover**: ⭐ É O CHAMARIZ DO QUIZ — a imagem que decide se a pessoa clica ou rola para o próximo. Capriche muito mais aqui do que nos outros itens:
+  - resuma visualmente a premissa do quiz (do título + descrição), com um elemento focal claro e único (não uma cena genérica e poluída)
+  - peça explicitamente composição forte: "strong focal point, rule of thirds, balanced composition, polished professional illustration, rich detail, high production value, vibrant but tasteful color palette, soft depth and lighting, eye-catching thumbnail quality"
+  - evite composições com muitos elementos pequenos competindo por atenção — uma cena central bem resolvida vale mais que um colete de itens
+  - este é o único item que pode usar resolução widescreen (\`alternate_cover_size\`) para funcionar como banner/thumbnail
+- **questions**: extraia da PERGUNTA e das ALTERNATIVAS os objetos, cenário ou decisão concretos mencionados — a imagem deve ilustrar a situação descrita no texto daquela pergunta, não o tema geral do quiz
+- **outcomes**: extraia do TÍTULO e da DESCRIÇÃO daquele outcome específico os elementos concretos citados (objetos, cores, lugar, ação, emoção) e represente-os — duas imagens de outcomes diferentes do mesmo quiz devem ser visualmente distinguíveis entre si, refletindo o que torna aquele resultado único, não apenas variações do mesmo cenário genérico do quiz
+
+Regra de verificação: se você trocasse o nome do quiz/outcome no prompt e ele ainda fizesse sentido para qualquer outro resultado do mesmo quiz, o prompt está genérico demais — reescreva citando o que é exclusivo daquele item.
+
+Todo prompt deve terminar com qualificadores tipo "no text, no logos" e, se for o estilo no_people, "no people, no anime girl, no human characters"
+
+\`negative_prompt\` padrão a incluir sempre (adapte se precisar reforçar algo específico do quiz):
+"${DEFAULT_NEGATIVE_PROMPT}"
+
+\`image_settings\` padrão (perguntas/outcomes): width 1024, height 1024, steps 20, cfg_scale 6.5, sampler "DPM++ 2M Karras", seed -1.
+Para a **cover**, inclua opcionalmente em \`image_settings.alternate_cover_size\` algo como "1536x864" (formato banner 16:9) — o pipeline aplica automaticamente mais steps e cfg_scale na geração da capa por ser o item mais importante, e também limita a resolução final ao que a GPU local suporta, então foque o esforço no PROMPT em vez de tentar ajustar steps/resolução manualmente.`;
+}
+
+// Prompt enxuto para quizzes que JÁ foram revisados/refeitos mas nunca tiveram
+// image_plan gerado (lote processado antes dessa funcionalidade existir). Não
+// pede reescrita de texto — só o plano de imagens, a partir do conteúdo atual.
+function buildImagePlanMessage(quizzes: Quiz[], batchNum: number, totalBatches: number): string {
+  const quizMd = quizzes.map((q, i) => quizToMarkdown(q, i, quizzes.length)).join("\n");
+
+  return `# Plano de imagens Funsona — Backfill Batch ${String(batchNum).padStart(3, "0")} de ${String(totalBatches).padStart(3, "0")} (${quizzes.length} quizzes)
+
+Estes quizzes JÁ foram revisados e o texto (título, descrição, perguntas, outcomes) já está pronto — **não reescreva nada de texto**. Sua única tarefa é gerar o \`image_plan\` de cada um, olhando o conteúdo atual abaixo.
+
+${imagePlanInstructions()}
+
+## Formato de retorno (array JSON, sem markdown wrapper) — APENAS id + image_plan
+
+[{
+  "id": "uuid",
+  "image_plan": {
+    "image_generation_strategy": "light",
+    "visual_style": "editorial_flat_vector",
+    "safety_notes": [],
+    "image_settings": { "width": 1024, "height": 1024, "steps": 20, "cfg_scale": 6.5, "sampler": "DPM++ 2M Karras", "seed": -1 },
+    "negative_prompt": "...",
+    "cover": { "filename": "banner.png", "prompt": "..." },
+    "questions": [{ "question_id": "...", "filename": "q1.png", "prompt": "..." }],
+    "outcomes": [{ "outcome_key": "...", "filename": "outcome1.png", "prompt": "..." }]
+  }
+}]
+
+---
+
+# Quizzes (conteúdo já final)
+
+${quizMd}`;
+}
+
 // Sempre manda o prompt completo — garante consistência mesmo que o projeto
 // ainda não tenha as instruções configuradas. O projeto adiciona contexto extra
 // mas cada conversa precisa ser auto-suficiente.
@@ -215,32 +317,56 @@ function buildMessage(
 
   return `# Revisão de Quizzes Funsona — Batch ${String(batchNum).padStart(3,"0")} de ${String(totalBatches).padStart(3,"0")} (${quizzes.length} quizzes)
 ${extra}
-Você é um especialista em criação de quizzes de entretenimento e educação. Revise os quizzes abaixo e retorne **apenas um array JSON** com as melhorias. Sem texto antes ou depois do JSON.
+Você é um editor sênior de quizzes de entretenimento, educação e personalidade para um site público com foco em SEO, qualidade editorial, segurança de marca e alta taxa de compartilhamento. Revise os quizzes abaixo e retorne **apenas um array JSON válido**, sem markdown, sem comentários antes ou depois.
 
 ## Regras gerais
 
 - Escreva **no mesmo idioma do quiz** (Português, Inglês ou Espanhol)
-- **Não crie perguntas nem alternativas novas** — apenas melhore as existentes
+- **Não crie perguntas nem alternativas novas no texto** — apenas melhore as existentes (exceto se o quiz estiver vazio, ver abaixo)
 - **Não remova perguntas** — mesmo que estejam ruins, inclua-as no output
 - Preserve os IDs **exatamente** como estão
 - Se uma pergunta está sem texto ou sem alternativas, melhore o que existe e sinalize nos issues
+- Se o quiz estiver vazio/quase vazio, gere estrutura mínima: PERSONALITY → 8-10 perguntas e 4-6 outcomes; TRIVIA → 8-12 perguntas com 4 alternativas cada
+- Não use conteúdo sexualizado, gore, ódio ou linguagem depreciativa. Evite títulos enganosos ou clickbait falso
 
 ## O que fazer em cada quiz
 
-1. **Título** — reescreva para ser irresistível e curioso (max 200 chars, mesmo idioma)
-2. **Descrição** — reescreva para gerar vontade de jogar imediatamente (max 1000 chars)
-3. **Perguntas** — melhore clareza, gramática e naturalidade; reescreva duplicadas de ângulos diferentes
-4. **Alternativas** — texto claro, balanceado, sem opções absurdas ou óbvias
-   - **TRIVIA**: verifique factualmente se a alternativa **← CORRETA** está correta
+1. **Título** — reescreva para ser curioso, claro e clicável (max 200 chars, mesmo idioma, sem clickbait enganoso)
+2. **Descrição** — reescreva para gerar vontade de jogar imediatamente (max 1000 chars, 2-4 frases, explique a premissa)
+3. **Perguntas** — melhore clareza, gramática e naturalidade; varie os ângulos (estética, emoção, comportamento social, decisão, rotina, humor, estilo de vida)
+4. **Alternativas** — texto claro, tamanho parecido, balanceado, sem opções absurdas, óbvias ou padrão "Sim/Não/Talvez"
+   - **TRIVIA**: verifique factualmente se a alternativa **← CORRETA** está correta; se tiver dúvida, sinalize em issues
    - **PERSONALITY**: verifique se os outcome_keys existem nos outcomes listados
-5. **Outcomes** (PERSONALITY) — título envolvente, descrição compartilhável
-6. **Issues** — todos os problemas encontrados. Quiz publicado mas incompleto → "RECOMENDO_DESPUBLICAR"
-7. **Score** — nota 1–10 da qualidade **antes** das suas melhorias
+5. **Outcomes** (PERSONALITY) — título no formato "[Resultado] — [traço forte e compartilhável]", descrição que soa personalizada e conecta claramente ao tema
+6. **Issues** — use tags objetivas: SEM_TITULO, SEM_DESCRICAO, SEM_PERGUNTAS, SEM_RESULTADOS, PERGUNTAS_DUPLICADAS, ALTERNATIVAS_FRACAS, OUTCOME_KEY_INVALIDA, TRIVIA_RESPOSTA_CORRETA_DUVIDOSA, CONTEUDO_SENSIVEL, RISCO_EDITORIAL, IMAGENS_AUSENTES, TEMA_CONFUSO. Quiz publicado mas incompleto → inclua também "RECOMENDO_DESPUBLICAR"
+7. **Score** — nota 1–10 da qualidade **antes** das suas melhorias (1-2 quebrado/vazio, 3-4 muito fraco, 5-6 publicável com ressalvas, 7-8 bom, 9-10 excelente)
 8. **Resumo** — 1–2 frases em português sobre o estado do quiz
 ${personalityInfo ? `\n## Outcomes válidos (PERSONALITY)\n${personalityInfo}\n` : ""}
+${imagePlanInstructions()}
+
 ## Formato de retorno (array JSON, sem markdown wrapper)
 
-[{ "id":"uuid","new_title":"...","new_description":"...","score":7,"issues":[],"missing_images":{"cover":false,"questions":[],"options":[],"outcomes":[]},"new_questions":[{"id":"...","text":"...","options":[{"id":"...","text":"..."}]}],"new_outcomes":[{"key":"...","title":"...","description":"..."}],"summary":"..." }]
+[{
+  "id": "uuid",
+  "new_title": "...",
+  "new_description": "...",
+  "score": 7,
+  "issues": [],
+  "missing_images": { "cover": false, "questions": [], "options": [], "outcomes": [] },
+  "new_questions": [{ "id": "...", "text": "...", "options": [{ "id": "...", "text": "..." }] }],
+  "new_outcomes": [{ "key": "...", "title": "...", "description": "..." }],
+  "image_plan": {
+    "image_generation_strategy": "light",
+    "visual_style": "editorial_flat_vector",
+    "safety_notes": [],
+    "image_settings": { "width": 1024, "height": 1024, "steps": 20, "cfg_scale": 6.5, "sampler": "DPM++ 2M Karras", "seed": -1 },
+    "negative_prompt": "...",
+    "cover": { "filename": "banner.png", "prompt": "..." },
+    "questions": [{ "question_id": "...", "filename": "q1.png", "prompt": "..." }],
+    "outcomes": [{ "outcome_key": "...", "filename": "outcome1.png", "prompt": "..." }]
+  },
+  "summary": "..."
+}]
 
 ---
 
@@ -316,7 +442,95 @@ async function applyReview(db_sq: ReturnType<typeof getDb>, db: SupabaseClient, 
     applied_at: new Date().toISOString(),
   });
 
+  enqueueImagesFromPlan(entry.id, entry.image_plan, toUnpublish === 1);
+
   return "applied";
+}
+
+// ─── Image plan → image queue ─────────────────────────────────────────────────
+
+// GTX 1660 Super local tem 6GB de VRAM — 1536x864 a 30 steps já travou o Forge
+// (VRAM estourada, servidor parou de responder até a request inteira). Limita a
+// área total da capa para caber com folga, mesmo se o ChatGPT sugerir um
+// alternate_cover_size maior.
+const COVER_MAX_PIXELS = 1024 * 1024;
+
+/**
+ * A capa é o item clicável que decide se a pessoa entra no quiz — vale a pena
+ * gastar mais orçamento de geração nela do que nos demais itens. Aplica isso
+ * automaticamente independente do que o ChatGPT tenha (ou não) preenchido em
+ * image_settings, em vez de depender só do texto do prompt. Mantém a área
+ * total dentro de COVER_MAX_PIXELS para não estourar VRAM da GPU local.
+ */
+function boostCoverSettings(base: ImagePlanSettings | undefined): ImagePlanSettings {
+  const baseSteps = base?.steps ?? 20;
+  const baseCfg = base?.cfg_scale ?? 6.5;
+
+  let width = base?.width ?? 1024;
+  let height = base?.height ?? 1024;
+  const alt = base?.alternate_cover_size?.match(/^(\d+)x(\d+)$/i);
+  if (alt) {
+    width = parseInt(alt[1], 10);
+    height = parseInt(alt[2], 10);
+  }
+
+  const pixels = width * height;
+  if (pixels > COVER_MAX_PIXELS) {
+    const scale = Math.sqrt(COVER_MAX_PIXELS / pixels);
+    width = Math.round((width * scale) / 8) * 8;   // múltiplo de 8 (requisito do modelo)
+    height = Math.round((height * scale) / 8) * 8;
+  }
+
+  return {
+    width,
+    height,
+    steps: Math.min(28, Math.max(24, Math.round(baseSteps * 1.3))),
+    cfg_scale: Math.min(8, baseCfg + 1),
+    sampler: base?.sampler,
+    seed: base?.seed,
+  };
+}
+
+/**
+ * Enfileira as imagens descritas no image_plan retornado pelo ChatGPT.
+ * Cada item carrega seu próprio prompt, negative_prompt, estilo e settings —
+ * evita prompts genéricos demais que o modelo de imagem tende a desviar para
+ * personagens anime sexualizados independente do tema real do quiz.
+ */
+function enqueueImagesFromPlan(quizId: string, plan: ImagePlan | undefined, recommendedUnpublish: boolean): void {
+  if (!plan || recommendedUnpublish) return;
+
+  const strategy = plan.image_generation_strategy ?? "light";
+  if (strategy === "skip") return;
+
+  const db_img = getImageQueueDb();
+  const negativePrompt = plan.negative_prompt || DEFAULT_NEGATIVE_PROMPT;
+  const visualStyle = plan.visual_style;
+  const settings = {
+    width: plan.image_settings?.width,
+    height: plan.image_settings?.height,
+    steps: plan.image_settings?.steps,
+    cfg_scale: plan.image_settings?.cfg_scale,
+    sampler: plan.image_settings?.sampler,
+    seed: plan.image_settings?.seed,
+  };
+
+  if (plan.cover?.prompt) {
+    const coverSettings = boostCoverSettings(plan.image_settings);
+    enqueueImage(db_img, quizId, "banner", "cover", plan.cover.prompt, { negativePrompt, visualStyle, settings: coverSettings });
+  }
+
+  if (strategy === "full" || strategy === "light") {
+    for (const q of plan.questions ?? []) {
+      if (!q.prompt || !q.question_id) continue;
+      enqueueImage(db_img, quizId, "question", q.question_id, q.prompt, { negativePrompt, visualStyle, settings });
+    }
+  }
+
+  for (const o of plan.outcomes ?? []) {
+    if (!o.prompt || !o.outcome_key) continue;
+    enqueueImage(db_img, quizId, "outcome", o.outcome_key, o.prompt, { negativePrompt, visualStyle, settings });
+  }
 }
 
 // ─── Chrome helpers ───────────────────────────────────────────────────────────
@@ -1031,6 +1245,120 @@ async function main() {
 
     await browser.close().catch(() => {});
     showStats(db_sq);
+    return;
+  }
+
+  // ── --backfill-images: gera image_plan para quizzes já revisados que nunca ────
+  //    tiveram plano de imagem (lote processado antes dessa feature existir)
+  if (BACKFILL_IMAGES) {
+    const allReviewed = db_sq
+      .prepare("SELECT * FROM quiz_reviews WHERE status IN ('applied','refactored') AND review_json IS NOT NULL")
+      .all() as QuizRow[];
+
+    let targets = allReviewed.filter((r) => {
+      try { return !JSON.parse(r.review_json!).image_plan; } catch { return false; }
+    });
+    if (LIMIT) targets = targets.slice(0, LIMIT);
+
+    console.log(`\n🖼️  Funsona Quiz Orchestrator — BACKFILL IMAGE_PLAN`);
+    console.log(`   ${targets.length} quizzes revisados sem image_plan (de ${allReviewed.length} total)`);
+    if (!targets.length) { console.log("   Nada a fazer."); return; }
+
+    if (DRY_RUN) {
+      targets.forEach((r) => console.log(`  - [${r.status}] ${r.new_title}`));
+      return;
+    }
+
+    const { browser, page } = await connectChrome();
+    await ensureLoggedIn(page);
+
+    const IMG_BATCH_SZ = 5; // prompt bem mais leve que o review completo, dá pra agrupar mais
+    const batches: QuizRow[][] = [];
+    for (let i = 0; i < targets.length; i += IMG_BATCH_SZ) batches.push(targets.slice(i, i + IMG_BATCH_SZ));
+
+    let done = 0, failed = 0;
+
+    for (let bi = 0; bi < batches.length; bi++) {
+      const group = batches[bi];
+      const ids   = group.map((r) => r.id);
+
+      console.log(`\n${"─".repeat(60)}`);
+      console.log(`🖼️  Backfill group ${bi + 1}/${batches.length} (${group.length} quizzes)`);
+      group.forEach((r) => console.log(`   "${r.new_title?.slice(0, 60)}"`));
+
+      const { data: quizzes } = await db
+        .from("quizzes")
+        .select("id,slug,title,description,cover_url,type,status,language,tags,content")
+        .in("id", ids);
+
+      if (!quizzes?.length) { console.log("  ⚠️  Quizzes não encontrados no Supabase"); continue; }
+
+      const message = buildImagePlanMessage(quizzes as Quiz[], bi + 1, batches.length);
+
+      if (DRY_RUN) { console.log("  🔍 [DRY RUN] Pulando envio"); continue; }
+
+      const MAX_RETRIES = 10;
+      let attemptNum = 0;
+      let entries: ImagePlanBackfillEntry[] | null = null;
+
+      while (true) {
+        try {
+          entries = (await sendToChatGPT(page, message, `imgplan-group-${bi + 1}`)) as unknown as ImagePlanBackfillEntry[];
+          break;
+        } catch (e: any) {
+          const isRetryable = e.name === "RateLimitError" || e.name === "TimeoutError" || e.name === "ChatGPTErrorResponse" || e.message.includes("Timeout");
+          if (isRetryable) {
+            attemptNum++;
+            if (attemptNum > MAX_RETRIES) {
+              console.log(`\n⏸️  TIMEOUT/RATE LIMIT no backfill group ${bi + 1} (${MAX_RETRIES} tentativas esgotadas)`);
+              console.log(`   Retome com: npx tsx orchestrate.ts --backfill-images`);
+              await browser.close().catch(() => {});
+              process.exit(0);
+            }
+            const waitMin = Math.min(2 * attemptNum, 20);
+            console.log(`\n  ⏸️  ${e.name} no backfill group ${bi + 1} (tentativa ${attemptNum}/${MAX_RETRIES}): ${e.message.slice(0, 60)}`);
+            console.log(`     Aguardando ${waitMin}min antes de tentar de novo...`);
+            await sleep(waitMin * 60_000, waitMin * 60_000 + 10_000);
+            continue;
+          }
+          console.error(`  ❌ Erro: ${e.message}`);
+          entries = null;
+          break;
+        }
+      }
+
+      if (entries) {
+        for (const entry of entries) {
+          const row = group.find((r) => r.id === entry.id);
+          if (!row || !entry.image_plan) {
+            console.log(`  ⚠️  Resposta sem correspondência para id "${entry.id}"`);
+            failed++;
+            continue;
+          }
+          try {
+            const parsed = JSON.parse(row.review_json!);
+            parsed.image_plan = entry.image_plan;
+            upsertQuiz(db_sq, row.id, { review_json: JSON.stringify(parsed) });
+            enqueueImagesFromPlan(row.id, entry.image_plan, row.recommended_unpublish === 1);
+            console.log(`  ✅ "${row.new_title?.slice(0, 55)}" — image_plan salvo e imagens enfileiradas`);
+            done++;
+          } catch (e: any) {
+            console.log(`  ❌ Falha salvando "${row.id}": ${e.message}`);
+            failed++;
+          }
+        }
+      }
+
+      if (bi < batches.length - 1) {
+        const delay = 3000 + Math.floor(Math.random() * 4000);
+        process.stdout.write(`  ⏳ Aguardando ${Math.round(delay / 1000)}s...`);
+        await sleep(delay, delay);
+        console.log(" pronto");
+      }
+    }
+
+    await browser.close().catch(() => {});
+    console.log(`\n🖼️  Backfill concluído: ${done} ok, ${failed} falhas`);
     return;
   }
 
