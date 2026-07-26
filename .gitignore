@@ -56,6 +56,7 @@ scripts/quiz-review/quiz-preview.html
 scripts/quiz-review/refactored-dump.json
 scripts/quiz-review/refactored-quizzes/
 scripts/quiz-review/*.log.err
+scripts/migration/output/
 
 # Astro
 .astro/
