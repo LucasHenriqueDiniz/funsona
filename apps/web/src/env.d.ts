@@ -4,8 +4,6 @@ interface ImportMetaEnv {
   readonly PUBLIC_API_URL: string;
   readonly PUBLIC_SITE_URL: string;
   readonly PUBLIC_CLERK_PUBLISHABLE_KEY: string;
-  readonly PUBLIC_SUPABASE_URL: string;
-  readonly PUBLIC_SUPABASE_ANON_KEY: string;
   readonly PUBLIC_GOOGLE_ANALYTICS_ID: string;
   readonly PUBLIC_GOOGLE_ADSENSE_CLIENT: string;
 }

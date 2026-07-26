@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { supabase } from "@/lib/supabase";
+import { PUBLIC_API_ORIGIN } from "@/lib/public-env";
 
 interface ImageUploadProps {
   onUpload: (url: string) => void;
@@ -39,15 +39,17 @@ export default function ImageUpload({ onUpload, currentUrl, label = "Imagem" }: 
 
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop() || "png";
-      const path = `${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage.from("quiz-images").upload(path, file, { upsert: false });
-      if (error) throw error;
-      const { data: urlData } = supabase.storage.from("quiz-images").getPublicUrl(path);
-      if (urlData?.publicUrl) {
-        onUpload(urlData.publicUrl);
-        setPreview(urlData.publicUrl);
-      }
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`${PUBLIC_API_ORIGIN}/media/quiz-images/upload`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || "Falha no upload.");
+      onUpload(json.data.publicUrl);
+      setPreview(json.data.publicUrl);
     } catch (err: unknown) {
       const error = err as ErrorWithMessage;
       alert(error.message || "Falha no upload. Tente novamente.");

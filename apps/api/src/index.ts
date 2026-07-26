@@ -13,6 +13,7 @@ import { settingsApp } from "./routes/settings.js";
 import { profilesApp } from "./routes/profiles.js";
 import { moderationApp } from "./routes/moderation.js";
 import { clerkWebhookApp } from "./routes/webhooks/clerk.js";
+import { mediaApp } from "./routes/media.js";
 
 export type Env = {
   Bindings: {
@@ -91,6 +92,7 @@ app.route("/api/settings", settingsApp);
 app.route("/api/stripe", stripeApp);
 app.route("/api/moderation", moderationApp);
 app.route("/api/webhooks/clerk", clerkWebhookApp);
+app.route("/media", mediaApp);
 
 app.onError((err, c) => {
   console.error("[ERROR]", err.message, err.stack);

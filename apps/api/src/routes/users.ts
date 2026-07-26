@@ -165,7 +165,7 @@ usersApp.post("/me/media", authMiddleware, async (c) => {
     httpMetadata: { contentType: fileRaw.type, cacheControl: "public, max-age=3600" },
   });
 
-  const publicUrl = `${c.env.ENVIRONMENT === "production" ? "https://media.funsona.com" : "https://media-dev.funsona.com"}/${objectPath}`;
+  const publicUrl = `${new URL(c.req.url).origin}/media/profile-media/${objectPath}`;
 
   try {
     await updateProfile(c.env, userId, {
