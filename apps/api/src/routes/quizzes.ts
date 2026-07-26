@@ -2,9 +2,29 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { CreateQuizSchema, UpdateQuizSchema, CreateQuizResultSchema } from "@FunSona/shared";
 import type { Env } from "../index.js";
-import { createServiceClient } from "../lib/supabase.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { requireAdmin } from "../middleware/admin.js";
+import {
+  getDb,
+  newId,
+  getQuizBySlug,
+  getQuizById,
+  listQuizzes,
+  insertQuiz,
+  updateQuiz,
+  deleteQuiz,
+  slugExists,
+  getSlugRedirect,
+  syncQuizTags,
+  incrementQuizAttempts,
+  likeQuiz,
+  unlikeQuiz,
+  hasLiked,
+  insertQuizResult,
+  createReport,
+  resolveOpenReports,
+  serializeQuiz,
+} from "../db/client.js";
 
 const ReportQuizSchema = z.object({
   reason: z.string().max(500).optional(),
@@ -29,11 +49,6 @@ type QuizSummary = {
   tags?: string[] | null;
 };
 
-type PlayedQuizRow = {
-  quiz_id?: string | null;
-  quiz?: { id?: string; tags?: string[] | null } | Array<{ id?: string; tags?: string[] | null }> | null;
-};
-
 function uniqueById(items: QuizSummary[]) {
   const seen = new Set<string>();
   return items.filter((item) => {
@@ -47,28 +62,28 @@ function uniqueById(items: QuizSummary[]) {
 // Applied before Unicode normalization so encoding quirks that break NFD
 // decomposition (e.g. mojibake) can't silently drop the base letter.
 const TRANSLITERATION_MAP: Record<string, string> = {
-  \u00e1: "a", \u00e0: "a", \u00e2: "a", \u00e3: "a", \u00e4: "a", \u00e5: "a",
-  \u00e9: "e", \u00e8: "e", \u00ea: "e", \u00eb: "e",
-  \u00ed: "i", \u00ec: "i", \u00ee: "i", \u00ef: "i",
-  \u00f3: "o", \u00f2: "o", \u00f4: "o", \u00f5: "o", \u00f6: "o",
-  \u00fa: "u", \u00f9: "u", \u00fb: "u", \u00fc: "u",
-  \u00e7: "c", \u00f1: "n", \u00fd: "y", \u00ff: "y",
+  á: "a", à: "a", â: "a", ã: "a", ä: "a", å: "a",
+  é: "e", è: "e", ê: "e", ë: "e",
+  í: "i", ì: "i", î: "i", ï: "i",
+  ó: "o", ò: "o", ô: "o", õ: "o", ö: "o",
+  ú: "u", ù: "u", û: "u", ü: "u",
+  ç: "c", ñ: "n", ý: "y", ÿ: "y",
 };
 
 // Generate slug from title
 function slugify(title: string) {
   const transliterated = title
     .toLowerCase()
-    .replace(/[\u00e1\u00e0\u00e2\u00e3\u00e4\u00e5\u00e9\u00e8\u00ea\u00eb\u00ed\u00ec\u00ee\u00ef\u00f3\u00f2\u00f4\u00f5\u00f6\u00fa\u00f9\u00fb\u00fc\u00e7\u00f1\u00fd\u00ff]/g, (char) => TRANSLITERATION_MAP[char] ?? char);
+    .replace(/[áàâãäåéèêëíìîïóòôõöúùûüçñýÿ]/g, (char) => TRANSLITERATION_MAP[char] ?? char);
 
   const slug = transliterated
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "");
 
   // Titles that are entirely emoji/symbols/non-Latin script can collapse to "".
-  // Never return an empty slug \u2014 fall back to a short random suffix.
+  // Never return an empty slug — fall back to a short random suffix.
   return slug || `quiz-${Math.random().toString(36).slice(2, 8)}`;
 }
 
@@ -105,64 +120,26 @@ function normalizeSettings(settings: unknown) {
   return isDefault ? undefined : normalized;
 }
 
-async function syncQuizTags(
-  service: ReturnType<typeof createServiceClient>,
-  quizId: string,
-  tags: string[]
-) {
-  const { error } = await service.rpc("sync_quiz_tags", {
-    p_quiz_id: quizId,
-    p_tags: tags,
-  });
-  return error;
-}
-
 // List / Search quizzes
 quizzesApp.get("/", async (c) => {
   const { search, tag, page = "1", limit = "20", sort, min_attempts } = c.req.query();
   const pageNum = Math.max(1, parseInt(page));
   const limitNum = Math.min(50, Math.max(1, parseInt(limit)));
-  const offset = (pageNum - 1) * limitNum;
   const minAttemptsNum = Math.max(0, parseInt(min_attempts || "0") || 0);
 
-  const service = createServiceClient(c.env);
-  let query = service
-    .from("quizzes")
-    .select("*, author:profiles!quizzes_author_id_fkey(handle, display_name, avatar_url)", { count: "exact" })
-    .eq("status", "PUBLISHED")
-    .range(offset, offset + limitNum - 1);
-
-  // Sorting
-  if (sort === "likes") {
-    query = query.order("likes_count", { ascending: false });
-  } else if (sort === "plays") {
-    query = query.order("attempts_count", { ascending: false });
-  } else {
-    query = query.order("created_at", { ascending: false });
-  }
-
-  if (tag) {
-    query = query.contains("tags", [tag]);
-  }
-
-  if (minAttemptsNum > 0) {
-    query = query.gte("attempts_count", minAttemptsNum);
-  }
-
-  if (search) {
-    query = query.textSearch("search_vector", search, { type: "websearch", config: "portuguese" });
-  }
-
-  const { data, error, count } = await query;
-
-  if (error) {
-    return c.json({ success: false, error: error.message }, 500);
-  }
+  const { data, total } = await listQuizzes(c.env, {
+    search,
+    tag,
+    page: pageNum,
+    limit: limitNum,
+    sort,
+    minAttempts: minAttemptsNum,
+  });
 
   return c.json({
     success: true,
     data,
-    meta: { page: pageNum, limit: limitNum, total: count ?? 0 },
+    meta: { page: pageNum, limit: limitNum, total },
   });
 });
 
@@ -170,34 +147,21 @@ quizzesApp.get("/", async (c) => {
 // (e.g. after the slugify() transliteration fix corrected broken slugs).
 quizzesApp.get("/redirect/:oldSlug", async (c) => {
   const oldSlug = c.req.param("oldSlug");
-  const service = createServiceClient(c.env);
+  const newSlug = await getSlugRedirect(c.env, oldSlug);
 
-  const { data, error } = await service
-    .from("quiz_slug_redirects")
-    .select("new_slug")
-    .eq("old_slug", oldSlug)
-    .maybeSingle();
-
-  if (error || !data) {
+  if (!newSlug) {
     return c.json({ success: false, error: "No redirect found" }, 404);
   }
 
-  return c.json({ success: true, data: { new_slug: data.new_slug } });
+  return c.json({ success: true, data: { new_slug: newSlug } });
 });
 
 // Get single quiz by slug
 quizzesApp.get("/:slug", async (c) => {
   const slug = c.req.param("slug");
-  const service = createServiceClient(c.env);
+  const data = await getQuizBySlug(c.env, slug);
 
-  const { data, error } = await service
-    .from("quizzes")
-    .select("*, author:profiles!quizzes_author_id_fkey(handle, display_name, avatar_url)")
-    .eq("slug", slug)
-    .eq("status", "PUBLISHED")
-    .single();
-
-  if (error || !data) {
+  if (!data) {
     return c.json({ success: false, error: "Quiz not found" }, 404);
   }
 
@@ -209,30 +173,18 @@ quizzesApp.get("/recommended/for-me", authMiddleware, async (c) => {
   const userId = c.get("userId");
   if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
 
-  const service = createServiceClient(c.env);
+  const db = getDb(c.env);
 
-  const { data: playedRows, error: playedError } = await service
-    .from("quiz_results")
-    .select("quiz_id, created_at, quiz:quizzes(id, tags)")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(200);
+  const { results: playedRows } = await db
+    .prepare("SELECT qr.quiz_id, q.tags FROM quiz_results qr JOIN quizzes q ON q.id = qr.quiz_id WHERE qr.user_id = ? ORDER BY qr.created_at DESC LIMIT 200")
+    .bind(userId)
+    .all<{ quiz_id: string; tags: string }>();
 
-  if (playedError) {
-    return c.json({ success: false, error: playedError.message }, 500);
-  }
-
-  const playedIds = new Set<string>(
-    ((playedRows || []) as PlayedQuizRow[])
-      .map((row) => row.quiz_id)
-      .filter((value): value is string => typeof value === "string" && value.length > 0)
-  );
+  const playedIds = new Set(playedRows.map((r) => r.quiz_id));
 
   const tagCounts = new Map<string, number>();
-  for (const row of (playedRows || []) as PlayedQuizRow[]) {
-    const rawQuiz = row.quiz;
-    const quiz = Array.isArray(rawQuiz) ? rawQuiz[0] : rawQuiz;
-    const tags = Array.isArray(quiz?.tags) ? quiz.tags : [];
+  for (const row of playedRows) {
+    const tags: string[] = JSON.parse(row.tags || "[]");
     for (const tag of tags) {
       const key = String(tag || "").trim().toLowerCase();
       if (!key) continue;
@@ -249,33 +201,20 @@ quizzesApp.get("/recommended/for-me", authMiddleware, async (c) => {
 
   let personalized: QuizSummary[] = [];
   if (preferredTags.length > 0) {
-    const { data, error } = await service
-      .from("quizzes")
-      .select(baseSelect)
-      .eq("status", "PUBLISHED")
-      .overlaps("tags", preferredTags)
-      .order("attempts_count", { ascending: false })
-      .limit(48);
-
-    if (error) {
-      return c.json({ success: false, error: error.message }, 500);
-    }
-
-    personalized = data || [];
+    const likeClauses = preferredTags.map(() => "tags LIKE ?").join(" OR ");
+    const { results } = await db
+      .prepare(`SELECT ${baseSelect} FROM quizzes WHERE status = 'PUBLISHED' AND (${likeClauses}) ORDER BY attempts_count DESC LIMIT 48`)
+      .bind(...preferredTags.map((t) => `%"${t}"%`))
+      .all<QuizSummary & { tags: string }>();
+    personalized = results.map((r) => ({ ...r, tags: JSON.parse((r as unknown as { tags: string }).tags || "[]") }));
   }
 
-  const { data: popularData, error: popularError } = await service
-    .from("quizzes")
-    .select(baseSelect)
-    .eq("status", "PUBLISHED")
-    .order("attempts_count", { ascending: false })
-    .limit(80);
+  const { results: popularData } = await db
+    .prepare(`SELECT ${baseSelect} FROM quizzes WHERE status = 'PUBLISHED' ORDER BY attempts_count DESC LIMIT 80`)
+    .all<QuizSummary & { tags: string }>();
+  const popular = popularData.map((r) => ({ ...r, tags: JSON.parse((r as unknown as { tags: string }).tags || "[]") }));
 
-  if (popularError) {
-    return c.json({ success: false, error: popularError.message }, 500);
-  }
-
-  const merged = uniqueById([...(personalized || []), ...((popularData || []) as QuizSummary[])])
+  const merged = uniqueById([...personalized, ...popular])
     .filter((quiz) => !playedIds.has(quiz.id))
     .slice(0, 12);
 
@@ -300,41 +239,34 @@ quizzesApp.post("/", authMiddleware, async (c) => {
     return c.json({ success: false, error: "Invalid input", details: parsed.error.format() }, 400);
   }
 
-  const service = createServiceClient(c.env);
   const slug = parsed.data.slug || `${slugify(parsed.data.title)}-${Date.now().toString(36)}`;
 
-  // Check slug uniqueness
-  const { data: existing } = await service.from("quizzes").select("id").eq("slug", slug).maybeSingle();
-  if (existing) {
+  if (await slugExists(c.env, slug)) {
     return c.json({ success: false, error: "Slug already exists" }, 409);
   }
 
   const normalizedTags = normalizeTags(parsed.data.tags);
-  const payload = {
-    ...parsed.data,
+  const id = newId();
+
+  const inserted = await insertQuiz(c.env, {
+    id,
     slug,
+    title: parsed.data.title,
+    description: parsed.data.description ?? null,
+    cover_url: parsed.data.cover_url ?? null,
+    type: parsed.data.type,
+    status: parsed.data.status ?? "DRAFT",
+    content: parsed.data.content,
+    intro_content: (parsed.data as Record<string, unknown>).intro_content ?? null,
+    settings: normalizeSettings(parsed.data.settings) ?? {},
     author_id: userId,
+    language: parsed.data.language ?? "pt",
     tags: normalizedTags,
-    settings: normalizeSettings(parsed.data.settings),
-  };
+  });
 
-  const { data, error } = await service
-    .from("quizzes")
-    .insert(payload)
-    .select()
-    .single();
+  await syncQuizTags(c.env, id, normalizedTags);
 
-  if (error) {
-    return c.json({ success: false, error: error.message }, 500);
-  }
-
-  const syncError = await syncQuizTags(service, data.id, normalizedTags);
-  if (syncError) {
-    await service.from("quizzes").delete().eq("id", data.id);
-    return c.json({ success: false, error: syncError.message }, 500);
-  }
-
-  return c.json({ success: true, data }, 201);
+  return c.json({ success: true, data: serializeQuiz(inserted!) }, 201);
 });
 
 // Update quiz (auth required)
@@ -349,10 +281,7 @@ quizzesApp.patch("/:id", authMiddleware, async (c) => {
     return c.json({ success: false, error: "Invalid input" }, 400);
   }
 
-  const service = createServiceClient(c.env);
-
-  // Verify ownership
-  const { data: quiz } = await service.from("quizzes").select("author_id").eq("id", id).maybeSingle();
+  const quiz = await getQuizById(c.env, id);
   if (!quiz || quiz.author_id !== userId) {
     return c.json({ success: false, error: "Forbidden" }, 403);
   }
@@ -364,20 +293,13 @@ quizzesApp.patch("/:id", authMiddleware, async (c) => {
     ...(parsed.data.settings !== undefined ? { settings: normalizeSettings(parsed.data.settings) ?? {} } : {}),
   };
 
-  const { data, error } = await service.from("quizzes").update(updates).eq("id", id).select().single();
-
-  if (error) {
-    return c.json({ success: false, error: error.message }, 500);
-  }
+  const updated = await updateQuiz(c.env, id, updates);
 
   if (normalizedTags !== undefined) {
-    const syncError = await syncQuizTags(service, id, normalizedTags);
-    if (syncError) {
-      return c.json({ success: false, error: syncError.message }, 500);
-    }
+    await syncQuizTags(c.env, id, normalizedTags);
   }
 
-  return c.json({ success: true, data });
+  return c.json({ success: true, data: serializeQuiz(updated!) });
 });
 
 // Delete quiz (auth required)
@@ -386,18 +308,12 @@ quizzesApp.delete("/:id", authMiddleware, async (c) => {
   if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
 
   const id = c.req.param("id");
-  const service = createServiceClient(c.env);
-
-  const { data: quiz } = await service.from("quizzes").select("author_id").eq("id", id).maybeSingle();
+  const quiz = await getQuizById(c.env, id);
   if (!quiz || quiz.author_id !== userId) {
     return c.json({ success: false, error: "Forbidden" }, 403);
   }
 
-  const { error } = await service.from("quizzes").delete().eq("id", id);
-  if (error) {
-    return c.json({ success: false, error: error.message }, 500);
-  }
-
+  await deleteQuiz(c.env, id);
   return c.json({ success: true });
 });
 
@@ -411,47 +327,26 @@ quizzesApp.post("/:id/results", authMiddleware, async (c) => {
     return c.json({ success: false, error: "Invalid input" }, 400);
   }
 
-  const service = createServiceClient(c.env);
-
   if (!userId) {
-    const { error } = await service.rpc("increment_quiz_attempts", { quiz_id: quizId });
-    if (error) {
-      return c.json({ success: false, error: error.message }, 500);
-    }
-
+    await incrementQuizAttempts(c.env, quizId);
     return c.json({ success: true, data: null }, 201);
   }
 
-  const { data: quiz, error: quizError } = await service
-    .from("quizzes")
-    .select("type")
-    .eq("id", quizId)
-    .single();
-
-  if (quizError || !quiz) {
+  const quiz = await getQuizById(c.env, quizId);
+  if (!quiz) {
     return c.json({ success: false, error: "Quiz not found" }, 404);
   }
 
   const canonicalResultType = quiz.type === "TRIVIA" ? "TRIVIA_SUM" : "PERSONALITY_TALLY";
 
-  const { data, error } = await service
-    .from("quiz_results")
-    .insert({
-      quiz_id: quizId,
-      user_id: userId,
-      quiz_type: quiz.type,
-      result_type: canonicalResultType,
-      result_value: parsed.data.result_value || null,
-      xp_gained: parsed.data.xp_gained,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    return c.json({ success: false, error: error.message }, 500);
-  }
-
-  // attempts_count is incremented by the handle_quiz_result trigger on insert
+  const data = await insertQuizResult(c.env, {
+    quizId,
+    userId,
+    quizType: quiz.type,
+    resultType: canonicalResultType,
+    resultValue: parsed.data.result_value ?? null,
+    xpGained: parsed.data.xp_gained,
+  });
 
   return c.json({ success: true, data }, 201);
 });
@@ -462,22 +357,7 @@ quizzesApp.post("/:id/like", authMiddleware, async (c) => {
   if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
 
   const quizId = c.req.param("id");
-  const service = createServiceClient(c.env);
-
-  const { error } = await service.from("quiz_likes").insert({ quiz_id: quizId, user_id: userId });
-  if (error?.code === "23505") {
-    return c.json({ success: true });
-  }
-  if (error) {
-    return c.json({ success: false, error: error.message }, 500);
-  }
-
-  // Update likes count
-  const { error: likeRpcError } = await service.rpc("increment_quiz_likes", { quiz_id: quizId });
-  if (likeRpcError) {
-    return c.json({ success: false, error: likeRpcError.message }, 500);
-  }
-
+  await likeQuiz(c.env, quizId, userId);
   return c.json({ success: true });
 });
 
@@ -487,28 +367,7 @@ quizzesApp.delete("/:id/like", authMiddleware, async (c) => {
   if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
 
   const quizId = c.req.param("id");
-  const service = createServiceClient(c.env);
-
-  const { data, error } = await service
-    .from("quiz_likes")
-    .delete()
-    .eq("quiz_id", quizId)
-    .eq("user_id", userId)
-    .select("quiz_id");
-  if (error) {
-    return c.json({ success: false, error: error.message }, 500);
-  }
-
-  if (!data?.length) {
-    return c.json({ success: true });
-  }
-
-  // Update likes count
-  const { error: unlikeRpcError } = await service.rpc("decrement_quiz_likes", { quiz_id: quizId });
-  if (unlikeRpcError) {
-    return c.json({ success: false, error: unlikeRpcError.message }, 500);
-  }
-
+  await unlikeQuiz(c.env, quizId, userId);
   return c.json({ success: true });
 });
 
@@ -518,16 +377,8 @@ quizzesApp.get("/:id/like", authMiddleware, async (c) => {
   if (!userId) return c.json({ success: false, liked: false });
 
   const quizId = c.req.param("id");
-  const service = createServiceClient(c.env);
-
-  const { data } = await service
-    .from("quiz_likes")
-    .select("quiz_id")
-    .eq("quiz_id", quizId)
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  return c.json({ success: true, liked: !!data });
+  const liked = await hasLiked(c.env, quizId, userId);
+  return c.json({ success: true, liked });
 });
 
 // Report a quiz (auth required)
@@ -542,44 +393,20 @@ quizzesApp.post("/:id/report", authMiddleware, async (c) => {
     return c.json({ success: false, error: "Invalid input" }, 400);
   }
 
-  const service = createServiceClient(c.env);
-
-  const { data: quiz } = await service.from("quizzes").select("id").eq("id", quizId).maybeSingle();
+  const quiz = await getQuizById(c.env, quizId);
   if (!quiz) {
     return c.json({ success: false, error: "Quiz not found" }, 404);
   }
 
-  const { error } = await service.from("content_reports").insert({
-    target_type: "quiz",
-    target_id: quizId,
-    reporter_id: userId,
-    reason: parsed.data.reason || null,
-  });
-
-  if (error && error.code !== "23505") {
-    return c.json({ success: false, error: error.message }, 500);
-  }
-
+  await createReport(c.env, "quiz", quizId, userId, parsed.data.reason || null);
   return c.json({ success: true }, 201);
 });
 
 // Hide a quiz by archiving it (admin only)
 quizzesApp.post("/:id/hide", authMiddleware, requireAdmin, async (c) => {
   const quizId = c.req.param("id");
-  const service = createServiceClient(c.env);
-
-  const { error } = await service.from("quizzes").update({ status: "ARCHIVED" }).eq("id", quizId);
-  if (error) {
-    return c.json({ success: false, error: error.message }, 500);
-  }
-
-  await service
-    .from("content_reports")
-    .update({ resolved_at: new Date().toISOString(), resolved_action: "hidden" })
-    .eq("target_type", "quiz")
-    .eq("target_id", quizId)
-    .is("resolved_at", null);
-
+  await updateQuiz(c.env, quizId, { status: "ARCHIVED" });
+  await resolveOpenReports(c.env, "quiz", quizId, "hidden");
   return c.json({ success: true });
 });
 

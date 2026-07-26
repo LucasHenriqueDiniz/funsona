@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import type { Env } from "../index.js";
-import { createServiceClient } from "../lib/supabase.js";
+import { getProfileByHandle } from "../db/client.js";
 
 const profilesApp = new Hono<Env>();
 
@@ -10,14 +10,8 @@ profilesApp.get("/:handle", async (c) => {
     return c.json({ success: false, error: "Missing handle" }, 400);
   }
 
-  const service = createServiceClient(c.env);
-  const { data, error } = await service
-    .from("profiles")
-    .select("id, handle, display_name, avatar_url, banner_url, bio, level, xp, is_premium, created_at")
-    .eq("handle", handle)
-    .single();
-
-  if (error || !data) {
+  const data = await getProfileByHandle(c.env, handle);
+  if (!data) {
     return c.json({ success: false, error: "Profile not found" }, 404);
   }
 

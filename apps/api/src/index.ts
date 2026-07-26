@@ -22,6 +22,9 @@ export type Env = {
     STRIPE_WEBHOOK_SECRET: string;
     JWT_SECRET: string;
     FUNSONA_CACHE: KVNamespace;
+    DB: D1Database;
+    QUIZ_IMAGES: R2Bucket;
+    PROFILE_MEDIA: R2Bucket;
     ENVIRONMENT: string;
   };
   Variables: {

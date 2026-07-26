@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import Stripe from "stripe";
 import type { Env } from "../index.js";
-import { createServiceClient } from "../lib/supabase.js";
 import { authMiddleware } from "../middleware/auth.js";
+import { getProfileById, updateProfile } from "../db/client.js";
 
 const stripeApp = new Hono<Env>();
 
@@ -20,21 +20,20 @@ stripeApp.post("/checkout", authMiddleware, async (c) => {
   const userId = c.get("userId");
   if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
 
-  const service = createServiceClient(c.env);
-  const { data: profile } = await service.from("profiles").select("email, is_premium").eq("id", userId).single();
+  const profile = await getProfileById(c.env, userId);
 
   if (profile?.is_premium) {
     return c.json({ success: false, error: "User already has premium" }, 400);
   }
 
   const stripe = getStripe(c.env);
-  const baseUrl = c.env.ENVIRONMENT === "production" 
+  const baseUrl = c.env.ENVIRONMENT === "production"
     ? "https://funsona.com"
     : "http://localhost:4321";
 
   try {
     const session = await stripe.checkout.sessions.create({
-      customer_email: profile?.email,
+      customer_email: profile?.email ?? undefined,
       line_items: [
         {
           price_data: {
@@ -81,20 +80,19 @@ stripeApp.post("/webhook", async (c) => {
     return c.json({ success: false, error: `Webhook error: ${getErrorMessage(err)}` }, 400);
   }
 
-  const service = createServiceClient(c.env);
-
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
       const userId = session.metadata?.user_id;
-      
+
       if (userId) {
-        const { error } = await service.from("profiles").update({ is_premium: true }).eq("id", userId);
-        if (error) {
+        try {
+          await updateProfile(c.env, userId, { is_premium: 1 });
+        } catch (err) {
           console.error("stripe webhook profile update failed", {
             eventType: event.type,
             userId,
-            error: error.message,
+            error: getErrorMessage(err),
           });
           return c.json({ success: false, error: "Failed to update premium status" }, 500);
         }
@@ -105,12 +103,13 @@ stripeApp.post("/webhook", async (c) => {
       const subscription = event.data.object as Stripe.Subscription;
       const userId = subscription.metadata?.user_id;
       if (userId) {
-        const { error } = await service.from("profiles").update({ is_premium: false }).eq("id", userId);
-        if (error) {
+        try {
+          await updateProfile(c.env, userId, { is_premium: 0 });
+        } catch (err) {
           console.error("stripe webhook profile downgrade failed", {
             eventType: event.type,
             userId,
-            error: error.message,
+            error: getErrorMessage(err),
           });
           return c.json({ success: false, error: "Failed to downgrade premium status" }, 500);
         }
