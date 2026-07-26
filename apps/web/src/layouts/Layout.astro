@@ -63,16 +63,6 @@ const adsenseClient = import.meta.env.PUBLIC_GOOGLE_ADSENSE_CLIENT;
     // Re-apply after each View Transition swap so theme is never lost
     document.addEventListener("astro:after-swap", applyTheme);
   </script>
-  <script is:inline>
-    (function() {
-      if (window.location.pathname === "/auth/callback") return;
-      const hash = window.location.hash || "";
-      const isOAuthReturn = hash.includes("access_token=") || hash.includes("error_description=");
-      if (isOAuthReturn) {
-        window.location.replace("/auth/callback" + hash);
-      }
-    })();
-  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { SignOutButton } from "@clerk/astro/react";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
 
 interface User {
@@ -37,14 +38,6 @@ export default function AuthNav() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  async function handleLogout() {
-    await fetch(`${PUBLIC_API_BASE_URL}/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-    window.location.reload();
-  }
 
   if (loading) {
     return <div className="h-10 w-10 animate-pulse rounded-2xl bg-[var(--color-surface-muted)]" />;
@@ -102,15 +95,16 @@ export default function AuthNav() {
               Ranking
             </a>
             <div className="border-t border-[var(--color-border)] mt-1 pt-1">
-              <button
-                onClick={handleLogout}
-                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-bold text-red-500 transition hover:bg-red-500/5"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                Sair
-              </button>
+              <SignOutButton redirectUrl="/">
+                <button
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-bold text-red-500 transition hover:bg-red-500/5"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  Sair
+                </button>
+              </SignOutButton>
             </div>
           </div>
         )}

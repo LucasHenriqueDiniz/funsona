@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config";
 import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
+import clerk from "@clerk/astro";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
@@ -12,7 +13,7 @@ export default defineConfig({
       enabled: true,
     },
   }),
-  integrations: [react()],
+  integrations: [react(), clerk()],
   prefetch: {
     prefetchAll: false,
     defaultStrategy: "hover",
