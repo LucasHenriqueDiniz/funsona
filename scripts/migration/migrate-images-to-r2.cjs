@@ -52,24 +52,30 @@ const MIGRATED_RE = /https?:\/\/[^/"'\s\\]+\/media\/(quiz-images|profile-media)\
 
 const API_DIR = path.join(__dirname, "..", "..", "apps", "api");
 
-/** Runs a read-only query through wrangler and returns the result rows.
- *  The SQL goes via a temp file — passing it as --command would need shell
- *  quoting, and the queries here contain spaces, quotes and % wildcards. */
-function queryD1(sql) {
-  const tmpFile = path.join(os.tmpdir(), `d1q-${process.pid}-${Math.random().toString(36).slice(2)}.sql`);
-  fs.writeFileSync(tmpFile, sql, "utf8");
-  try {
-    const raw = execFileSync(
-      "npx",
-      ["wrangler", "d1", "execute", "funsona-db", REMOTE ? "--remote" : "--local", "--file", tmpFile, "--json"],
-      { cwd: API_DIR, stdio: ["ignore", "pipe", "pipe"], shell: true, maxBuffer: 512 * 1024 * 1024 }
-    ).toString();
-    // wrangler prefixes the JSON with banner lines; take from the first bracket.
-    const start = raw.indexOf("[");
-    if (start === -1) throw new Error(`Unexpected wrangler output: ${raw.slice(0, 300)}`);
-    return JSON.parse(raw.slice(start))[0]?.results ?? [];
-  } finally {
-    fs.unlinkSync(tmpFile);
+const SUPABASE_URL = process.env.SUPABASE_URL?.replace(/\/$/, "");
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+/** Pages a table out of Supabase. The object inventory is read from Supabase
+ *  rather than D1 for two reasons: `wrangler d1 execute --remote --file`
+ *  returns a summary rather than result rows, so remote reads come back empty;
+ *  and a D1 that has already been rewritten no longer records which Supabase
+ *  project each object came from, leaving nothing to fetch the bytes from.
+ *  Supabase is the source of truth and always has the original URLs. */
+async function fetchSupabase(table, columns) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error("Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY — the image inventory is read from Supabase.");
+  }
+  const headers = { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}` };
+  const rows = [];
+  const pageSize = 1000;
+  for (let from = 0; ; from += pageSize) {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=${columns}`, {
+      headers: { ...headers, Range: `${from}-${from + pageSize - 1}` },
+    });
+    if (!response.ok) throw new Error(`${table}: ${response.status} ${(await response.text()).slice(0, 200)}`);
+    const batch = await response.json();
+    rows.push(...batch);
+    if (batch.length < pageSize) return rows;
   }
 }
 
@@ -85,7 +91,7 @@ function parseUrl(url) {
 /** Every hosted image URL anywhere in the database, scanned as raw text so
  *  nested shapes (question/answer/outcome images, legacy `image.file`) are all
  *  covered without having to know the JSON schema. */
-function collectReferences() {
+async function collectReferences() {
   const found = new Map(); // `${bucket}/${objectPath}` -> projectRef|null
   const note = (text) => {
     if (!text) return;
@@ -102,22 +108,11 @@ function collectReferences() {
     }
   };
 
-  // Filter in SQL so only rows that actually reference a hosted image come
-  // back — quizzes.content alone is ~11 MB across the table.
-  const hosted = (column) =>
-    [
-      "/storage/v1/object/public/",
-      "/media/quiz-images/",
-      "/media/profile-media/",
-    ]
-      .map((needle) => `${column} LIKE '%${needle}%'`)
-      .join(" OR ");
-
-  for (const row of queryD1(`SELECT cover_url, content FROM quizzes WHERE ${hosted("cover_url")} OR ${hosted("content")}`)) {
+  for (const row of await fetchSupabase("quizzes", "cover_url,content")) {
     note(row.cover_url);
-    note(row.content);
+    note(typeof row.content === "string" ? row.content : JSON.stringify(row.content));
   }
-  for (const row of queryD1(`SELECT avatar_url, banner_url FROM profiles WHERE ${hosted("avatar_url")} OR ${hosted("banner_url")}`)) {
+  for (const row of await fetchSupabase("profiles", "avatar_url,banner_url")) {
     note(row.avatar_url);
     note(row.banner_url);
   }
@@ -149,7 +144,10 @@ async function uploadToR2(bucket, objectPath, projectRef) {
         `${BUCKETS[bucket]}/${objectPath}`,
         `--file=${tmpFile}`,
         `--content-type=${CONTENT_TYPES[ext] || "application/octet-stream"}`,
-        REMOTE ? "--remote" : "--local",
+        // Remote is the default for `r2 object put`; only local needs a flag.
+        // (Passing --remote errors with "Unknown argument" on the wrangler
+        // version pinned in apps/api.)
+        ...(REMOTE ? [] : ["--local"]),
       ],
       { cwd: API_DIR, stdio: "pipe", shell: true }
     );
@@ -164,7 +162,7 @@ async function uploadToR2(bucket, objectPath, projectRef) {
 async function main() {
   console.log(`Mode: ${REMOTE ? "REMOTE R2" : "LOCAL R2"}${DRY_RUN ? " (dry-run)" : ""}`);
 
-  const references = collectReferences();
+  const references = await collectReferences();
   console.log(`${references.size} distinct hosted objects referenced in D1.`);
 
   const projectRefs = new Set([...references.values()].filter(Boolean));
