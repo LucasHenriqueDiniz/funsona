@@ -32,7 +32,12 @@
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
-const { execFileSync } = require("child_process");
+const { execFile } = require("child_process");
+const { promisify } = require("util");
+
+// Must be the async form: the uploads run through a worker pool, and
+// execFileSync would block the event loop and serialise them anyway.
+const execFileAsync = promisify(execFile);
 
 const REMOTE = process.argv.includes("--remote");
 const DRY_RUN = process.argv.includes("--dry-run");
@@ -42,6 +47,7 @@ const argValue = (flag, fallback) => {
 };
 const LIMIT = Number(argValue("--limit", Infinity));
 const OUT_SQL = argValue("--out", "rewrite-image-urls.sql");
+const CONCURRENCY = Number(argValue("--concurrency", 8));
 
 const BUCKETS = { "quiz-images": "funsona-quiz-images", "profile-media": "funsona-profile-media" };
 const API_ORIGIN = REMOTE ? "https://api.funsona.com" : "http://localhost:8787";
@@ -137,7 +143,7 @@ async function uploadToR2(bucket, objectPath, projectRef) {
   fs.writeFileSync(tmpFile, buffer);
   const ext = objectPath.split(".").pop().toLowerCase();
   try {
-    execFileSync(
+    await execFileAsync(
       "npx",
       [
         "wrangler", "r2", "object", "put",
@@ -149,7 +155,7 @@ async function uploadToR2(bucket, objectPath, projectRef) {
         // version pinned in apps/api.)
         ...(REMOTE ? [] : ["--local"]),
       ],
-      { cwd: API_DIR, stdio: "pipe", shell: true }
+      { cwd: API_DIR, shell: true }
     );
     return { status: "ok" };
   } catch (error) {
@@ -167,16 +173,33 @@ async function main() {
 
   const projectRefs = new Set([...references.values()].filter(Boolean));
   const tally = { ok: 0, "source-missing": 0, "upload-failed": 0, unresolvable: 0 };
-  let processed = 0;
 
-  for (const [key, projectRef] of references) {
-    if (processed >= LIMIT) break;
-    processed++;
-    const slash = key.indexOf("/");
-    const result = await uploadToR2(key.slice(0, slash), key.slice(slash + 1), projectRef);
-    tally[result.status]++;
-    if (result.status !== "ok") console.log(`  ${result.status}: ${key}${result.detail ? ` (${result.detail})` : ""}`);
+  // Each upload spawns a wrangler process, so running 1,300 of them in series
+  // takes about an hour. A small pool cuts that to minutes; keep it modest so
+  // the Supabase fetches and the R2 API are not hammered.
+  const queue = [...references].slice(0, LIMIT === Infinity ? undefined : LIMIT);
+  const total = queue.length;
+  let started = 0;
+  let finished = 0;
+
+  async function worker() {
+    for (;;) {
+      const index = started++;
+      if (index >= total) return;
+      const [key, projectRef] = queue[index];
+      const slash = key.indexOf("/");
+      const result = await uploadToR2(key.slice(0, slash), key.slice(slash + 1), projectRef);
+      tally[result.status]++;
+      finished++;
+      if (result.status !== "ok") {
+        console.log(`  ${result.status}: ${key}${result.detail ? ` (${result.detail})` : ""}`);
+      } else if (finished % 50 === 0) {
+        console.log(`  ${finished}/${total} uploaded`);
+      }
+    }
   }
+
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, total) }, worker));
 
   console.log(`\nuploaded=${tally.ok} sourceMissing=${tally["source-missing"]} failed=${tally["upload-failed"]} unresolvable=${tally.unresolvable}`);
 
