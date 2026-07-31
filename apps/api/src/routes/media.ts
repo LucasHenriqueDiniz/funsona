@@ -30,7 +30,22 @@ mediaApp.get("/:bucket/*", async (c) => {
   const binding = BUCKETS[bucketKey];
   if (!binding) return c.notFound();
 
-  const objectPath = c.req.path.split(`/${bucketKey}/`)[1];
+  // Read the key off the path rather than via c.req.param("*") — Hono does not
+  // expose the wildcard as a named param here, so that returns undefined and
+  // every object 404s. Keys legitimately contain slashes
+  // (<quiz-id>/outcomes/resultado1.png), so take everything after the bucket
+  // segment and decode it.
+  const prefix = `/${bucketKey}/`;
+  const pathname = new URL(c.req.url).pathname;
+  const start = pathname.indexOf(prefix);
+  if (start === -1) return c.notFound();
+
+  let objectPath: string;
+  try {
+    objectPath = decodeURIComponent(pathname.slice(start + prefix.length));
+  } catch {
+    return c.notFound();
+  }
   if (!objectPath) return c.notFound();
 
   const object = await c.env[binding].get(objectPath);
