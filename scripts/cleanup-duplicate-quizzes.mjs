@@ -110,6 +110,7 @@ async function main() {
 
   let retired = 0;
   let skipped = 0;
+  let missingRedirectTable = false;
 
   for (const [keeperSlug, duplicateSlug] of PAIRS) {
     const keeper = await fetchQuiz(keeperSlug);
@@ -145,14 +146,31 @@ async function main() {
       body: JSON.stringify({ status: "ARCHIVED" }),
     });
 
-    await rest("quiz_slug_redirects", {
-      method: "POST",
-      headers: { Prefer: "resolution=merge-duplicates" },
-      body: JSON.stringify({ old_slug: duplicate.slug, new_slug: keeper.slug, quiz_id: keeper.id }),
-    });
+    // `quiz_slug_redirects` exists in the D1 schema but was never applied to
+    // Supabase (its migration sat unapplied), so on the current production
+    // backend there is nowhere to record the 301. Archive still works; the URL
+    // just 404s until the D1 cutover, which is acceptable here because every
+    // retired quiz has zero plays and none are indexed yet.
+    try {
+      await rest("quiz_slug_redirects", {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates" },
+        body: JSON.stringify({ old_slug: duplicate.slug, new_slug: keeper.slug, quiz_id: keeper.id }),
+      });
+    } catch (error) {
+      if (/does not exist|PGRST205|42P01/.test(error.message)) {
+        missingRedirectTable = true;
+      } else {
+        throw error;
+      }
+    }
   }
 
   console.log(`\n${retired} to retire, ${skipped} skipped.`);
+  if (missingRedirectTable) {
+    console.log("NOTE: quiz_slug_redirects is absent on this backend — quizzes were archived");
+    console.log("      without a redirect, so their URLs will 404 until the D1 cutover.");
+  }
   if (!APPLY && retired > 0) console.log("Re-run with --apply to write these changes.");
 }
 
