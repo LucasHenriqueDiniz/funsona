@@ -45,7 +45,7 @@ of the data. Verified against the live Supabase project:
 | `supabase-to-d1-remote.mjs` | **Use this for the cutover.** Generates FK-ordered SQL files from live Supabase, loadable into local *or* remote D1. |
 | `supabase-to-d1-load-local.cjs` | Older, local-only (writes the miniflare sqlite via better-sqlite3). Superseded. |
 | `backfill-profile-emails.mjs` | Fills `profiles.email` from Supabase `auth.users`. Confirmed emails only. |
-| `migrate-images-to-r2.cjs` | Copies quiz/profile images to R2 and rewrites URLs. **Only ever run in local mode** — see caveats below. |
+| `migrate-images-to-r2.cjs` | Copies quiz/profile images to R2 and emits the URL rewrite as SQL. Works against local or remote. |
 | `check-remaining.cjs`, `count-supabase-image-urls.cjs`, `verify-local-counts.cjs` | Read the *local* sqlite. Verification helpers. |
 
 ### Why the SQL-file approach works now
@@ -125,14 +125,21 @@ remaining copy of the pre-migration data.
 
 ## Known gaps
 
-- **Images.** Remote R2 is empty; the blobs exist only under
-  `apps/api/.wrangler/state/v3/r2/`. `migrate-images-to-r2.cjs --remote` only
-  affects the R2 upload target, still reads local D1, and its regex only matches
-  `supabase.co` URLs — so the 216 rows already rewritten to `localhost:8787`
-  locally would be skipped and never uploaded. It needs fixing before use.
-  Loading from Supabase (as this runbook does) keeps the original `supabase.co`
-  image URLs, which keep working as long as the Supabase project is alive — so
-  images are not a cutover blocker, but they are a reason not to do step 10 yet.
+- **Images.** Remote R2 is still empty — the blobs exist only under
+  `apps/api/.wrangler/state/v3/r2/`. Loading from Supabase (as this runbook
+  does) keeps the original `supabase.co` image URLs, which keep working while
+  the Supabase project is alive, so images do not block the cutover — but they
+  are the reason not to do step 10 yet.
+
+  To move them, after step 3:
+
+  ```bash
+  node scripts/migration/migrate-images-to-r2.cjs --remote --out rewrite-urls.sql
+  npx wrangler d1 execute funsona-db --remote --config apps/api/wrangler.toml --file rewrite-urls.sql
+  ```
+
+  1,309 distinct objects are referenced. Add `--dry-run` to check which ones
+  still resolve upstream before uploading anything.
 - **`scripts/release/check-readiness.mjs` is stale** — it still requires
   `PUBLIC_SUPABASE_*`, expects Supabase secret names in `wrangler.toml`, and runs
   `supabase db push --dry-run`. It cannot pass against the migrated repo.
