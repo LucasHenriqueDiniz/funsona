@@ -29,6 +29,41 @@ const image = `${Astro.url.origin}/og/${slug}`;
 const { data: related } = await apiFetch(`/quizzes?limit=3&sort=likes`);
 const filteredRelated = related?.filter((q: any) => q.id !== quiz.id).slice(0, 3) || [];
 
+// The substance of a quiz — its questions — used to exist only inside the
+// client-rendered /quiz/:slug/play screen, so crawlers (and the AdSense
+// reviewer) only ever saw this landing page: a title, a blurb, and shared
+// nav/footer chrome. We now publish the questions and, for personality
+// quizzes, the possible outcomes as static HTML on this canonical URL.
+// Correct answers are deliberately withheld so the quiz stays worth playing.
+//
+// Older imported quizzes use a different key naming than the current schema
+// (`title`/`answers`/`label` vs `text`/`options`/`text`), so read both the way
+// QuizPlay.tsx does.
+type LandingOption = { text?: string; label?: string };
+type LandingQuestion = {
+  text?: string;
+  title?: string;
+  options?: LandingOption[];
+  answers?: LandingOption[];
+};
+type LandingOutcome = { title?: string; description?: string };
+
+const questions = (Array.isArray(quiz.content?.questions) ? quiz.content.questions : [])
+  .map((question: LandingQuestion) => ({
+    title: (question?.title ?? question?.text ?? "").trim(),
+    options: (question?.options ?? question?.answers ?? [])
+      .map((option: LandingOption) => (option?.text ?? option?.label ?? "").trim())
+      .filter(Boolean),
+  }))
+  .filter((question: { title: string }) => question.title.length > 0);
+
+const outcomes = (Array.isArray(quiz.content?.outcomes) ? quiz.content.outcomes : [])
+  .map((outcome: LandingOutcome) => ({
+    title: (outcome?.title ?? "").trim(),
+    description: (outcome?.description ?? "").trim(),
+  }))
+  .filter((outcome: { title: string }) => outcome.title.length > 0);
+
 // Fetch current user for comment section
 let currentUserId: string | null = null;
 try {
@@ -42,7 +77,7 @@ try {
 }
 ---
 
-<Layout title={title} description={description} image={image} canonical={`/quiz/${slug}`}>
+<Layout title={title} description={description} image={image} canonical={`/quiz/${slug}`} lang={quiz.language || "pt"}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Quiz",
@@ -163,6 +198,85 @@ try {
           <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
             {quiz.intro_content.context}
           </div>
+          {quiz.intro_content.what_youll_learn && (
+            <>
+              <h3 class="mb-3 mt-6 text-lg font-black text-[var(--color-text-primary)]">O que você vai descobrir</h3>
+              <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
+                {quiz.intro_content.what_youll_learn}
+              </div>
+            </>
+          )}
+          {quiz.intro_content.how_scoring_works && (
+            <>
+              <h3 class="mb-3 mt-6 text-lg font-black text-[var(--color-text-primary)]">Como a pontuação funciona</h3>
+              <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
+                {quiz.intro_content.how_scoring_works}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+    )}
+
+    {questions.length > 0 && (
+      <section class="relative mx-auto mb-8 max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div class="rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 sm:p-8">
+          <h2 class="text-xl font-black text-[var(--color-text-primary)]">
+            As {questions.length} perguntas de "{quiz.title}"
+          </h2>
+          <p class="mt-2 text-sm font-medium text-[var(--color-text-muted)]">
+            {quiz.type === "TRIVIA"
+              ? "Veja tudo o que vai ser perguntado. As respostas certas aparecem só enquanto você joga."
+              : "Veja tudo o que vai ser perguntado. Suas escolhas em cada pergunta definem o resultado final."}
+          </p>
+
+          <ol class="mt-6 space-y-6">
+            {questions.map((question: { title: string; options: string[] }, index: number) => (
+              <li class="border-t border-[var(--color-border)] pt-6 first:border-t-0 first:pt-0">
+                <h3 class="flex gap-3 text-base font-black text-[var(--color-text-primary)] sm:text-lg">
+                  <span class="shrink-0 text-brand-500">{index + 1}.</span>
+                  <span>{question.title}</span>
+                </h3>
+                {question.options.length > 0 && (
+                  <ul class="mt-3 grid gap-2 sm:grid-cols-2 sm:pl-8">
+                    {question.options.map((option: string) => (
+                      <li class="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-sm font-semibold text-[var(--color-text-secondary)]">
+                        {option}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ol>
+
+          <a href={`/quiz/${slug}/play`} class="mt-8 inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-600 to-accent-600 px-6 py-3 font-black text-white transition hover:-translate-y-0.5">
+            Responder as {questions.length} perguntas
+          </a>
+        </div>
+      </section>
+    )}
+
+    {outcomes.length > 0 && (
+      <section class="relative mx-auto mb-8 max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div class="rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 sm:p-8">
+          <h2 class="text-xl font-black text-[var(--color-text-primary)]">
+            Os {outcomes.length} resultados possíveis
+          </h2>
+          <p class="mt-2 text-sm font-medium text-[var(--color-text-muted)]">
+            Cada combinação de respostas leva a um destes perfis.
+          </p>
+
+          <dl class="mt-6 space-y-5">
+            {outcomes.map((outcome: { title: string; description: string }) => (
+              <div class="border-t border-[var(--color-border)] pt-5 first:border-t-0 first:pt-0">
+                <dt class="font-black text-[var(--color-text-primary)]">{outcome.title}</dt>
+                {outcome.description && (
+                  <dd class="mt-1.5 whitespace-pre-line text-[var(--color-text-secondary)]">{outcome.description}</dd>
+                )}
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
     )}

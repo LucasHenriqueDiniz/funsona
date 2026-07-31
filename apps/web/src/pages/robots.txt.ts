@@ -15,7 +15,6 @@ Allow: /
 Disallow: /api/
 Disallow: /admin/
 Disallow: /auth/
-Disallow: /quiz/*/play
 Disallow: /private/
 
 Sitemap: ${baseUrl}/sitemap.xml

@@ -87,6 +87,19 @@ function slugify(title: string) {
   return slug || `quiz-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+// POST /quizzes stores a client-supplied slug verbatim, which is how
+// machine-generated duplicates such as `internet-das-coisas-iot-1777921094606`
+// (a clean slug plus a raw Date.now()) got published alongside the clean
+// `internet-das-coisas-iot`. Google reads those pairs as scaled/duplicate
+// content. Strip the timestamp and re-slugify so a duplicate now collides with
+// the original and is rejected with 409 instead of silently becoming a twin.
+function normalizeRequestedSlug(requested: string | undefined): string | undefined {
+  if (!requested) return undefined;
+  const withoutTimestamp = requested.trim().replace(/-\d{10,}$/, "");
+  const normalized = slugify(withoutTimestamp || requested);
+  return normalized || undefined;
+}
+
 function normalizeTags(tags: unknown): string[] {
   if (!Array.isArray(tags)) return [];
   const normalized = tags
@@ -239,7 +252,8 @@ quizzesApp.post("/", authMiddleware, async (c) => {
     return c.json({ success: false, error: "Invalid input", details: parsed.error.format() }, 400);
   }
 
-  const slug = parsed.data.slug || `${slugify(parsed.data.title)}-${Date.now().toString(36)}`;
+  const slug =
+    normalizeRequestedSlug(parsed.data.slug) || `${slugify(parsed.data.title)}-${Date.now().toString(36)}`;
 
   if (await slugExists(c.env, slug)) {
     return c.json({ success: false, error: "Slug already exists" }, 409);

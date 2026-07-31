@@ -104,6 +104,8 @@ export const CreateQuizSchema = QuizSchema.omit({
   created_at: true,
   updated_at: true,
 }).extend({
+  // Accepted permissively here and normalized in the create route — see
+  // normalizeRequestedSlug() in apps/api/src/routes/quizzes.ts.
   slug: z.string().min(1).max(200).optional(),
 });
 

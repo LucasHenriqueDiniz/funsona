@@ -6,6 +6,11 @@ interface ImportMetaEnv {
   readonly PUBLIC_CLERK_PUBLISHABLE_KEY: string;
   readonly PUBLIC_GOOGLE_ANALYTICS_ID: string;
   readonly PUBLIC_GOOGLE_ADSENSE_CLIENT: string;
+  /** Numeric AdSense ad unit IDs, from the AdSense dashboard. A placement with
+   *  no ID configured renders nothing rather than an empty ad box. */
+  readonly PUBLIC_ADSENSE_SLOT_QUIZ_LANDING: string;
+  readonly PUBLIC_ADSENSE_SLOT_QUIZ_PLAY: string;
+  readonly PUBLIC_ADSENSE_SLOT_QUIZ_RESULT: string;
 }
 
 interface ImportMeta {

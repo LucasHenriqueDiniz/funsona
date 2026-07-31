@@ -12,45 +12,27 @@ export interface Props {
   transparentNav?: boolean;
   hideNav?: boolean;
   hideFooter?: boolean;
+  /** Keep the page out of the index while still letting crawlers follow its
+   *  links. Used for interactive shells (e.g. quiz play) whose content is
+   *  client-rendered and already published as static HTML on a canonical page. */
+  noindex?: boolean;
+  /** Declares the page's actual content language. Quiz pages pass the quiz's own
+   *  `language` so a Spanish quiz is not labelled lang="pt". */
+  lang?: string;
 }
 
-const { title, description = "FunSona - Crie e jogue quizzes incríveis", image = "/og-default.svg", canonical, transparentNav, hideNav = false, hideFooter = false } = Astro.props;
+const { title, description = "FunSona - Crie e jogue quizzes incríveis", image = "/og-default.svg", canonical, transparentNav, hideNav = false, hideFooter = false, noindex = false, lang } = Astro.props;
 const siteUrl = Astro.site || new URL(Astro.url.origin);
 const toAbsoluteUrl = (value: string) => new URL(value, siteUrl).toString();
 const url = canonical ? toAbsoluteUrl(canonical) : Astro.url.href;
 const imageUrl = toAbsoluteUrl(image);
-const locales = ["pt", "en", "es"] as const;
-const defaultLocale = "pt";
-const nonDefaultLocales = locales.filter((locale) => locale !== defaultLocale);
-const pathname = new URL(url).pathname;
-const normalizedPath = (() => {
-  for (const locale of nonDefaultLocales) {
-    if (pathname === `/${locale}`) return "/";
-    if (pathname.startsWith(`/${locale}/`)) {
-      return pathname.slice(locale.length + 1) || "/";
-    }
-  }
-  return pathname || "/";
-})();
-const localizedUrls = locales.map((locale) => {
-  const localizedPath = locale === defaultLocale
-    ? normalizedPath
-    : normalizedPath === "/"
-      ? `/${locale}`
-      : `/${locale}${normalizedPath}`;
-  return {
-    locale,
-    href: toAbsoluteUrl(localizedPath),
-  };
-});
-const xDefaultHref = localizedUrls.find((entry) => entry.locale === defaultLocale)?.href || url;
 
 const gaId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID;
 const adsenseClient = import.meta.env.PUBLIC_GOOGLE_ADSENSE_CLIENT;
 ---
 
 <!DOCTYPE html>
-<html lang={Astro.currentLocale || "pt"}>
+<html lang={lang || Astro.currentLocale || "pt"}>
 <head>
   <script is:inline>
     function applyTheme() {
@@ -72,11 +54,11 @@ const adsenseClient = import.meta.env.PUBLIC_GOOGLE_ADSENSE_CLIENT;
   <link rel="manifest" href="/site.webmanifest" />
   <title>{title}</title>
   <meta name="description" content={description} />
+  {noindex && <meta name="robots" content="noindex, follow" />}
   <link rel="canonical" href={url} />
-  {localizedUrls.map((entry) => (
-    <link rel="alternate" hreflang={entry.locale} href={entry.href} />
-  ))}
-  <link rel="alternate" hreflang="x-default" href={xDefaultHref} />
+  {/* No hreflang cluster: Astro's `i18n` config does not generate /en/* or /es/*
+      routes on its own and no such pages exist, so every alternate this used to
+      emit pointed at a 404. Re-add once localized routes actually exist. */}
 
   <!-- Open Graph -->
   <meta property="og:title" content={title} />

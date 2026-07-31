@@ -20,7 +20,12 @@ const title = `${quiz.title} | FunSona`;
 const description = quiz.description || `Jogue o quiz ${quiz.title} no FunSona`;
 ---
 
-<Layout title={title} description={description} canonical={`/quiz/${slug}/play`} hideFooter>
+{/* The play screen is a client-rendered React shell, so there is nothing for a
+    crawler to index here — the questions are published as static HTML on the
+    quiz landing page instead. It stays crawlable (robots.txt no longer blocks
+    it) so AdSense can inspect the in-quiz ad slots, but is kept out of the
+    index with noindex,follow. */}
+<Layout title={title} description={description} canonical={`/quiz/${slug}/play`} noindex lang={quiz.language || "pt"} hideFooter>
   <div class="relative min-h-screen overflow-hidden bg-[#070816] text-white">
     <div class="pointer-events-none absolute inset-0">
       <div class="absolute -top-28 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-brand-500/30 blur-[110px]"></div>

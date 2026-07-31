@@ -8,22 +8,38 @@ type QuizSitemapEntry = {
   updated_at?: string;
 };
 
-async function fetchAllPublishedQuizzes() {
-  const limit = 200;
-  const maxPages = 200;
-  const all: QuizSitemapEntry[] = [];
+// The API clamps `limit` to 50 (see apps/api/src/routes/quizzes.ts), so asking
+// for 200 silently returned 50 — and the old `pageItems.length < limit` guard
+// then read that as "last page" and stopped after page 1. The sitemap has been
+// capped at 50 quizzes ever since. Page at the real maximum instead.
+const PAGE_SIZE = 50;
+const MAX_PAGES = 400;
 
-  for (let page = 1; page <= maxPages; page++) {
-    const response = await apiFetch(`/quizzes?limit=${limit}&page=${page}`);
+async function fetchAllPublishedQuizzes() {
+  const all: QuizSitemapEntry[] = [];
+  const seenSlugs = new Set<string>();
+
+  for (let page = 1; page <= MAX_PAGES; page++) {
+    const response = await apiFetch(`/quizzes?limit=${PAGE_SIZE}&page=${page}`);
     const pageItems = (response?.data || []) as QuizSitemapEntry[];
 
     if (!Array.isArray(pageItems) || pageItems.length === 0) {
       break;
     }
 
-    all.push(...pageItems);
+    for (const item of pageItems) {
+      if (item?.slug && !seenSlugs.has(item.slug)) {
+        seenSlugs.add(item.slug);
+        all.push(item);
+      }
+    }
 
-    if (pageItems.length < limit) {
+    if (pageItems.length < PAGE_SIZE) {
+      break;
+    }
+
+    const total = response?.meta?.total;
+    if (typeof total === "number" && all.length >= total) {
       break;
     }
   }
@@ -33,13 +49,13 @@ async function fetchAllPublishedQuizzes() {
 
 export const GET: APIRoute = async ({ site }) => {
   const baseUrl = site?.toString().replace(/\/$/, "") || "https://funsona.com";
-  const locales = ["pt", "en", "es"] as const;
   const defaultLocale = "pt";
-  const withLocale = (path: string, locale: (typeof locales)[number]) => {
-    if (locale === defaultLocale) return path;
-    return path === "/" ? `/${locale}` : `/${locale}${path}`;
-  };
-  
+
+  // Only default-locale URLs are listed. Astro's `i18n` config does not by
+  // itself generate /en/* or /es/* routes, and no such pages exist under
+  // src/pages — every locale-prefixed URL returns 404 (verified against
+  // production). This sitemap used to emit all three locales for every path,
+  // so roughly two thirds of the URLs submitted to Google were dead links.
   const quizzes = await fetchAllPublishedQuizzes();
   const guides = await getCollection("guides");
   const basePaths = [
@@ -54,38 +70,38 @@ export const GET: APIRoute = async ({ site }) => {
     { path: "/guides", changefreq: "weekly", priority: 0.6 },
   ] as const;
 
-  const localizedStaticUrls = locales.flatMap((locale) =>
-    basePaths.map((entry) => ({
-      loc: `${baseUrl}${withLocale(entry.path, locale)}`,
-      changefreq: entry.changefreq,
-      priority: entry.priority,
-    }))
-  );
+  const staticUrls = basePaths.map((entry) => ({
+    loc: `${baseUrl}${entry.path}`,
+    changefreq: entry.changefreq,
+    priority: entry.priority,
+  }));
 
-  const localizedQuizUrls = locales.flatMap((locale) =>
-    (quizzes || []).map((quiz) => ({
-      loc: `${baseUrl}${withLocale(`/quiz/${quiz.slug}`, locale)}`,
-      changefreq: "weekly",
-      priority: 0.8,
-      lastmod: quiz.updated_at?.split("T")[0],
-    }))
-  );
+  // Quizzes are authored in a single language and never translated, so each one
+  // has exactly one URL. The locale-prefixed variants used to be listed here as
+  // well, which put ~1,500 duplicate Portuguese pages in the sitemap; they now
+  // 301 to the canonical URL (see src/middleware.ts).
+  const quizUrls = (quizzes || []).map((quiz) => ({
+    loc: `${baseUrl}/quiz/${quiz.slug}`,
+    changefreq: "weekly",
+    priority: 0.8,
+    lastmod: quiz.updated_at?.split("T")[0],
+  }));
 
-  // Guide entries carry their own locale in the collection id (`<locale>/<slug>`),
-  // so each one maps to exactly one localized URL rather than being repeated
-  // across all locales like the static paths above.
-  const guideUrls = guides.map((guide: CollectionEntry<"guides">) => {
-    const [locale, slug] = guide.id.split("/");
-    return {
-      loc: `${baseUrl}${withLocale(`/guides/${slug}`, locale as (typeof locales)[number])}`,
+  // Guide entries carry their locale in the collection id (`<locale>/<slug>`),
+  // but /guides/[slug].astro only ever resolves the default locale, so only the
+  // pt guides are actually reachable. The en/es ones were being submitted as
+  // /en/guides/... and /es/guides/..., which 404. List just the reachable ones.
+  const guideUrls = guides
+    .filter((guide: CollectionEntry<"guides">) => guide.id.split("/")[0] === defaultLocale)
+    .map((guide: CollectionEntry<"guides">) => ({
+      loc: `${baseUrl}/guides/${guide.id.split("/")[1]}`,
       changefreq: "monthly",
       priority: 0.6,
       lastmod: (guide.data.updatedDate || guide.data.publishedDate).toISOString().split("T")[0],
-    };
-  });
+    }));
 
   const uniqueUrls = new Map<string, { loc: string; changefreq: string; priority: number; lastmod?: string }>();
-  for (const entry of [...localizedStaticUrls, ...localizedQuizUrls, ...guideUrls]) {
+  for (const entry of [...staticUrls, ...quizUrls, ...guideUrls]) {
     uniqueUrls.set(entry.loc, entry);
   }
   const urls = Array.from(uniqueUrls.values());
@@ -107,6 +123,9 @@ ${urls
   return new Response(xml, {
     headers: {
       "Content-Type": "application/xml",
+      // Building this now costs one API round-trip per 50 quizzes, so let the
+      // edge serve it from cache between crawls instead of re-paginating.
+      "Cache-Control": "public, max-age=3600, s-maxage=21600",
     },
   });
 };
