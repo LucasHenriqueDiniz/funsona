@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { Webhook } from "svix";
 import type { Env } from "../../index.js";
-import { upsertProfileFromClerk, deleteProfile } from "../../db/client.js";
+import { upsertProfileFromClerk, deleteProfileByClerkUserId, resolveProfileIdForClerkUser } from "../../db/client.js";
 
 const clerkWebhookApp = new Hono<Env>();
 
@@ -13,7 +13,13 @@ type ClerkUserEvent = {
     first_name: string | null;
     last_name: string | null;
     image_url: string | null;
-    email_addresses: Array<{ id: string; email_address: string }>;
+    // `verification.status` gates claiming a pre-existing profile by email, so
+    // an unverified address can never be used to take over another account.
+    email_addresses: Array<{
+      id: string;
+      email_address: string;
+      verification?: { status?: string } | null;
+    }>;
     primary_email_address_id: string | null;
   };
 };
@@ -37,19 +43,30 @@ clerkWebhookApp.post("/", async (c) => {
 
   if (event.type === "user.created" || event.type === "user.updated") {
     const user = event.data;
-    const primaryEmail = user.email_addresses.find((e) => e.id === user.primary_email_address_id)?.email_address
-      ?? user.email_addresses[0]?.email_address
+    const emailRecord = user.email_addresses.find((e) => e.id === user.primary_email_address_id)
+      ?? user.email_addresses[0]
       ?? null;
+    const primaryEmail = emailRecord?.email_address ?? null;
     const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.username || primaryEmail?.split("@")[0] || "user";
 
-    await upsertProfileFromClerk(c.env, user.id, {
+    // Resolve first so a returning Supabase-era user updates their existing
+    // profile instead of getting a second, empty one keyed by the Clerk id.
+    const profileId = await resolveProfileIdForClerkUser(c.env, user.id, {
+      handleSeed: user.username || primaryEmail?.split("@")[0] || `user_${user.id.slice(-8)}`,
+      displayName,
+      email: primaryEmail,
+      emailVerified: emailRecord?.verification?.status === "verified",
+      avatarUrl: user.image_url || null,
+    });
+
+    await upsertProfileFromClerk(c.env, profileId, {
       handleSeed: user.username || primaryEmail?.split("@")[0] || `user_${user.id.slice(-8)}`,
       displayName,
       email: primaryEmail,
       avatarUrl: user.image_url || null,
     });
   } else if (event.type === "user.deleted") {
-    await deleteProfile(c.env, event.data.id);
+    await deleteProfileByClerkUserId(c.env, event.data.id);
   }
 
   return c.json({ success: true });

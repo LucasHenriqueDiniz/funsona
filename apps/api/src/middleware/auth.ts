@@ -1,13 +1,17 @@
 import type { MiddlewareHandler } from "hono";
 import { createClerkClient } from "@clerk/backend";
 import type { Env } from "../index.js";
-import { ensureProfileExists, getProfileById } from "../db/client.js";
+import { resolveProfileIdForClerkUser } from "../db/client.js";
 
 // Verifies the Clerk session for the incoming request (cookie or Bearer
-// token — authenticateRequest handles both) and, on success, ensures a
-// local `profiles` row exists for that Clerk user (lazily created here so
-// the rest of the app keeps working even before the user.created webhook
-// has landed, or if it's ever missed).
+// token — authenticateRequest handles both) and resolves that Clerk user to a
+// local `profiles` row, creating one lazily if needed (e.g. before the
+// user.created webhook lands, or if it's ever missed).
+//
+// `userId` in the context is the internal profile id, NOT the Clerk id. Users
+// carried over from Supabase are keyed by their original Supabase UUID, which
+// is what author_id/user_id/reporter_id reference throughout the schema — so
+// every ownership check downstream compares against the internal id.
 export const authMiddleware: MiddlewareHandler<Env> = async (c, next) => {
   const clerk = createClerkClient({ secretKey: c.env.CLERK_SECRET_KEY, publishableKey: c.env.CLERK_PUBLISHABLE_KEY });
 
@@ -16,23 +20,23 @@ export const authMiddleware: MiddlewareHandler<Env> = async (c, next) => {
 
     if (isSignedIn) {
       const auth = toAuth();
-      const userId = auth.userId;
-      if (userId) {
+      const clerkUserId = auth.userId;
+      if (clerkUserId) {
+        const user = await clerk.users.getUser(clerkUserId);
+        const primaryEmail = user.primaryEmailAddress ?? user.emailAddresses[0] ?? null;
+        const email = primaryEmail?.emailAddress ?? null;
+        const displayName = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.username || email?.split("@")[0] || "user";
+
+        const userId = await resolveProfileIdForClerkUser(c.env, clerkUserId, {
+          handleSeed: user.username || email?.split("@")[0] || `user_${clerkUserId.slice(-8)}`,
+          displayName,
+          email,
+          emailVerified: primaryEmail?.verification?.status === "verified",
+          avatarUrl: user.imageUrl || null,
+        });
+
         c.set("userId", userId);
         c.set("session", { userId });
-
-        const existing = await getProfileById(c.env, userId);
-        if (!existing) {
-          const user = await clerk.users.getUser(userId);
-          const email = user.primaryEmailAddress?.emailAddress ?? user.emailAddresses[0]?.emailAddress ?? null;
-          const displayName = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.username || email?.split("@")[0] || "user";
-          await ensureProfileExists(c.env, userId, {
-            handleSeed: user.username || email?.split("@")[0] || `user_${userId.slice(-8)}`,
-            displayName,
-            email,
-            avatarUrl: user.imageUrl || null,
-          });
-        }
       }
     }
   } catch (err) {

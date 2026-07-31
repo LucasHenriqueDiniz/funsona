@@ -117,6 +117,76 @@ export async function ensureProfileExists(
     .run();
 }
 
+export type ClerkIdentity = {
+  handleSeed: string;
+  displayName: string;
+  email: string | null;
+  /** Whether Clerk considers `email` verified. Claiming a legacy profile by
+   *  email is an account takeover vector if the address was never proven, so an
+   *  unverified address is treated as if no email were supplied at all. */
+  emailVerified: boolean;
+  avatarUrl: string | null;
+};
+
+/**
+ * Maps a Clerk user id onto the internal `profiles.id`, which for users carried
+ * over from Supabase is a Supabase auth UUID rather than the Clerk id.
+ *
+ * Resolution order:
+ *   1. `clerk_user_id` — already linked, the steady state.
+ *   2. verified email — a legacy row whose owner is signing in with Clerk for
+ *      the first time. The row is claimed by stamping `clerk_user_id`, so this
+ *      path runs at most once per user.
+ *   3. otherwise create a new profile keyed by the Clerk id.
+ *
+ * Returns the internal profile id. Callers should use that for ownership checks
+ * rather than the Clerk id.
+ */
+export async function resolveProfileIdForClerkUser(
+  env: Env["Bindings"],
+  clerkUserId: string,
+  identity: ClerkIdentity
+): Promise<string> {
+  const db = getDb(env);
+
+  const linked = await db
+    .prepare("SELECT id FROM profiles WHERE clerk_user_id = ?")
+    .bind(clerkUserId)
+    .first<{ id: string }>();
+  if (linked) return linked.id;
+
+  if (identity.email && identity.emailVerified) {
+    const byEmail = await db
+      .prepare("SELECT id FROM profiles WHERE LOWER(email) = LOWER(?) AND clerk_user_id IS NULL")
+      .bind(identity.email)
+      .first<{ id: string }>();
+
+    if (byEmail) {
+      // Conditional on clerk_user_id still being NULL so two concurrent first
+      // sign-ins cannot both claim the same row.
+      const claimed = await db
+        .prepare("UPDATE profiles SET clerk_user_id = ?, updated_at = ? WHERE id = ? AND clerk_user_id IS NULL")
+        .bind(clerkUserId, nowIso(), byEmail.id)
+        .run();
+      if (claimed.meta.changes > 0) return byEmail.id;
+
+      // Lost the race — re-read to find where this Clerk id landed.
+      const reread = await db
+        .prepare("SELECT id FROM profiles WHERE clerk_user_id = ?")
+        .bind(clerkUserId)
+        .first<{ id: string }>();
+      if (reread) return reread.id;
+    }
+  }
+
+  await ensureProfileExists(env, clerkUserId, identity);
+  await db
+    .prepare("UPDATE profiles SET clerk_user_id = ? WHERE id = ? AND clerk_user_id IS NULL")
+    .bind(clerkUserId, clerkUserId)
+    .run();
+  return clerkUserId;
+}
+
 export async function upsertProfileFromClerk(
   env: Env["Bindings"],
   id: string,
@@ -135,6 +205,15 @@ export async function upsertProfileFromClerk(
 
 export async function deleteProfile(env: Env["Bindings"], id: string) {
   await getDb(env).prepare("DELETE FROM profiles WHERE id = ?").bind(id).run();
+}
+
+// Clerk's user.deleted webhook carries the Clerk id, which for users carried
+// over from Supabase is not the profile's primary key.
+export async function deleteProfileByClerkUserId(env: Env["Bindings"], clerkUserId: string) {
+  await getDb(env)
+    .prepare("DELETE FROM profiles WHERE clerk_user_id = ? OR (id = ? AND clerk_user_id IS NULL)")
+    .bind(clerkUserId, clerkUserId)
+    .run();
 }
 
 export async function updateProfile(env: Env["Bindings"], id: string, updates: Record<string, unknown>) {
@@ -574,6 +653,15 @@ export async function getLeaderboardWindow(env: Env["Bindings"], window: string,
   return results;
 }
 
+// RANK() semantics (matches the ported Postgres RANK() OVER (ORDER BY xp DESC)):
+// tied scores share the same rank, and the next distinct score skips ahead
+// by the number of tied rows above it — not a plain dense array position.
+function rankOf(results: { user_id: string; xp: number }[], userId: string) {
+  const target = results.find((r) => r.user_id === userId);
+  if (!target) return null;
+  return { xp: target.xp, rank: results.filter((r) => r.xp > target.xp).length + 1 };
+}
+
 export async function getMyLeaderboardRank(env: Env["Bindings"], userId: string, window: string) {
   const db = getDb(env);
   if (window === "weekly" || window === "monthly") {
@@ -584,16 +672,16 @@ export async function getMyLeaderboardRank(env: Env["Bindings"], userId: string,
       )
       .bind(since)
       .all<{ user_id: string; xp: number }>();
-    const rank = results.findIndex((r) => r.user_id === userId);
-    if (rank === -1) return null;
+    const ranked = rankOf(results, userId);
+    if (!ranked) return null;
     const profile = await getProfileById(env, userId);
-    return { rank: rank + 1, xp: results[rank].xp, handle: profile?.handle, display_name: profile?.display_name, avatar_url: profile?.avatar_url, level: profile?.level };
+    return { rank: ranked.rank, xp: ranked.xp, handle: profile?.handle, display_name: profile?.display_name, avatar_url: profile?.avatar_url, level: profile?.level };
   }
   const { results } = await db.prepare("SELECT user_id, xp_all_time as xp FROM leaderboard ORDER BY xp_all_time DESC").all<{ user_id: string; xp: number }>();
-  const rank = results.findIndex((r) => r.user_id === userId);
-  if (rank === -1) return null;
+  const ranked = rankOf(results, userId);
+  if (!ranked) return null;
   const profile = await getProfileById(env, userId);
-  return { rank: rank + 1, xp: results[rank].xp, handle: profile?.handle, display_name: profile?.display_name, avatar_url: profile?.avatar_url, level: profile?.level };
+  return { rank: ranked.rank, xp: ranked.xp, handle: profile?.handle, display_name: profile?.display_name, avatar_url: profile?.avatar_url, level: profile?.level };
 }
 
 // ─── Comments ───────────────────────────────────────────────────────────────
