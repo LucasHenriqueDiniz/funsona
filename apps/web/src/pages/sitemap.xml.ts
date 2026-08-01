@@ -15,35 +15,44 @@ type QuizSitemapEntry = {
 const PAGE_SIZE = 50;
 const MAX_PAGES = 400;
 
+/**
+ * Walking the pages one after another took 10-13s in production, and Google
+ * gave up on it — Search Console reported "couldn't fetch the sitemap" with 0
+ * pages found. Cloudflare does not cache this response either
+ * (cf-cache-status: DYNAMIC), so the cost was paid on every request.
+ *
+ * The first response carries `meta.total`, so only that one call has to happen
+ * before the rest: read the total, then fetch the remaining pages at once.
+ */
 async function fetchAllPublishedQuizzes() {
-  const all: QuizSitemapEntry[] = [];
+  const firstResponse = await apiFetch(`/quizzes?limit=${PAGE_SIZE}&page=1`);
+  const firstPage = (firstResponse?.data || []) as QuizSitemapEntry[];
+  if (!Array.isArray(firstPage) || firstPage.length === 0) return [];
+
+  const total = firstResponse?.meta?.total;
+  const pageCount =
+    typeof total === "number" && total > 0
+      ? Math.min(Math.ceil(total / PAGE_SIZE), MAX_PAGES)
+      : 1;
+
+  const remaining = await Promise.all(
+    Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) =>
+      apiFetch(`/quizzes?limit=${PAGE_SIZE}&page=${index + 2}`).then(
+        (response) => (response?.data || []) as QuizSitemapEntry[]
+      )
+    )
+  );
+
+  // Dedupe by slug: paging a list that is being written to can repeat a row
+  // across page boundaries, and a duplicate <loc> invalidates the sitemap.
   const seenSlugs = new Set<string>();
-
-  for (let page = 1; page <= MAX_PAGES; page++) {
-    const response = await apiFetch(`/quizzes?limit=${PAGE_SIZE}&page=${page}`);
-    const pageItems = (response?.data || []) as QuizSitemapEntry[];
-
-    if (!Array.isArray(pageItems) || pageItems.length === 0) {
-      break;
-    }
-
-    for (const item of pageItems) {
-      if (item?.slug && !seenSlugs.has(item.slug)) {
-        seenSlugs.add(item.slug);
-        all.push(item);
-      }
-    }
-
-    if (pageItems.length < PAGE_SIZE) {
-      break;
-    }
-
-    const total = response?.meta?.total;
-    if (typeof total === "number" && all.length >= total) {
-      break;
+  const all: QuizSitemapEntry[] = [];
+  for (const item of [firstPage, ...remaining].flat()) {
+    if (item?.slug && !seenSlugs.has(item.slug)) {
+      seenSlugs.add(item.slug);
+      all.push(item);
     }
   }
-
   return all;
 }
 
