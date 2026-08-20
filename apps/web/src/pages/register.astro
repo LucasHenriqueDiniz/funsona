@@ -37,16 +37,9 @@ const quizImages = [
             <p class="text-[var(--color-text-muted)] mt-2">Publique quizzes e construa seu perfil.</p>
           </div>
 
+          <!-- Clerk's own footer already renders the localized "entrar"
+               link (signInUrl), so the page doesn't repeat it. -->
           <RegisterForm client:load />
-
-          <div class="mt-8 text-center">
-            <p class="text-sm text-[var(--color-text-secondary)]">
-              Já tem uma conta?{" "}
-              <a href="/login" class="font-bold text-brand-500 hover:text-brand-600 transition hover:underline">
-                Entrar
-              </a>
-            </p>
-          </div>
         </div>
 
         <p class="text-center text-xs text-[var(--color-text-muted)] mt-8">
