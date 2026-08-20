@@ -5,9 +5,3 @@ pages_build_output_dir = "./dist"
 [[kv_namespaces]]
 binding = "SESSION"
 id = "02dbd51b0bac4b67a0edafee77697595"
-
-# PUBLIC_CLERK_PUBLISHABLE_KEY lives in the repo-root wrangler.toml instead —
-# that's the file Cloudflare Pages' Git-integration build actually reads
-# (see ccb2811). Declaring it here too made `wrangler pages deploy` fail with
-# "Binding name 'PUBLIC_CLERK_PUBLISHABLE_KEY' already in use" — this file is
-# still needed locally for dev/type-generation and the SESSION KV binding.
