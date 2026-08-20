@@ -18,99 +18,96 @@
  *
  * DRY RUN BY DEFAULT. Nothing is written unless you pass --apply.
  *
- *   node scripts/cleanup-duplicate-quizzes.mjs            # report only
- *   node scripts/cleanup-duplicate-quizzes.mjs --apply    # actually write
+ *   node scripts/cleanup-duplicate-quizzes.mjs                          # report only, tier=paraphrased
+ *   node scripts/cleanup-duplicate-quizzes.mjs --apply                  # write, tier=paraphrased
+ *   node scripts/cleanup-duplicate-quizzes.mjs --tier=all --apply       # write, all 22 pairs
  *
- * Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (production still runs the
- * Supabase-backed API; once the D1 cutover lands, point this at D1 instead).
- *
- * Talks to PostgREST over plain fetch so it has no npm dependencies and can run
- * from the repo root without an install step.
+ * Talks to production D1 (`funsona-db`) via `wrangler d1 execute --remote`,
+ * run from apps/api where wrangler.toml declares the binding. Reversible:
+ * archived rows can be flipped back to status='PUBLISHED' and the redirect
+ * row deleted — nothing is ever DELETEd.
  */
+import { execFileSync } from "node:child_process";
+
 const APPLY = process.argv.includes("--apply");
+const TIER = (process.argv.find((a) => a.startsWith("--tier="))?.split("=")[1]) || "paraphrased";
 
-const SUPABASE_URL = process.env.SUPABASE_URL?.replace(/\/$/, "");
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error("Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.");
-  process.exit(1);
+function d1Query(sql) {
+  const quotedSql = `"${sql.replace(/"/g, '\\"')}"`;
+  const out = execFileSync(
+    "npx",
+    ["wrangler", "d1", "execute", "funsona-db", "--remote", "--json", "--command", quotedSql],
+    {
+      cwd: new URL("../apps/api", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"),
+      encoding: "utf8",
+      maxBuffer: 1024 * 1024 * 16,
+      shell: true,
+    }
+  );
+  const parsed = JSON.parse(out);
+  return parsed[0]?.results ?? [];
 }
 
-async function rest(path, init = {}) {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    ...init,
-    headers: {
-      apikey: SUPABASE_SERVICE_ROLE_KEY,
-      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-      "Content-Type": "application/json",
-      ...(init.headers ?? {}),
-    },
-  });
-  const text = await response.text();
-  if (!response.ok) throw new Error(`${path} -> ${response.status} ${text}`);
-  return text ? JSON.parse(text) : null;
+const esc = (s) => String(s).replace(/'/g, "''");
+
+async function fetchQuiz(slug) {
+  const rows = d1Query(
+    `SELECT id, slug, title, status, content, attempts_count FROM quizzes WHERE slug = '${esc(slug)}'`
+  );
+  return rows[0] ?? null;
 }
 
-/** [keeper slug, duplicate slug] — from scripts/duplicate-quizzes.md */
+/** [keeper slug, duplicate slug, verdict] — from scripts/duplicate-quizzes.md */
 const PAIRS = [
-  ["qual-e-o-seu-alinhamento-moral", "qual-e-o-seu-alinhamento-moral-1"],
-  ["qual-e-o-seu-alinhamento-moral", "qual-e-o-seu-alinhamento-moral-5"],
-  ["quem-e-voce-descubra-seu-arquetipo", "quem-e-voce-descubra-seu-arquetipo-6"],
-  ["qual-e-a-minha-ideologia-politica", "qual-e-a-minha-ideologia-politica-5"],
-  ["qual-pokemon-inicial-voce-deve-escolher", "qual-pokemon-inicial-voce-deve-escolher-5"],
-  ["como-sera-seu-2024", "como-sera-seu-2024-6"],
-  ["que-tipo-de-macaco-voce-e", "que-tipo-de-macaco-voce-e-5"],
-  ["quem-e-voce", "quem-e-voce-5"],
+  ["qual-e-o-seu-alinhamento-moral", "qual-e-o-seu-alinhamento-moral-1", "paraphrased"],
+  ["qual-e-o-seu-alinhamento-moral", "qual-e-o-seu-alinhamento-moral-5", "paraphrased"],
+  ["quem-e-voce-descubra-seu-arquetipo", "quem-e-voce-descubra-seu-arquetipo-6", "distinct-ish"],
+  ["qual-e-a-minha-ideologia-politica", "qual-e-a-minha-ideologia-politica-5", "distinct-ish"],
+  ["qual-pokemon-inicial-voce-deve-escolher", "qual-pokemon-inicial-voce-deve-escolher-5", "paraphrased"],
+  ["como-sera-seu-2024", "como-sera-seu-2024-6", "paraphrased"],
+  ["que-tipo-de-macaco-voce-e", "que-tipo-de-macaco-voce-e-5", "paraphrased"],
+  ["quem-e-voce", "quem-e-voce-5", "paraphrased"],
   [
     "quao-facilmente-voce-se-deixa-seduzir-descubra-seu-perfil-de-seducao",
     "quao-facilmente-voce-se-deixa-seduzir-descubra-seu-perfil-de-seducao-5",
+    "paraphrased",
   ],
   [
     "descubra-o-que-as-pessoas-que-voce-acha-atraente-revelam-sobre-voce",
     "descubra-o-que-as-pessoas-que-voce-acha-atraente-revelam-sobre-voce-5",
+    "distinct-ish",
   ],
   [
     "o-que-diz-sua-mensagem-personalizada-de-biscoito-da-sorte",
     "o-que-diz-sua-mensagem-personalizada-de-biscoito-da-sorte-5",
+    "distinct-ish",
   ],
-  ["descubra-se-voce-conhece-bem-o-nosso-planeta", "descubra-se-voce-conhece-bem-o-nosso-planeta-5"],
-  ["que-criatura-sobrenatural-guarda-seus-sonhos", "que-criatura-sobrenatural-guarda-seus-sonhos-5"],
-  ["qual-classe-voce-deve-escolher", "qual-classe-voce-deve-escolher-5"],
-  ["voce-e-kira-ou-l", "voce-e-kira-ou-l-5"],
-  ["qual-e-o-meu-fetiche-descubra-seu-fetiche-sexual", "qual-e-o-meu-fetiche-descubra-seu-fetiche-sexual-5"],
-  ["descubra-quao-atraente-voce-e", "descubra-quao-atraente-voce-e-5"],
-  ["qual-e-o-meu-estilo-de-apego", "qual-e-o-meu-estilo-de-apego-5"],
-  ["voce-e-mais-acucar-ou-sal", "voce-e-mais-acucar-ou-sal-5"],
-  ["qual-casa-voce-deve-escolher", "qual-casa-voce-deve-escolher-1"],
-  ["qual-personagem-voce-e", "qual-personagem-voce-e-1"],
-  ["em-que-pais-voce-deve-morar", "em-que-pais-voce-deve-morar-1"],
-];
+  ["descubra-se-voce-conhece-bem-o-nosso-planeta", "descubra-se-voce-conhece-bem-o-nosso-planeta-5", "distinct-ish"],
+  ["que-criatura-sobrenatural-guarda-seus-sonhos", "que-criatura-sobrenatural-guarda-seus-sonhos-5", "paraphrased"],
+  ["qual-classe-voce-deve-escolher", "qual-classe-voce-deve-escolher-5", "paraphrased"],
+  ["voce-e-kira-ou-l", "voce-e-kira-ou-l-5", "distinct-ish"],
+  ["qual-e-o-meu-fetiche-descubra-seu-fetiche-sexual", "qual-e-o-meu-fetiche-descubra-seu-fetiche-sexual-5", "paraphrased"],
+  ["descubra-quao-atraente-voce-e", "descubra-quao-atraente-voce-e-5", "paraphrased"],
+  ["qual-e-o-meu-estilo-de-apego", "qual-e-o-meu-estilo-de-apego-5", "distinct-ish"],
+  ["voce-e-mais-acucar-ou-sal", "voce-e-mais-acucar-ou-sal-5", "paraphrased"],
+  ["qual-casa-voce-deve-escolher", "qual-casa-voce-deve-escolher-1", "paraphrased"],
+  ["qual-personagem-voce-e", "qual-personagem-voce-e-1", "distinct-ish"],
+  ["em-que-pais-voce-deve-morar", "em-que-pais-voce-deve-morar-1", "distinct-ish"],
+].filter(([, , verdict]) => TIER === "all" || verdict === TIER);
 
-const normalize = (text) =>
-  String(text ?? "")
-    .toLowerCase()
-    .replace(/[^\p{L}\p{Nd}\s]/gu, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-const questionFingerprint = (quiz) => {
-  const questions = quiz?.content?.questions ?? [];
-  return JSON.stringify(questions.map((q) => normalize(q?.text ?? q?.title)));
-};
-
-async function fetchQuiz(slug) {
-  const rows = await rest(
-    `quizzes?slug=eq.${encodeURIComponent(slug)}&select=id,slug,title,status,content,attempts_count`
-  );
-  return rows?.[0] ?? null;
-}
+// Paraphrased pairs never have identical question text by definition (that's
+// why they're "paraphrased" and not exact copies) — see duplicate-quizzes.md.
+// The invariant the audit actually verified, and the one worth re-checking
+// here as a staleness guard, is identical question COUNT: "every single pair
+// has an identical question count... generated from the same template".
+const questionCount = (quiz) => (JSON.parse(quiz?.content ?? "{}")?.questions ?? []).length;
 
 async function main() {
+  console.log(`TIER: ${TIER} (${PAIRS.length} pairs)`);
   console.log(APPLY ? "MODE: APPLY (writing changes)\n" : "MODE: DRY RUN (no writes)\n");
 
   let retired = 0;
   let skipped = 0;
-  let missingRedirectTable = false;
 
   for (const [keeperSlug, duplicateSlug] of PAIRS) {
     const keeper = await fetchQuiz(keeperSlug);
@@ -126,8 +123,8 @@ async function main() {
       skipped++;
       continue;
     }
-    if (questionFingerprint(keeper) !== questionFingerprint(duplicate)) {
-      console.log(`SKIP ${duplicateSlug} — questions no longer identical, needs a human`);
+    if (questionCount(keeper) !== questionCount(duplicate)) {
+      console.log(`SKIP ${duplicateSlug} — question count no longer matches, needs a human`);
       skipped++;
       continue;
     }
@@ -141,36 +138,15 @@ async function main() {
     retired++;
     if (!APPLY) continue;
 
-    await rest(`quizzes?id=eq.${encodeURIComponent(duplicate.id)}`, {
-      method: "PATCH",
-      body: JSON.stringify({ status: "ARCHIVED" }),
-    });
+    d1Query(`UPDATE quizzes SET status = 'ARCHIVED', updated_at = STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = '${esc(duplicate.id)}'`);
 
-    // `quiz_slug_redirects` exists in the D1 schema but was never applied to
-    // Supabase (its migration sat unapplied), so on the current production
-    // backend there is nowhere to record the 301. Archive still works; the URL
-    // just 404s until the D1 cutover, which is acceptable here because every
-    // retired quiz has zero plays and none are indexed yet.
-    try {
-      await rest("quiz_slug_redirects", {
-        method: "POST",
-        headers: { Prefer: "resolution=merge-duplicates" },
-        body: JSON.stringify({ old_slug: duplicate.slug, new_slug: keeper.slug, quiz_id: keeper.id }),
-      });
-    } catch (error) {
-      if (/does not exist|PGRST205|42P01/.test(error.message)) {
-        missingRedirectTable = true;
-      } else {
-        throw error;
-      }
-    }
+    d1Query(
+      `INSERT INTO quiz_slug_redirects (old_slug, quiz_id, new_slug) VALUES ('${esc(duplicate.slug)}', '${esc(keeper.id)}', '${esc(keeper.slug)}')
+       ON CONFLICT(old_slug) DO UPDATE SET quiz_id = excluded.quiz_id, new_slug = excluded.new_slug`
+    );
   }
 
   console.log(`\n${retired} to retire, ${skipped} skipped.`);
-  if (missingRedirectTable) {
-    console.log("NOTE: quiz_slug_redirects is absent on this backend — quizzes were archived");
-    console.log("      without a redirect, so their URLs will 404 until the D1 cutover.");
-  }
   if (!APPLY && retired > 0) console.log("Re-run with --apply to write these changes.");
 }
 

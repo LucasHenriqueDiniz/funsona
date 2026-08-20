@@ -1,0 +1,770 @@
+slug,title,type,attempts_count,completions_count,question_count,outcome_count,min_options,cover_class,total_images,broken_images,placeholder_images,missing_question_images,missing_outcome_images,duplicate_role,duplicate_of,duplicate_verdict,severity_score,flags
+qual-personagem-de-star-wars-voce-e-teste-divertido,Qual personagem de Star Wars domina a sua energia galáctica?,PERSONALITY,0,0,11,15,4,ok_unclassified,19,18,18,8,0,,,,55,ZERO_ATTEMPTS|BROKEN_IMAGES:18|UNRESOLVED_PLACEHOLDER_IMAGES:18
+que-personagem-do-harry-potter-e-teste-de-personalidade,Qual personagem de Harry Potter revela sua verdadeira energia mágica?,PERSONALITY,0,0,10,10,4,ok_unclassified,11,10,10,10,0,,,,31,ZERO_ATTEMPTS|BROKEN_IMAGES:10|UNRESOLVED_PLACEHOLDER_IMAGES:10
+com-qual-celebridade-eu-me-pareco-questionario-divertido-sobre-sosias-de-celebridades,Qual celebridade tem a mesma energia que você?,PERSONALITY,0,0,12,10,3,ok_unclassified,11,10,10,12,0,,,,31,ZERO_ATTEMPTS|BROKEN_IMAGES:10|UNRESOLVED_PLACEHOLDER_IMAGES:10
+qual-e-a-sua-cor-de-mms-descubra-sua-personalidade-mm,Qual cor de M&M's revela sua personalidade doce e secreta?,PERSONALITY,0,0,10,6,6,ok_unclassified,17,10,10,0,0,,,,31,ZERO_ATTEMPTS|BROKEN_IMAGES:10|UNRESOLVED_PLACEHOLDER_IMAGES:10
+qual-e-a-sua-cor-do-arco-iris,Qual Cor do Arco-Íris Combina com a Sua Energia?,PERSONALITY,0,0,10,6,4,ok_unclassified,17,10,10,0,0,,,,31,ZERO_ATTEMPTS|BROKEN_IMAGES:10|UNRESOLVED_PLACEHOLDER_IMAGES:10
+podemos-adivinhar-seu-emoji-favorito-quiz-divertido,Será que Conseguimos Adivinhar Seu Emoji Favorito?,PERSONALITY,0,0,12,8,2,ok_unclassified,21,9,9,0,0,,,,28,ZERO_ATTEMPTS|BROKEN_IMAGES:9|UNRESOLVED_PLACEHOLDER_IMAGES:9
+qual-muppet-e-voce-descubra-seu-personagem-dos-muppets,Qual Muppet combina com a sua personalidade?,PERSONALITY,0,0,12,8,3,ok_unclassified,21,7,7,0,0,,,,22,ZERO_ATTEMPTS|BROKEN_IMAGES:7|UNRESOLVED_PLACEHOLDER_IMAGES:7
+quao-ma-pessoa-voce-realmente-e,Quão vilão você realmente é no dia a dia?,PERSONALITY,0,0,10,6,2,ok_unclassified,7,6,6,10,0,,,,19,ZERO_ATTEMPTS|BROKEN_IMAGES:6|UNRESOLVED_PLACEHOLDER_IMAGES:6
+devo-virar-vegano-quiz-para-descobrir,Você Está Pronto para Virar Vegano ou Melhor Começar aos Poucos?,PERSONALITY,0,0,15,4,2,ok_unclassified,10,5,5,10,0,,,,16,ZERO_ATTEMPTS|BROKEN_IMAGES:5|UNRESOLVED_PLACEHOLDER_IMAGES:5
+qual-e-o-teu-digimon-descubra-seu-digimon-ideal,Qual Digimon seria seu parceiro ideal no Mundo Digital?,PERSONALITY,0,0,12,10,2,ok_unclassified,14,9,0,9,0,,,,10,ZERO_ATTEMPTS|BROKEN_IMAGES:9
+qual-e-o-meu-superpoder,Qual Superpoder Revela o Seu Verdadeiro Jeito de Agir?,PERSONALITY,1,0,12,20,4,ok_unclassified,4,3,3,12,17,,,,9,BROKEN_IMAGES:3|UNRESOLVED_PLACEHOLDER_IMAGES:3
+quantas-pessoas-querem-que-voce-morra-descubra-seu-destino,Quantos Inimigos Mortais Você Acumularia em uma Vida de Segredos?,PERSONALITY,0,0,12,20,2,ok_unclassified,30,3,2,3,0,,,,8,ZERO_ATTEMPTS|BROKEN_IMAGES:3|UNRESOLVED_PLACEHOLDER_IMAGES:2
+o-que-diz-sua-mensagem-personalizada-de-biscoito-da-sorte-5,Qual Mensagem de Biscoito da Sorte Foi Escrita Para Você?,PERSONALITY,0,0,12,40,2,ok_unclassified,1,0,0,12,40,duplicate,o-que-diz-sua-mensagem-personalizada-de-biscoito-da-sorte,distinct-ish,7,RESULT_NO_DESC:resultado13|RESULT_NO_DESC:resultado14|RESULT_NO_DESC:resultado15|RESULT_NO_DESC:resultado16|RESULT_NO_DESC:resultado17|RESULT_NO_DESC:resultado18|RESULT_NO_DESC:resultado19|RESULT_NO_DESC:resultado20|RESULT_NO_DESC:resultado21|RESULT_NO_DESC:resultado22|RESULT_NO_DESC:resultado23|RESULT_NO_DESC:resultado24|RESULT_NO_DESC:resultado25|RESULT_NO_DESC:resultado26|RESULT_NO_DESC:resultado27|RESULT_NO_DESC:resultado28|RESULT_NO_DESC:resultado29|RESULT_NO_DESC:resultado30|RESULT_NO_DESC:resultado31|RESULT_NO_DESC:resultado32|RESULT_NO_DESC:resultado33|RESULT_NO_DESC:resultado34|RESULT_NO_DESC:resultado35|RESULT_NO_DESC:resultado36|RESULT_NO_DESC:resultado37|RESULT_NO_DESC:resultado38|RESULT_NO_DESC:resultado39|RESULT_NO_DESC:resultado40|ZERO_ATTEMPTS|DUPLICATE:duplicate:distinct-ish
+qual-personagem-de-gravity-falls-voce-e-descubra-seu-alter-ego,Qual personagem de Gravity Falls combina com seu jeito de enfrentar o estranho?,PERSONALITY,0,0,12,6,4,ok_unclassified,19,2,2,0,0,,,,7,ZERO_ATTEMPTS|BROKEN_IMAGES:2|UNRESOLVED_PLACEHOLDER_IMAGES:2
+qual-personagem-de-owl-house-voce-e-quiz-divertido-e-magico,Qual personagem de The Owl House combina com sua magia interior?,PERSONALITY,0,0,10,6,3,ok_unclassified,17,2,2,0,0,,,,7,ZERO_ATTEMPTS|BROKEN_IMAGES:2|UNRESOLVED_PLACEHOLDER_IMAGES:2
+conseguimos-adivinhar-seu-personagem-favorito-de-one-piece-quiz-divertido,Qual Personagem de One Piece Combina com Seu Jeito de Ser?,PERSONALITY,0,0,10,6,3,ok_unclassified,17,4,0,0,0,,,,5,ZERO_ATTEMPTS|BROKEN_IMAGES:4
+qual-e-o-seu-alinhamento-moral-1,"Qual é o seu alinhamento moral? Descubra onde você cai no mapa do bem, ordem e caos",PERSONALITY,0,0,14,9,3,ok_unclassified,24,0,0,0,0,duplicate,qual-e-o-seu-alinhamento-moral,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+descubra-se-voce-conhece-bem-o-nosso-planeta-5,Você Cai em Mitos Sobre o Planeta ou Sabe o Que Está em Jogo?,PERSONALITY,0,0,10,2,2,ok_unclassified,11,0,0,2,0,duplicate,descubra-se-voce-conhece-bem-o-nosso-planeta,distinct-ish,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:distinct-ish
+qual-e-o-meu-estilo-de-apego-5,Qual é o seu estilo de apego nos relacionamentos?,PERSONALITY,0,0,25,4,2,ok_unclassified,5,0,0,25,0,duplicate,qual-e-o-meu-estilo-de-apego,distinct-ish,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:distinct-ish
+voce-e-kira-ou-l-5,Você Pensaria Como Kira ou Como L em Death Note?,PERSONALITY,0,0,14,2,2,ok_unclassified,17,0,0,0,0,duplicate,voce-e-kira-ou-l,distinct-ish,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:distinct-ish
+qual-e-a-minha-ideologia-politica-5,Onde Você Se Encaixa no Mapa Político? Descubra Seu Quadrante Ideológico,PERSONALITY,0,0,18,4,2,ok_unclassified,1,0,0,18,4,duplicate,qual-e-a-minha-ideologia-politica,distinct-ish,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:distinct-ish
+como-sera-seu-2024-6,Como teria sido o seu 2024?,PERSONALITY,0,0,8,6,4,ok_unclassified,9,0,0,6,0,duplicate,como-sera-seu-2024,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+que-tipo-de-macaco-voce-e-5,Que tipo de macaco combina com sua personalidade mais estranha?,PERSONALITY,0,0,20,12,2,ok_unclassified,30,0,0,3,0,duplicate,que-tipo-de-macaco-voce-e,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+que-criatura-sobrenatural-guarda-seus-sonhos-5,Qual Criatura Sobrenatural Protege Seus Sonhos?,PERSONALITY,0,0,12,6,3,ok_unclassified,10,0,0,9,0,duplicate,que-criatura-sobrenatural-guarda-seus-sonhos,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+descubra-quao-atraente-voce-e-5,Qual é o Seu Nível de Charme? Descubra Como Você Se Apresenta ao Mundo,PERSONALITY,0,0,18,10,3,ok_unclassified,27,0,0,2,0,duplicate,descubra-quao-atraente-voce-e,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+qual-e-o-seu-alinhamento-moral-5,Qual É o Seu Alinhamento Moral? Descubra Onde Você Cai no Mapa Ético,PERSONALITY,0,0,14,9,3,ok_unclassified,24,0,0,0,0,duplicate,qual-e-o-seu-alinhamento-moral,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+em-que-pais-voce-deve-morar-1,Qual país combina com o seu jeito de viver?,PERSONALITY,0,0,10,27,4,ok_unclassified,34,0,0,4,0,duplicate,em-que-pais-voce-deve-morar,distinct-ish,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:distinct-ish
+escolha-entre-flores-e-elas-dirao-o-quao-estiloso-voce-e,Escolha Flores Lindas e Descubra Quanto Seu Estilo Realmente Chama Atenção,PERSONALITY,0,0,10,20,4,ok_unclassified,21,4,0,10,0,,,,5,ZERO_ATTEMPTS|BROKEN_IMAGES:4
+qual-personagem-voce-e-1,Qual personagem de Ghost of Tsushima revela seu verdadeiro código de honra?,PERSONALITY,0,0,10,6,2,ok_unclassified,16,0,0,1,0,duplicate,qual-personagem-voce-e,distinct-ish,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:distinct-ish
+qual-e-o-meu-fetiche-descubra-seu-fetiche-sexual-5,Qual Fantasia Íntima Mais Combina com o Seu Perfil?,PERSONALITY,0,0,18,7,3,ok_unclassified,8,0,0,18,0,duplicate,qual-e-o-meu-fetiche-descubra-seu-fetiche-sexual,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+voce-e-mais-acucar-ou-sal-5,"Você Tem Mais Energia de Açúcar, Sal ou Caramelo Salgado?",PERSONALITY,0,0,10,3,4,ok_unclassified,12,0,0,2,0,duplicate,voce-e-mais-acucar-ou-sal,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+qual-casa-voce-deve-escolher-1,Qual casa de Hogwarts escolheria você de verdade?,PERSONALITY,0,0,15,4,2,ok_unclassified,14,0,0,6,0,duplicate,qual-casa-voce-deve-escolher,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+descubra-o-que-as-pessoas-que-voce-acha-atraente-revelam-sobre-voce-5,O Que Seu Tipo de Atração Revela Sobre Você?,PERSONALITY,0,0,29,6,2,ok_unclassified,36,0,0,0,0,duplicate,descubra-o-que-as-pessoas-que-voce-acha-atraente-revelam-sobre-voce,distinct-ish,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:distinct-ish
+quem-e-voce-descubra-seu-arquetipo-6,"Qual Arquétipo Vive em Você: Guerreiro, Poeta ou Rei?",PERSONALITY,0,0,10,3,2,ok_unclassified,13,0,0,1,0,duplicate,quem-e-voce-descubra-seu-arquetipo,distinct-ish,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:distinct-ish
+quao-facilmente-voce-se-deixa-seduzir-descubra-seu-perfil-de-seducao-5,Você Cai Fácil no Charme de Alguém?,PERSONALITY,0,0,10,6,4,ok_unclassified,11,0,0,6,0,duplicate,quao-facilmente-voce-se-deixa-seduzir-descubra-seu-perfil-de-seducao,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+qual-classe-voce-deve-escolher-5,Qual Classe de RPG Combina com Seu Estilo de Jogo?,PERSONALITY,0,0,12,5,6,ok_unclassified,18,0,0,0,0,duplicate,qual-classe-voce-deve-escolher,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+qual-pokemon-inicial-voce-deve-escolher-5,Qual inicial de Pokémon combina com você?,PERSONALITY,0,0,15,3,3,ok_unclassified,19,0,0,0,0,duplicate,qual-pokemon-inicial-voce-deve-escolher,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+quem-e-voce-5,"Mago, Cavaleiro ou Trapaceiro: Quem Você Seria em uma Jornada Mística?",PERSONALITY,0,0,10,3,3,ok_unclassified,14,0,0,0,0,duplicate,quem-e-voce,paraphrased,5,ZERO_ATTEMPTS|DUPLICATE:duplicate:paraphrased
+qual-celebridade-e-sua-alma-gemea-descubra-seu-par-perfeito,Qual celebridade teria química perfeita com você?,PERSONALITY,0,0,10,6,2,ok_unclassified,9,2,1,8,0,,,,5,ZERO_ATTEMPTS|BROKEN_IMAGES:2|UNRESOLVED_PLACEHOLDER_IMAGES:1
+qual-personagem-de-one-piece-e-a-sua-alma-gemea,Quem seria sua alma gêmea em One Piece?,PERSONALITY,0,0,10,6,2,ok_unclassified,16,4,0,1,0,,,,5,ZERO_ATTEMPTS|BROKEN_IMAGES:4
+que-raca-de-gato-voce-e,Que Raça de Gato Combina Com a Sua Personalidade?,PERSONALITY,0,0,12,6,3,ok_unclassified,19,3,0,0,0,,,,4,ZERO_ATTEMPTS|BROKEN_IMAGES:3
+qual-emoji-assustador-e-a-sua-fantasia-de-halloween-deste-ano,Qual emoji assustador combina com a sua fantasia de Halloween?,PERSONALITY,0,0,12,8,2,ok_unclassified,21,1,1,0,0,,,,4,ZERO_ATTEMPTS|BROKEN_IMAGES:1|UNRESOLVED_PLACEHOLDER_IMAGES:1
+este-quiz-de-one-piece-pode-revelar-qual-pirata-do-chapeu-de-palha-seria-seu-melhor-amigo,Qual Chapéu de Palha de One Piece seria seu melhor amigo?,PERSONALITY,0,0,9,6,4,ok_unclassified,16,3,0,0,0,,,,4,ZERO_ATTEMPTS|BROKEN_IMAGES:3
+qual-personagem-de-umbrella-academy-voce-e-descubra-com-nosso-quiz,Qual personagem de The Umbrella Academy é você?,PERSONALITY,0,0,9,6,4,ok_unclassified,16,1,1,0,0,,,,4,ZERO_ATTEMPTS|BROKEN_IMAGES:1|UNRESOLVED_PLACEHOLDER_IMAGES:1
+internet-das-coisas-iot,Internet das Coisas: você realmente entende como os objetos conectados funcionam?,PERSONALITY,0,0,12,5,4,ausente,0,0,0,12,5,,,,3,ZERO_ATTEMPTS|MISSING_COVER
+qual-superpotencia-voce-teria-com-base-na-sua-personalidade,Qual superpoder escondido combina com quem você realmente é?,PERSONALITY,0,0,12,30,2,ok_unclassified,39,2,0,4,0,,,,3,ZERO_ATTEMPTS|BROKEN_IMAGES:2
+em-qual-filme-do-studio-ghibli-sua-vida-e-baseada,Qual Filme do Studio Ghibli Espelha a História Secreta da Sua Vida?,PERSONALITY,0,0,10,8,3,ok_unclassified,16,2,0,3,0,,,,3,ZERO_ATTEMPTS|BROKEN_IMAGES:2
+6-ano,"Temperatura no 6º ano: você sabe diferenciar calor, energia térmica e sensação?",PERSONALITY,0,0,11,4,4,ausente,0,0,0,11,4,,,,3,ZERO_ATTEMPTS|MISSING_COVER
+o-que-diz-sua-mensagem-personalizada-de-biscoito-da-sorte,Abra Seu Biscoito da Sorte e Revele a Mensagem Que Você Precisa Ler Hoje,PERSONALITY,0,0,12,40,2,ok_unclassified,1,0,0,12,40,keeper,o-que-diz-sua-mensagem-personalizada-de-biscoito-da-sorte-5,distinct-ish,3,RESULT_NO_DESC:resultado13|RESULT_NO_DESC:resultado14|RESULT_NO_DESC:resultado15|RESULT_NO_DESC:resultado16|RESULT_NO_DESC:resultado17|RESULT_NO_DESC:resultado18|RESULT_NO_DESC:resultado19|RESULT_NO_DESC:resultado20|RESULT_NO_DESC:resultado21|RESULT_NO_DESC:resultado22|RESULT_NO_DESC:resultado23|RESULT_NO_DESC:resultado24|RESULT_NO_DESC:resultado25|RESULT_NO_DESC:resultado26|RESULT_NO_DESC:resultado27|RESULT_NO_DESC:resultado28|RESULT_NO_DESC:resultado29|RESULT_NO_DESC:resultado30|RESULT_NO_DESC:resultado31|RESULT_NO_DESC:resultado32|RESULT_NO_DESC:resultado33|RESULT_NO_DESC:resultado34|RESULT_NO_DESC:resultado35|RESULT_NO_DESC:resultado36|RESULT_NO_DESC:resultado37|RESULT_NO_DESC:resultado38|RESULT_NO_DESC:resultado39|RESULT_NO_DESC:resultado40|ZERO_ATTEMPTS|DUPLICATE:keeper:distinct-ish
+nao-faca-esse-quiz,Não Faça Este Quiz: O Vazio Já Está Esperando por Você,PERSONALITY,0,0,28,4,2,ok_unclassified,24,2,0,9,0,,,,3,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS|BROKEN_IMAGES:2
+qual-personagem-da-nintendo-e-voce,Qual ícone da Nintendo parece ter a sua personalidade?,PERSONALITY,0,0,10,15,3,ok_unclassified,16,2,0,10,0,,,,3,ZERO_ATTEMPTS|BROKEN_IMAGES:2
+que-personagem-da-sailor-moon-e-voce-descubra-seu-guerreiro-da-lua,Qual Sailor Guardian revela o verdadeiro tipo da sua força?,PERSONALITY,0,0,15,10,3,ok_unclassified,26,2,0,0,0,,,,3,ZERO_ATTEMPTS|BROKEN_IMAGES:2
+qual-personagem-de-star-wars-e-sua-alma-gemea,Quem Seria Sua Alma Gêmea em Star Wars?,PERSONALITY,0,0,13,10,3,ok_unclassified,21,2,0,3,0,,,,3,ZERO_ATTEMPTS|BROKEN_IMAGES:2
+qual-personagem-do-super-mario-voce-e-descubra-com-nosso-quiz,Qual personagem de Super Mario você seria no Reino Cogumelo?,PERSONALITY,0,0,12,8,2,ok_unclassified,18,2,0,3,0,,,,3,ZERO_ATTEMPTS|BROKEN_IMAGES:2
+qual-personagem-de-the-legend-of-zelda-voce-e-descubra-no-quiz,Qual personagem de The Legend of Zelda combina com sua alma aventureira?,PERSONALITY,0,0,12,6,2,ok_unclassified,17,2,0,2,0,,,,3,ZERO_ATTEMPTS|BROKEN_IMAGES:2
+voce-e-mais-esperto-que-um-homem-das-cavernas,Você Sobreviveria Como um Homem das Cavernas?,PERSONALITY,0,0,11,6,2,ok_unclassified,16,1,0,2,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+que-carater-animico-sou-eu-descubra-seu-personagem-de-anime,Qual Personagem de Anime Tem a Mesma Energia que Você?,PERSONALITY,0,0,12,12,2,ok_unclassified,17,1,0,8,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+o-que-voce-tem-de-apaixonado-descubra-sua-paixao,Qual Paixão Realmente Move Você por Dentro?,PERSONALITY,0,0,15,10,2,ok_unclassified,25,1,0,1,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+seus-valores-podem-determinar-sua-superpotencia-secreta-qual-e-a-sua,Qual superpoder secreto revela a força que existe em você?,PERSONALITY,0,0,10,30,2,ok_unclassified,31,1,0,10,0,,,,2,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS|BROKEN_IMAGES:1
+mostre-nos-o-seu-eu-super-heroi-e-descubra-seu-ajudante-celebridade-perfeito,Monte seu alter ego de super-herói e descubra qual celebridade seria seu parceiro ideal,PERSONALITY,0,0,9,8,2,ok_unclassified,12,1,0,6,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-personagem-de-winnie-the-pooh-voce-e-descubra-com-nosso-quiz,Qual morador do Bosque dos Cem Acres vive no seu coração?,PERSONALITY,0,0,10,6,4,ok_unclassified,16,1,0,1,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+que-celebridade-namoraria-com-voce-descubra-seu-par-perfeito,Qual celebridade seria seu par perfeito?,PERSONALITY,0,0,10,12,3,ok_unclassified,22,1,0,1,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+conte-nos-alguns-segredinhos-picantes-sobre-voce-e-revelaremos-qual-celebridade-sairia-com-voce,Revele seus segredinhos e descubra qual celebridade daria match com você,PERSONALITY,0,0,10,6,2,ok_unclassified,11,1,0,6,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-personagem-voce-e-descubra-com-nosso-quiz,Qual personagem de One Piece combina com sua personalidade?,PERSONALITY,0,0,10,10,2,ok_unclassified,20,1,0,1,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-personagem-de-animal-crossing-voce-e-descubra-com-este-quiz,Qual personagem de Animal Crossing combina com seu jeito de jogar?,PERSONALITY,0,0,12,6,3,ok_unclassified,17,1,0,2,0,,,,2,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS|BROKEN_IMAGES:1
+suas-escolhas-do-dia-a-dia-podem-revelar-qual-personagem-de-videogame-voce-mais-se-parece,Qual personagem icônico dos videogames combina com suas escolhas do dia a dia?,PERSONALITY,0,0,10,6,4,ok_unclassified,9,1,0,8,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+conseguimos-adivinhar-seu-personagem-de-anime-favorito-quiz-divertido-e-interativo,Qual Personagem de Anime Combina com Sua Personalidade?,PERSONALITY,0,0,10,6,2,ok_unclassified,17,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+quantos-socos-de-um-gorila-voce-poderia-aguentar,Quantos socos de um gorila você aguentaria? O resultado pode humilhar você,PERSONALITY,0,0,12,6,3,ok_unclassified,19,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+quao-animado-voce-esta-para-o-gta-vi-descubra-com-nosso-quiz,Seu hype para GTA VI está no máximo ou você nem caiu nessa ainda?,PERSONALITY,0,0,8,4,3,ok_unclassified,10,1,0,3,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+como-seu-gato-planeja-sua-morte-descubra-com-este-quiz,Qual Plano Dramático Seu Gato Usaria Para Tomar o Controle da Sua Vida?,PERSONALITY,0,0,15,12,4,ok_unclassified,27,1,0,1,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+sou-aromatico-teste-para-descobrir-sua-identidade-romantica,"Você é arromântico, romântico ou está em algum lugar entre os dois?",PERSONALITY,0,0,15,4,3,ok_unclassified,20,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+quais-sao-seus-turn-ons-secretos-descubra-seus-desejos-com-nosso-teste-de-personalidade,Qual tipo de atração secreta mais mexe com você?,PERSONALITY,0,0,10,6,4,ok_unclassified,11,1,0,6,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+que-animal-sou-eu-descubra-seu-animal-interior,Qual animal revela seu instinto secreto?,PERSONALITY,0,0,12,12,2,ok_unclassified,21,1,0,4,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+o-que-sou-eu-descubra-quem-voce-e-com-este-quiz-de-memes,Qual Meme Absurdo Mora Dentro de Você?,PERSONALITY,0,0,20,12,2,ok_unclassified,31,1,0,2,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+estas-20-perguntas-revelam-qual-personagem-de-anime-voce-e,Responda 19 perguntas e descubra qual personagem de anime tem a sua energia,PERSONALITY,0,0,19,66,6,ok_unclassified,86,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+quantos-bebes-poderiam-ser-derrotados-em-uma-briga-quiz-divertido,Quantos Bebês Zumbis de Desenho Você Sobreviveria em uma Simulação Absurda?,PERSONALITY,0,0,13,20,3,ok_unclassified,34,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-criatura-mitica-seria-seu-colega-de-quarto-ideal,Qual criatura mítica seria seu colega de quarto perfeito?,PERSONALITY,0,0,11,14,2,ok_unclassified,23,1,0,3,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+sou-um-sociopata-descubra-agora,Você Tem Um Lado Frio? Descubra Seu Nível de Distanciamento Emocional,PERSONALITY,0,0,10,10,4,ok_unclassified,21,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+que-inseto-sou-eu,Qual inseto revela o lado mais secreto da sua personalidade?,PERSONALITY,0,0,15,13,2,ok_unclassified,25,1,0,4,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-caminho-de-vida-voce-deve-escolher-no-cyberpunk-2077,Qual origem de Cyberpunk 2077 revela seu verdadeiro lugar em Night City?,PERSONALITY,1,0,9,3,2,ok_unclassified,9,2,0,1,3,,,,2,BROKEN_IMAGES:2
+vibracoes-de-vice-city-quao-bem-voce-conhece-vice-city,Você realmente conhece Vice City e GTA VI?,PERSONALITY,0,0,8,4,4,ok_unclassified,13,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+quantas-aranhas-voce-ja-comeu-em-sua-vida-descubra-com-nosso-quiz,Quantas aranhas você já comeu sem perceber? Faça o quiz e descubra,PERSONALITY,0,0,15,20,2,ok_unclassified,36,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+que-tipo-de-personagem-lego-voce-seria-descubra-com-nosso-quiz-divertido,Qual personagem LEGO combina com a sua personalidade?,PERSONALITY,0,0,10,6,4,ok_unclassified,17,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-e-o-meu-nome-de-rap,Qual Nome de Rap Combina com Sua Persona de Palco?,PERSONALITY,0,0,10,30,3,ok_unclassified,38,1,0,3,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+quando-voce-vai-se-casar-quiz-divertido,Quando Você Vai se Casar? Descubra o Que Sua Vida Amorosa Revela,PERSONALITY,0,0,15,8,2,ok_unclassified,16,1,0,8,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+avalie-estas-declaracoes-e-revelaremos-qual-criatura-mitica-seria-seu-animal-de-estimacao-ideal,Qual criatura mítica seria o seu pet perfeito?,PERSONALITY,0,0,20,30,6,ok_unclassified,51,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+o-questionario-pottermore-sorting-hat-quiz-para-criancas,Qual Casa de Hogwarts Combina com Você? Um Quiz do Chapéu Seletor para Crianças,PERSONALITY,0,0,8,4,4,ok_unclassified,12,1,0,1,0,,,,2,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS|BROKEN_IMAGES:1
+que-tipo-de-dere-voce-e,Qual tipo de Dere você seria em um anime romântico?,PERSONALITY,0,0,15,5,3,ok_unclassified,19,1,0,2,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-bojack-horseman-e-voce-teste-de-personalidade,Qual personagem de BoJack Horseman revela seu lado mais honesto?,PERSONALITY,0,0,15,8,3,ok_unclassified,24,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-personagem-de-dragon-ball-e-sua-alma-gemea,Qual personagem de Dragon Ball seria sua alma gêmea?,PERSONALITY,0,0,10,6,2,ok_unclassified,14,1,0,3,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-pokemon-lendario-voce-e-descubra-seu-pokemon-lendario-interior,Qual Pokémon lendário vive dentro de você?,PERSONALITY,0,0,12,8,4,ok_unclassified,19,1,0,2,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-jogo-do-nintendo-switch-voce-deve-jogar-a-seguir,Qual jogo do Nintendo Switch combina com sua próxima obsessão?,PERSONALITY,0,0,8,6,4,ok_unclassified,7,1,0,8,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-animal-eu-devo-ter-descubra-com-este-quiz,Qual animal de estimação combina de verdade com você?,PERSONALITY,0,0,15,12,2,ok_unclassified,24,1,0,4,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+qual-personagem-do-scooby-doo-voce-e-quiz-de-personalidade,Qual personagem de Scooby-Doo combina com sua personalidade?,PERSONALITY,0,0,14,5,2,ok_unclassified,16,1,0,4,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+faca-o-quiz-definitivo-de-one-piece-e-descubra-quem-e-o-seu-arqui-inimigo,Quem seria seu maior rival em One Piece?,PERSONALITY,0,0,10,6,3,ok_unclassified,17,1,0,0,0,,,,2,ZERO_ATTEMPTS|BROKEN_IMAGES:1
+quem-foi-voce-em-sua-vida-passada-descubra-com-este-quiz,Quem você teria sido em uma vida passada? Descubra sua identidade mais absurda,PERSONALITY,0,0,15,12,2,ok_unclassified,20,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-planta-voce-e-descubra-com-este-quiz-divertido,Qual planta revela sua personalidade mais estranha?,PERSONALITY,0,0,11,12,2,ok_unclassified,16,0,0,8,0,,,,1,ZERO_ATTEMPTS
+as-bebidas-que-voce-escolhe-neste-quiz-revelam-se-voce-e-um-bom-amante-ou-nao,Escolha Bebidas e Descubra Seu Estilo de Conquista,PERSONALITY,0,0,10,20,2,ok_unclassified,21,0,0,10,0,,,,1,ZERO_ATTEMPTS
+voce-e-um-profissional-em-decoracao-de-halloween-teste-suas-habilidades,Qual Mestre da Decoração de Halloween Assombraria a Sua Casa?,PERSONALITY,0,0,12,8,2,ok_unclassified,20,0,0,1,0,,,,1,ZERO_ATTEMPTS
+que-cor-devo-pintar-meu-cabelo-descubra-com-nosso-quiz,Qual Cor de Cabelo Combina com Sua Nova Fase?,PERSONALITY,0,0,8,8,3,ok_unclassified,15,0,0,2,0,,,,1,ZERO_ATTEMPTS
+quao-malvado-voce-e-teste-de-personalidade-revelador,Qual É o Seu Nível de Vilão? Descubra Seu Lado Mais Sombrio,PERSONALITY,0,0,12,6,4,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+os-gradientes-de-cor-que-voce-escolhe-revelam-quao-bom-voce-e-na-cama,Escolha Gradientes e Revele Seu Magnetismo nas Conexões,PERSONALITY,0,0,10,4,4,ok_unclassified,5,0,0,10,0,,,,1,ZERO_ATTEMPTS
+desenhe-sua-ilha-fantastica-e-descubra-qual-criatura-mitica-seria-seu-pet,Crie Sua Ilha dos Sonhos e Descubra Qual Criatura Mítica Seria Seu Pet,PERSONALITY,0,0,10,6,2,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+em-qual-cidade-voce-deveria-morar-descubra-com-nosso-quiz,Em qual cidade do mundo sua personalidade realmente viveria melhor?,PERSONALITY,0,0,9,6,6,ok_unclassified,10,0,0,0,6,,,,1,ZERO_ATTEMPTS
+voce-e-um-unicornio-ou-um-dragao-descubra-sua-criatura-mitica,Você tem alma de unicórnio ou de dragão? Descubra sua criatura mítica,PERSONALITY,0,0,11,2,4,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-classe-de-hearthstone-voce-deve-jogar-descubra-com-nosso-quiz,Qual classe de Hearthstone combina com seu estilo de jogo?,PERSONALITY,0,0,8,10,2,ok_unclassified,17,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-livro-do-booktok-voce-e,Qual Queridinho do BookTok Foi Escrito Para a Sua Vibe?,PERSONALITY,0,0,10,12,2,ok_unclassified,3,0,0,8,12,,,,1,ZERO_ATTEMPTS
+este-quiz-revela-se-voce-e-um-perfeccionista-ou-orientadoa-ao-progresso,Você mira na perfeição ou prefere avançar sem travar?,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-harry-potter-e-sua-alma-gemea-descubra-aqui,Quem seria sua conexão mágica no universo de Harry Potter?,PERSONALITY,0,0,10,12,3,ok_unclassified,22,0,0,1,0,,,,1,ZERO_ATTEMPTS
+estou-apaixonado-quiz-para-descobrir-seus-sentimentos,Estou Apaixonado de Verdade? Descubra o Que Você Realmente Sente,PERSONALITY,0,0,23,4,2,ok_unclassified,1,0,0,23,4,,,,1,ZERO_ATTEMPTS
+qual-personagem-e-voce,Qual Personagem de Friday Night Funkin’ Combina com Você?,PERSONALITY,0,0,10,8,2,ok_unclassified,1,0,0,10,8,,,,1,ZERO_ATTEMPTS
+voce-e-um-mestremestra-da-cozinha-ou-um-guruguru-da-boa-forma-fisica,"Você é Chef Supremo, Mestre do Fitness ou o Equilíbrio Perfeito?",PERSONALITY,0,0,10,3,2,ok_unclassified,13,0,0,1,0,,,,1,ZERO_ATTEMPTS
+os-animais-que-voce-escolhe-neste-quiz-revelam-sua-habilidade-artistica,Escolha Animais e Revele Seu Talento Artístico Escondido,PERSONALITY,0,0,10,6,4,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-enredo-de-videogame-ressoa-com-a-jornada-da-sua-vida,Qual história de videogame parece a sua vida?,PERSONALITY,0,0,8,6,4,ok_unclassified,14,0,0,1,0,,,,1,ZERO_ATTEMPTS
+como-e-que-o-tempo-estara-amanha-previsao-e-quiz-divertido,Que Previsão Absurda o Seu Amanhã Teria?,PERSONALITY,0,0,11,8,2,ok_unclassified,9,0,0,11,0,,,,1,ZERO_ATTEMPTS
+voce-e-do-time-do-cafe-ou-do-cha-quiz-divertido-e-revelador,"Você Tem Alma de Café, Chá ou Meio a Meio?",PERSONALITY,0,0,10,3,2,ok_unclassified,13,0,0,1,0,,,,1,ZERO_ATTEMPTS
+o-que-voce-esta-fazendo-no-meu-pantano,Qual criatura do pântano do Shrek vive dentro de você?,PERSONALITY,0,0,12,6,3,ok_unclassified,12,0,0,1,6,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-filme-de-halloween-voce-e,Qual Ícone dos Filmes de Halloween Combina Com Sua Personalidade Sombria?,PERSONALITY,0,0,12,7,3,ok_unclassified,20,0,0,0,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+a-sua-opiniao-aleatoria-revela-o-que-deve-comer-hoje,As Tuas Opiniões Mais Aleatórias Revelam o Que Deves Comer Hoje,PERSONALITY,0,0,10,10,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-classe-de-rpg-combina-melhor-com-voce-descubra-sua-classe-ideal,Qual classe de RPG combina com a sua personalidade?,PERSONALITY,0,0,9,6,4,ok_unclassified,11,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-carater-da-forca-de-fogo,Qual personagem de Fire Force combina com a sua alma em chamas?,PERSONALITY,0,0,12,10,3,ok_unclassified,21,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-nome-de-anime,Qual Seria Seu Nome de Anime? Monte Sua Identidade de Personagem,PERSONALITY,0,0,10,60,3,ok_unclassified,71,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-gurren-lagann-e-sua-alma-gemea-quiz-divertido,Quem Seria Sua Alma Gêmea em Gurren Lagann?,PERSONALITY,0,0,10,6,2,ok_unclassified,10,0,0,7,0,,,,1,ZERO_ATTEMPTS
+estou-pronto-para-ter-um-bebe,Você Está Mesmo Pronto Para Ter um Bebê?,PERSONALITY,0,0,15,4,4,ok_unclassified,5,0,0,15,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-pessoa-eu-sou-teste-de-personalidade-para-autoconhecimento,O que realmente define sua personalidade?,PERSONALITY,0,0,21,8,4,ok_unclassified,1,0,0,21,8,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-personagem-da-anatomia-de-grey-descubra-com-nosso-quiz,Qual personagem de Grey’s Anatomy você seria no hospital Grey Sloan?,PERSONALITY,0,0,15,10,3,ok_unclassified,25,0,0,1,0,,,,1,ZERO_ATTEMPTS
+conseguimos-adivinhar-seu-personagem-favorito-da-nintendo-quiz-divertido,Que Personagem da Nintendo Tem a Mesma Energia que Tu?,PERSONALITY,0,0,10,6,4,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+voce-seria-um-grande-rei-ou-rainha-teste-seu-potencial-real,"Você governaria como lenda, estrategista, aprendiz ou tirano?",PERSONALITY,0,0,15,4,2,ok_unclassified,1,0,0,15,4,,,,1,ZERO_ATTEMPTS
+devo-comprar-um-nintendo-switch-guia-e-questionario,Você Deve Comprar um Nintendo Switch ou Vai Se Arrepender?,PERSONALITY,0,0,13,3,3,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+podemos-determinar-com-precisao-o-quao-inteligente-voce-e-pelos-numeros-que-voce-escolhe,Escolha números por instinto e descubra qual inteligência domina sua mente,PERSONALITY,0,0,10,4,4,ok_unclassified,5,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-gossip-girl-e-voce-teste-de-personalidade,Qual personagem de Gossip Girl domina sua personalidade?,PERSONALITY,0,0,10,8,4,ok_unclassified,15,0,0,4,0,,,,1,ZERO_ATTEMPTS
+devo-terminar-com-minha-namorada-teste-para-tomar-a-decisao-certa,Você Deve Terminar o Namoro? Reflita Antes de Decidir,PERSONALITY,0,0,15,4,4,ok_unclassified,20,0,0,0,0,,,,1,ZERO_ATTEMPTS
+sou-uma-feminista,O Quanto Suas Ideias Se Aproximam do Feminismo?,PERSONALITY,0,0,20,40,6,ok_unclassified,31,0,0,20,10,,,,1,ZERO_ATTEMPTS
+qual-personagem-do-peter-pan-da-disney-seria-seu-arqui-inimigo,Qual personagem de Peter Pan seria seu arqui-inimigo?,PERSONALITY,0,0,11,6,4,ok_unclassified,13,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-cozinha-global-representa-melhor-o-seu-paladar,Qual cozinha do mundo combina com o seu jeito de sentir sabores?,PERSONALITY,0,0,12,8,4,ok_unclassified,20,0,0,1,0,,,,1,ZERO_ATTEMPTS
+escolha-os-essenciais-da-sua-rotina-matinal-para-descobrir-seu-plano-de-sobrevivencia-ao-apocalipse-zumbi,Monte sua rotina matinal e descubra como você sobreviveria a um apocalipse zumbi,PERSONALITY,0,0,10,6,2,ok_unclassified,8,0,0,9,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-alinhamento-moral,Qual é o Seu Verdadeiro Alinhamento Moral?,PERSONALITY,0,0,14,9,3,ok_unclassified,24,0,0,0,0,keeper,qual-e-o-seu-alinhamento-moral-1,paraphrased,1,ZERO_ATTEMPTS|DUPLICATE:keeper:paraphrased
+como-eu-vou-morrer-quiz,Qual Seria Seu Final Sombrio em um Filme Místico?,PERSONALITY,0,0,14,8,2,ok_unclassified,1,0,0,14,8,,,,1,ZERO_ATTEMPTS
+qual-signo-do-zodiaco-voce-deveria-ser-mesmo-descubra-aqui,Qual signo do zodíaco combina de verdade com a sua personalidade?,PERSONALITY,0,0,12,12,4,ok_unclassified,25,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-tita-grego-dorme-no-seu-coracao-descubra-com-nosso-quiz,Qual Titã Grego Desperta Dentro de Você?,PERSONALITY,0,0,10,6,4,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-yaoi-voce-e-descubra-com-nosso-quiz,Qual Personagem de Yaoi Combina com o Seu Jeito de Amar?,PERSONALITY,0,0,12,8,2,ok_unclassified,20,0,0,1,0,,,,1,ZERO_ATTEMPTS
+cada-um-tem-seu-proprio-dia-da-semana-descubra-o-que-o-seu-pode-revelar-sobre-voce,Qual dia da semana revela o seu jeito de viver?,PERSONALITY,0,0,25,7,4,ok_unclassified,28,0,0,5,0,,,,1,ZERO_ATTEMPTS
+teste-de-personalidade-divertido-e-revelador-3,Verdade ou Desafio: Suas Escolhas Revelam Que Tipo de Pessoa Você É,PERSONALITY,0,0,18,8,2,ok_unclassified,27,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-lider-de-justica-social-da-historia-dos-eua-combina-com-voce,Qual líder histórico da justiça social dos EUA combina com você?,PERSONALITY,0,0,10,6,4,ok_unclassified,16,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-bruxa-eu-sou-descubra-com-este-quiz-divertido,Que tipo de bruxa mora escondida dentro de você?,PERSONALITY,0,0,9,8,2,ok_unclassified,10,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-jogo-de-tronos-voce-e,Qual personagem de Game of Thrones revela seu destino em Westeros?,PERSONALITY,0,0,10,12,3,ok_unclassified,14,0,0,9,0,,,,1,ZERO_ATTEMPTS
+meu-namorado-me-ama-descubra-com-este-quiz,Seu namorado te ama de verdade? Descubra pelos sinais que ele dá,PERSONALITY,0,0,11,4,4,ok_unclassified,1,0,0,11,4,,,,1,ZERO_ATTEMPTS
+qual-atividade-de-inverno-combina-mais-com-a-sua-personalidade,Qual atividade de inverno revela sua personalidade?,PERSONALITY,0,0,10,6,4,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+desenhe-a-sua-taca-de-sorvete-perfeita-e-nos-adivinharemos-o-mes-do-seu-aniversario-com-98-de-precisao,Monte sua taça de sorvete perfeita e revelaremos seu mês de aniversário,PERSONALITY,0,0,10,12,4,ok_unclassified,14,0,0,9,0,,,,1,ZERO_ATTEMPTS
+este-quiz-de-estilo-vai-revelar-de-qual-pais-voce-deveria-ser,Monte seus looks e descubra qual país combina com a sua estética,PERSONALITY,0,0,10,8,4,ok_unclassified,9,0,0,10,0,,,,1,ZERO_ATTEMPTS
+voce-e-mais-barbie-ou-oppenheimer-1,Barbie ou Oppenheimer: Qual Lado Domina Sua Personalidade?,PERSONALITY,0,0,15,20,2,ok_unclassified,10,0,0,6,20,,,,1,ZERO_ATTEMPTS
+qual-elemento-da-tabela-periodica-combina-com-o-seu-carater,Qual elemento da tabela periódica revela a sua verdadeira personalidade?,PERSONALITY,0,0,12,12,6,ok_unclassified,25,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-personagem-de-quarta-feira,Qual Personagem de Quarta-feira Combina com Você?,PERSONALITY,0,0,13,9,4,ok_unclassified,23,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-e-um-verdadeiro-patriota-americano,"Seu patriotismo americano é crítico, clássico ou bandeira no peito?",PERSONALITY,0,0,15,6,2,ok_unclassified,21,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-caminho-para-o-sucesso-nos-eua-3,Qual Caminho Levaria Você ao Seu Sonho Americano?,PERSONALITY,0,0,10,6,4,ok_unclassified,13,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-animal-selvagem-voce-e-descubra-com-nosso-quiz,Qual animal selvagem revela seu instinto mais profundo?,PERSONALITY,0,0,9,6,6,ok_unclassified,10,0,0,0,6,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-chainsaw-man-seria-seu-melhor-amigo-quiz-divertido-e-revelador,Qual personagem de Chainsaw Man seria seu melhor amigo de verdade?,PERSONALITY,0,0,10,6,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-vikings-voce-e-descubra-seu-perfil-viking,Qual personagem de Vikings revela seu lado guerreiro?,PERSONALITY,0,0,13,10,3,ok_unclassified,24,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-genero-de-filme-reflete-a-sua-vida,Qual gênero de filme parece a história da sua vida?,PERSONALITY,0,0,15,8,2,ok_unclassified,24,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-era-historica-voce-pertence-de-acordo-com-sua-dieta,Qual Era Histórica Combina Com o Seu Jeito de Comer?,PERSONALITY,0,0,10,6,4,ok_unclassified,14,0,0,3,0,,,,1,ZERO_ATTEMPTS
+em-qual-classe-voce-deve-jogar-4,Qual classe de Starfield combina com seu instinto no espaço?,PERSONALITY,0,0,12,16,2,ok_unclassified,29,0,0,0,0,,,,1,ZERO_ATTEMPTS
+conta-pra-gente-um-pouco-sobre-voce-e-nos-te-diremos-qual-e-o-curso-universitario-ideal-para-voce,Qual Curso Universitário Tem Mais a Ver com Seu Jeito de Pensar?,PERSONALITY,0,0,10,6,2,ok_unclassified,13,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-voce-e,Qual alma de Ghost of Tsushima vive em você?,PERSONALITY,0,0,10,6,2,ok_unclassified,16,0,0,1,0,keeper,qual-personagem-voce-e-1,distinct-ish,1,ZERO_ATTEMPTS|DUPLICATE:keeper:distinct-ish
+qual-e-o-meu-nome-de-super-heroi,Descubra Seu Nome de Super-Herói: Qual Lenda Você Seria?,PERSONALITY,0,0,12,36,2,ok_unclassified,41,0,0,8,0,,,,1,ZERO_ATTEMPTS
+sera-que-sobreviverias-teste-de-sobrevivencia-netflix-4,Você sobreviveria ao Round 6? Descubra até qual jogo chegaria,PERSONALITY,0,0,16,9,3,ok_unclassified,10,0,0,16,0,,,,1,ZERO_ATTEMPTS
+qual-genero-de-videogame-combina-mais-com-a-sua-personalidade,Qual gênero de videogame combina com seu jeito de jogar a vida?,PERSONALITY,0,0,10,6,4,ok_unclassified,11,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-chainsaw-man-e-a-sua-alma-gemea,Qual personagem de Chainsaw Man seria sua alma gêmea?,PERSONALITY,0,0,10,4,3,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-estado-dos-eua-voce-seria-descubra-a-personalidade-do-seu-estado,Qual estado dos EUA combina com a sua personalidade?,PERSONALITY,0,0,10,8,2,ok_unclassified,10,0,0,9,0,,,,1,ZERO_ATTEMPTS
+com-que-personagem-es-mais-parecido-teste-de-personalidade-5,Qual personagem de Round 6 revela seu lado mais perigoso?,PERSONALITY,0,0,10,8,3,ok_unclassified,9,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-classico-de-video-game-combina-com-a-sua-personalidade,Qual personagem clássico dos videogames combina com a sua personalidade?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-spice-girl-voce-e-descubra-com-nosso-quiz-divertido,Qual Spice Girl combina com sua energia no palco?,PERSONALITY,0,0,10,5,4,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+devo-adotar-um-cachorro-descubra-se-esta-pronto-para-ter-um-pet,Você está pronto para adotar um cachorro? Descubra antes de dar esse passo,PERSONALITY,0,0,8,4,4,ok_unclassified,11,0,0,2,0,,,,1,ZERO_ATTEMPTS
+descubra-sua-essencia-intelectual-5,"Sua Mente é de Cientista, Artista ou Filósofo?",PERSONALITY,0,0,10,3,4,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-presidente-dos-eua-voce-mais-se-parece-descubra-agora,Qual Presidente dos EUA Combina com Seu Jeito de Liderar?,PERSONALITY,0,0,7,6,4,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-the-walking-dead-voce-e,Qual Sobrevivente de The Walking Dead Você Seria Quando Tudo Desmorona?,PERSONALITY,0,0,12,12,2,ok_unclassified,22,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-inovacao-dos-eua-define-o-seu-espirito-inventivo,Qual grande inovação dos EUA combina com o seu espírito criativo?,PERSONALITY,0,0,10,6,2,ok_unclassified,13,0,0,4,0,,,,1,ZERO_ATTEMPTS
+quem-sou-eu-descubra-sua-personalidade-5,O Que Seu Olhar Vê Primeiro Pode Revelar Sobre Sua Personalidade Oculta,PERSONALITY,0,0,12,5,5,ok_unclassified,1,0,0,12,5,,,,1,ZERO_ATTEMPTS
+quem-e-voce,"És Mago, Cavaleiro ou Trapaceiro? Descobre o Teu Arquétipo Fantástico",PERSONALITY,0,0,10,3,3,ok_unclassified,14,0,0,0,0,keeper,quem-e-voce-5,paraphrased,1,ZERO_ATTEMPTS|DUPLICATE:keeper:paraphrased
+qual-personagem-de-chainsaw-man-seria-seu-arqui-inimigo,Quem seria seu arqui-inimigo em Chainsaw Man?,PERSONALITY,0,0,9,6,3,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+avalie-estas-10-declaracoes-para-descobrir-o-que-seu-cao-realmente-pensa-de-voce,Responda 10 afirmações e descubra o que seu cachorro realmente pensa de você,PERSONALITY,0,0,10,6,6,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quao-puro-voce-e-descubra-agora-5,Teste de Pureza: Até Onde Vai Sua Pontuação?,PERSONALITY,0,0,99,18,2,ok_unclassified,19,0,0,99,0,,,,1,ZERO_ATTEMPTS
+que-nova-personagem-e-voce-descubra-com-o-quiz-da-new-girl,Qual personagem de New Girl tem exatamente a sua energia no loft?,PERSONALITY,0,0,15,8,3,ok_unclassified,22,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-membro-do-bts-e-voce-descubra-seu-membro-bts-favorito,Qual membro do BTS combina com sua personalidade no palco e fora dele?,PERSONALITY,0,0,15,7,2,ok_unclassified,22,0,0,1,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-queijo-malcheiroso-voce-e-descubra-agora,Que queijo fedido revela a parte mais estranha da sua personalidade?,PERSONALITY,0,0,15,6,4,ok_unclassified,20,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-personagem-da-casa-do-dragao,Qual personagem de A Casa do Dragão governa a sua personalidade?,PERSONALITY,0,0,15,8,2,ok_unclassified,21,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-boruto-e-voce-descubra-com-nosso-quiz-de-personalidade,Qual personagem de Boruto revela seu verdadeiro estilo ninja?,PERSONALITY,0,0,12,8,3,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+avalie-essas-10-afirmacoes-para-descobrir-o-que-seu-gato-realmente-pensa-de-voce,O Que Seu Gato Realmente Pensa de Você? Responda e Descubra o Julgamento Felino,PERSONALITY,0,0,9,6,6,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+avalie-estas-10-declaracoes-e-nos-revelaremos-quem-voce-seria-em-um-mundo-de-fantasia,Quem Você Seria em um Mundo de Fantasia? Avalie 10 Frases e Descubra Seu Destino,PERSONALITY,0,0,10,18,6,ok_unclassified,29,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-patronus-descubra-seu-patronus-de-harry-potter,Qual Patrono de Harry Potter Defenderia Você dos Dementadores?,PERSONALITY,0,0,14,18,2,ok_unclassified,19,0,0,14,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-tokyo-ghoul-e-voce,Qual Personagem de Tokyo Ghoul Revela Seu Lado Mais Sombrio?,PERSONALITY,0,0,12,8,2,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-casa-de-harry-potter-eu-sou,Qual Casa de Hogwarts Combina com Você? Descubra Sua Verdadeira Casa,PERSONALITY,0,0,28,4,2,ok_unclassified,1,0,0,28,4,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-tim-burton-voce-e-descubra-com-nosso-teste,Qual personagem de Tim Burton vive dentro de você?,PERSONALITY,0,0,13,6,3,ok_unclassified,12,0,0,8,0,,,,1,ZERO_ATTEMPTS
+que-doce-sou-eu,Qual Doce Revela o Lado Mais Gostoso da Sua Personalidade?,PERSONALITY,0,0,15,12,2,ok_unclassified,22,0,0,6,0,,,,1,ZERO_ATTEMPTS
+que-personagem-de-bobs-burgers-e-voce,Qual personagem de Bob's Burgers mais parece com você?,PERSONALITY,0,0,8,10,4,ok_unclassified,14,0,0,5,0,,,,1,ZERO_ATTEMPTS
+quantas-vezes-voce-ja-reencarnou-descubra-suas-vidas-passadas,Quantas Vidas Passadas Sua Alma Já Viveu? Faça o Teste Cósmico,PERSONALITY,0,0,10,6,2,ok_unclassified,1,0,0,10,6,,,,1,ZERO_ATTEMPTS
+qual-personagem-dos-simpsons-voce-e,Qual personagem dos Simpsons mais parece com você?,PERSONALITY,0,0,12,20,2,ok_unclassified,26,0,0,7,0,,,,1,ZERO_ATTEMPTS
+como-voce-e-kawaii-descubra-seu-nivel-de-fofura,Qual É o Seu Verdadeiro Nível de Kawaii?,PERSONALITY,0,0,15,20,4,ok_unclassified,21,0,0,15,0,,,,1,ZERO_ATTEMPTS
+quantos-pombos-voce-consegue-superar-em-uma-partida-de-xadrez,Quantos pombos você derrotaria no xadrez antes de perder a paciência?,PERSONALITY,0,0,10,6,2,ok_unclassified,10,0,0,7,0,,,,1,ZERO_ATTEMPTS
+este-questionario-de-fotos-dira-qual-pais-voce-deve-visitar-em-seguida,Escolha paisagens de viagem e descubra qual país está chamando seu nome,PERSONALITY,0,0,10,10,4,ok_unclassified,11,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-e-a-minha-ideologia-politica,Em Qual Quadrante Político Suas Ideias Mais se Aproximam?,PERSONALITY,0,0,18,4,2,ok_unclassified,1,0,0,18,4,keeper,qual-e-a-minha-ideologia-politica-5,distinct-ish,1,ZERO_ATTEMPTS|DUPLICATE:keeper:distinct-ish
+which-character-are-you-based-on-your-knowledge,Seu Conhecimento Pokémon Revela Qual Personagem Você Seria,PERSONALITY,0,0,20,4,4,ok_unclassified,25,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-musica-da-taylor-swift-descreve-melhor-a-sua-vida-descubra-com-nosso-quiz,Qual música da Taylor Swift traduz exatamente a fase que você está vivendo?,PERSONALITY,0,0,12,10,4,ok_unclassified,13,0,0,0,10,,,,1,ZERO_ATTEMPTS
+quantas-criancas-de-cinco-anos-voce-pode-lutar-descubra-agora,Quantas crianças de 5 anos você venceria numa gincana totalmente absurda?,PERSONALITY,0,0,12,12,3,ok_unclassified,23,0,0,2,0,,,,1,ZERO_ATTEMPTS
+o-caminho-da-agua-e-voce,Qual Personagem de Avatar: O Caminho da Água Combina com Sua Alma em Pandora?,PERSONALITY,0,0,15,6,2,ok_unclassified,19,0,0,3,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+voce-foi-travesso-ou-comportado-este-ano-este-quiz-de-natal-vai-revelar,Lista dos comportados ou dos travessos: qual lado do Natal combina com você?,PERSONALITY,0,0,10,2,3,ok_unclassified,1,0,0,10,2,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-sword-art-online-e-sua-alma-gemea,Quem de Sword Art Online seria sua alma gêmea?,PERSONALITY,0,0,8,6,3,ok_unclassified,11,0,0,4,0,,,,1,ZERO_ATTEMPTS
+planeje-suas-ferias-dos-sonhos-e-nos-previremos-quantos-gatos-voce-tera-no-futuro,Planeje Suas Férias dos Sonhos e Descubra Quantos Gatos Terá no Futuro,PERSONALITY,0,0,10,6,2,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+quantos-dias-voce-sobreviveria-em-uma-ilha-deserta-descubra-seu-tempo-de-sobrevivencia,Quantos dias você sobreviveria em uma ilha deserta?,PERSONALITY,0,0,10,6,2,ok_unclassified,13,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-avatar-voce-e-descubra-com-nosso-quiz,Qual Personagem de Avatar Combina com Sua Personalidade?,PERSONALITY,0,0,12,6,2,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-deve-ser-o-seu-gamertag-ideal,Qual Gamertag Tem a Sua Vibe Secreta no Lobby?,PERSONALITY,0,0,12,39,3,ok_unclassified,46,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-papel-na-fronteira-da-vida,"Você Seria Pioneiro, Construtor ou Andarilho em um Novo Mundo?",PERSONALITY,0,0,9,3,4,ok_unclassified,13,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quao-bom-voce-e-em-seduzir-os-outros-descubra-agora,Qual é o Seu Nível de Charme na Paquera?,PERSONALITY,0,0,10,6,4,ok_unclassified,13,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-meu-tipo-de-corpo,"Seu corpo lembra mais ectomorfo, mesomorfo ou endomorfo?",PERSONALITY,0,0,8,3,3,ok_unclassified,1,0,0,8,3,,,,1,ZERO_ATTEMPTS
+qual-prato-asiatico-voce-e-descubra-seu-prato-asiatico-favorito,Qual Prato Asiático Traduz Sua Personalidade?,PERSONALITY,0,0,10,6,4,ok_unclassified,14,0,0,3,0,,,,1,ZERO_ATTEMPTS
+escolha-gradientes-malucos-para-descobrir-sua-popularidade,Escolha Gradientes Hipnóticos e Descubra Sua Porcentagem de Popularidade,PERSONALITY,0,0,10,20,4,ok_unclassified,21,0,0,10,0,,,,1,ZERO_ATTEMPTS
+avalie-estas-declaracoes-para-saber-quanto-dna-alienigena-voce-tem,Quanto do Seu DNA Parece Alienígena?,PERSONALITY,0,0,10,18,6,ok_unclassified,29,0,0,0,0,,,,1,ZERO_ATTEMPTS
+escolha-seus-ingredientes-favoritos-de-pizza-e-descubra-em-qual-mundo-ficticio-voce-pertence,Monte sua pizza dos sonhos e descubra em qual universo fictício você deveria viver,PERSONALITY,0,0,8,6,4,ok_unclassified,10,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-super-heroi-voce-e-descubra-com-nosso-quiz,Qual super-herói revela o seu lado mais poderoso?,PERSONALITY,0,0,15,12,2,ok_unclassified,23,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-anime-seria-seu-melhor-amigo-descubra-agora,Qual personagem de anime seria seu melhor amigo inseparável?,PERSONALITY,0,0,10,6,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-garoto-de-anime-e-o-seu-verdadeiro-amor-descubra-agora,Qual garoto de anime seria seu verdadeiro amor?,PERSONALITY,0,0,10,6,3,ok_unclassified,15,0,0,2,0,,,,1,ZERO_ATTEMPTS
+avalie-estas-declaracoes-para-ver-qual-disney-princess-e-mais-parecida-com-voce,Qual Princesa da Disney Mora na Sua Personalidade?,PERSONALITY,0,0,10,6,6,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-espirito-animal-que-dorme-dentro-de-voce,Qual espírito animal revela a sua verdadeira energia?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+numa-escala-de-1-a-10-o-quanto-as-pessoas-te-acham-assustador,"De 1 a 10, quão assustadora é a sua energia?",PERSONALITY,0,0,12,10,3,ok_unclassified,23,0,0,0,0,,,,1,ZERO_ATTEMPTS
+como-voce-consegue-lidar-com-o-medo-descubra-seu-tipo-de-assombracao,Qual Assombração Revela o Seu Jeito de Encarar o Medo?,PERSONALITY,0,0,12,8,3,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-carater-sem-vergonha-voce-e-descubra-seu-personagem-shameless,Qual personagem de Shameless combina com seu instinto de sobrevivência?,PERSONALITY,0,0,13,7,3,ok_unclassified,19,0,0,2,0,,,,1,ZERO_ATTEMPTS
+ano-novo-voce-novo-ou-nao-quais-mudancas-2024-trara,"Ano Novo, Vida Nova: Que Virada Está Esperando Por Você?",PERSONALITY,0,0,10,6,4,ok_unclassified,8,0,0,9,0,,,,1,ZERO_ATTEMPTS
+descubra-sua-identidade-de-estilo-de-vida,Qual Identidade de Estilo de Vida Combina com Você?,PERSONALITY,0,0,9,3,4,ok_unclassified,13,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quem-es-tu-na-escola-descobre-o-teu-papel-escolar,Qual Arquétipo Escolar Domina Sua Personalidade?,PERSONALITY,0,0,11,10,6,ok_unclassified,22,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-mitologia-de-civilizacao-antiga-combina-com-sua-personalidade,Qual mitologia antiga combina com a tua alma?,PERSONALITY,0,0,9,6,4,ok_unclassified,10,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-esporte-americano-combina-mais-com-voce-descubra-com-nosso-quiz,Qual esporte americano tem a tua energia?,PERSONALITY,0,0,10,6,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-do-sonic-the-hedgehog-voce-e-quiz-divertido-e-revelador,Qual Personagem de Sonic Revela a Sua Verdadeira Energia?,PERSONALITY,0,0,10,8,3,ok_unclassified,15,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-personagem-de-schitts-creek-que-voce-e,Qual morador de Schitt's Creek revela sua verdadeira energia?,PERSONALITY,0,0,12,10,3,ok_unclassified,23,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-pokemon-voce-e-descubra-seu-tipo-pokemon,Qual Tipo de Pokémon Revela Sua Verdadeira Personalidade?,PERSONALITY,0,0,10,18,3,ok_unclassified,1,0,0,10,18,,,,1,ZERO_ATTEMPTS
+descubra-qual-historia-de-amor-mitologica-se-parece-com-a-sua,Qual História de Amor Mitológica Combina com o Seu Coração?,PERSONALITY,0,0,9,6,4,ok_unclassified,7,0,0,9,0,,,,1,ZERO_ATTEMPTS
+que-liga-das-lendas-sou-campeao-i,Qual campeão de League of Legends combina com sua personalidade?,PERSONALITY,0,0,12,12,3,ok_unclassified,25,0,0,0,0,,,,1,ZERO_ATTEMPTS
+se-a-sua-vida-fosse-uma-historia-de-amor-qual-seria-o-titulo,"Se Sua Vida Amorosa Fosse Um Romance, Qual Seria o Título?",PERSONALITY,0,0,8,10,4,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-programa-infantil-dos-anos-90-voce-e,Qual clássico infantil dos anos 90 tem a sua energia nostálgica?,PERSONALITY,0,0,15,12,2,ok_unclassified,19,0,0,9,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-sanrio-voce-e-descubra-seu-personagem-sanrio-favorito,Qual personagem da Sanrio combina com sua personalidade?,PERSONALITY,0,0,10,6,2,ok_unclassified,15,0,0,2,0,,,,1,ZERO_ATTEMPTS
+que-gato-engracado-e-voce-descubra-seu-gato-interior-divertido,Que Gato Absurdamente Caótico Mora Dentro de Você?,PERSONALITY,0,0,13,12,3,ok_unclassified,20,0,0,6,0,,,,1,ZERO_ATTEMPTS
+voce-deveria-usar-ouro-prata-ou-algo-completamente-diferente,Qual Tipo de Joia Combina com a Sua Energia?,PERSONALITY,0,0,10,8,4,ok_unclassified,18,0,0,1,0,,,,1,ZERO_ATTEMPTS
+onde-voce-vai-encontrar-sua-alma-gemea-este-quiz-divertido-tem-a-resposta,Onde você vai encontrar sua alma gêmea? O cenário do seu romance está aqui,PERSONALITY,0,0,10,8,4,ok_unclassified,12,0,0,7,0,,,,1,ZERO_ATTEMPTS
+que-animal-voce-foi-em-uma-vida-anterior-descubra-agora,Que Animal Você Foi em Outra Vida?,PERSONALITY,0,0,10,10,2,ok_unclassified,19,0,0,2,0,,,,1,ZERO_ATTEMPTS
+quais-sao-os-aneis-do-poder-que-voce,Qual personagem de Os Anéis de Poder revela sua alma na Terra-média?,PERSONALITY,0,0,12,7,3,ok_unclassified,17,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-e-a-sua-idade-mental-real,Qual É a Sua Idade Mental de Verdade?,PERSONALITY,0,0,20,20,6,ok_unclassified,41,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quando-vou-encontrar-o-amor-descubra-seu-momento-ideal-para-o-amor-verdadeiro,Quando o amor verdadeiro vai chegar para você?,PERSONALITY,0,0,27,7,4,ok_unclassified,11,0,0,24,0,,,,1,ZERO_ATTEMPTS
+que-idolo-de-k-pop-eu-sou-descubra-seu-idolo-de-k-pop-ideal,Qual Ídolo de K-pop Combina com Sua Energia?,PERSONALITY,0,0,10,12,2,ok_unclassified,22,0,0,1,0,,,,1,ZERO_ATTEMPTS
+o-questionario-de-cores-do-gathering-qual-a-cor-do-mtg-que-eu-sou,Qual Cor de Magic: The Gathering Revela Sua Verdadeira Essência?,PERSONALITY,0,0,10,5,5,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-resident-evil-4-voce-e-teste-de-personalidade,Qual personagem de Resident Evil 4 combina com sua personalidade?,PERSONALITY,0,0,15,6,2,ok_unclassified,22,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-a-sua-historia-de-origem-de-super-heroiheroina,Qual é a sua história de origem de super-herói?,PERSONALITY,0,0,10,8,4,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-power-ranger-voce-e-descubra-seu-ranger-ideal,Qual Power Ranger representa sua energia de herói?,PERSONALITY,0,0,12,8,4,ok_unclassified,19,0,0,2,0,,,,1,ZERO_ATTEMPTS
+descubra-seus-verdadeiros-sentimentos,O que seus sentimentos amorosos revelam sobre você?,PERSONALITY,0,0,9,4,4,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-conto-de-fadas-voce-e-descubra-seu-personagem-encantado,Qual personagem de conto de fadas combina com sua alma encantada?,PERSONALITY,0,0,15,8,3,ok_unclassified,24,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-superpoder-psicologico-descubra-seu-poder-mental-unico,Qual É o Seu Superpoder Psicológico Secreto?,PERSONALITY,0,0,10,8,4,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-lugar-na-equipe,Qual Papel Você Assume em uma Equipe?,PERSONALITY,0,0,10,3,4,ok_unclassified,13,0,0,1,0,,,,1,ZERO_ATTEMPTS
+a-qual-divindade-voce-deve-rezar,Qual divindade mitológica combina com sua energia?,PERSONALITY,0,0,12,6,4,ok_unclassified,9,0,0,10,0,,,,1,ZERO_ATTEMPTS
+quao-solitario-voce-esta-teste-de-solidao-e-autoexploracao,"Você Está Sozinho, Recarregando ou Precisando de Mais Conexão?",PERSONALITY,0,0,12,6,4,ok_unclassified,19,0,0,0,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-pokemon-voce-e-baseado-em-sua-personalidade-quiz-de-personalidade-pokemon,Qual Pokémon combina com a sua energia secreta?,PERSONALITY,0,0,10,12,3,ok_unclassified,1,0,0,10,12,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-jogo-de-playstation-one-voce-deve-jogar-a-seguir,Qual clássico do PlayStation 1 você deveria jogar agora?,PERSONALITY,0,0,10,7,2,ok_unclassified,12,0,0,6,0,,,,1,ZERO_ATTEMPTS
+sera-que-adivinhamos-seu-personagem-favorito-de-piratas-do-caribe,Podemos adivinhar seu personagem favorito de Piratas do Caribe?,PERSONALITY,0,0,9,5,4,ok_unclassified,13,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-foi-a-coisa-mais-louca-que-aconteceu-com-voce-em-2024,Qual evento completamente absurdo vai transformar o seu próximo ano?,PERSONALITY,0,0,8,6,4,ok_unclassified,9,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-teu-nome-japones,Qual Seria o Seu Nome Japonês?,PERSONALITY,0,0,10,60,3,ok_unclassified,68,0,0,3,0,,,,1,ZERO_ATTEMPTS
+e-loucura-mas-sabemos-quanto-dinheiro-voce-vai-ganhar-durante-toda-a-sua-vida,"É loucura, mas suas escolhas revelam quanto dinheiro você vai ganhar na vida",PERSONALITY,0,0,10,6,2,ok_unclassified,10,0,0,7,0,,,,1,ZERO_ATTEMPTS
+sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-chainsaw-man,Conseguimos adivinhar seu personagem favorito de Chainsaw Man?,PERSONALITY,0,0,9,6,4,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+como-sera-seu-bebe-descubra-com-nosso-quiz-divertido,Como Seria Seu Futuro Bebê? Descubra a Personalidade do Pequeno,PERSONALITY,0,0,14,8,2,ok_unclassified,21,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-jogo-de-playstation-5-voce-deve-jogar-a-seguir,Qual jogo de PS5 combina com seu próximo vício gamer?,PERSONALITY,0,0,8,6,4,ok_unclassified,10,0,0,5,0,,,,1,ZERO_ATTEMPTS
+que-gato-guerreiro-voce-e-teste-de-personalidade-dos-gatos-guerreiros,Qual Gato Guerreiro Combina com Você? Descubra Seu Espírito de Clã,PERSONALITY,0,0,15,8,3,ok_unclassified,17,0,0,7,0,,,,1,ZERO_ATTEMPTS
+meu-casamento-esta-acabado-teste-para-avaliar-sua-vida-amorosa,Seu casamento ainda tem futuro? Faça o teste e reflita sobre sua relação,PERSONALITY,0,0,11,4,4,ok_unclassified,15,0,0,1,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-amigo-voce-e-descubra-com-nosso-quiz-interativo,Que tipo de amigo você é quando a amizade é colocada à prova?,PERSONALITY,0,0,12,6,3,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-jogo-de-playstation-4-voce-deve-jogar-a-seguir,Qual clássico de PS4 você deveria jogar agora?,PERSONALITY,0,0,10,6,4,ok_unclassified,10,0,0,7,0,,,,1,ZERO_ATTEMPTS
+que-vegetal-sou-eu-descubra-seu-vegetal-ideal,Que vegetal combina com sua personalidade secreta?,PERSONALITY,0,0,12,13,2,ok_unclassified,24,0,0,2,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-arvore-de-natal-voce-seria-descubra-no-quiz,Que tipo de árvore de Natal combina com a sua vibe festiva?,PERSONALITY,0,0,10,4,4,ok_unclassified,8,0,0,7,0,,,,1,ZERO_ATTEMPTS
+que-planeta-e-voce-descubra-seu-planeta-no-sistema-solar,Qual planeta — ou astro — revela o seu jeito de ser?,PERSONALITY,0,0,25,10,3,ok_unclassified,25,0,0,11,0,,,,1,ZERO_ATTEMPTS
+meu-marido-e-gay-quiz-para-entender-a-orientacao-sexual-dele,Seu Casamento Precisa de Mais Clareza? Um Quiz Sobre Sinais e Conversas Difíceis,PERSONALITY,0,0,11,4,4,ok_unclassified,16,0,0,0,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+que-raca-de-cachorro-voce-e-descubra-com-nosso-quiz-divertido,Que raça de cachorro tem exatamente a sua energia?,PERSONALITY,0,0,15,15,6,ok_unclassified,31,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-musica-combina-melhor-com-sua-personalidade-teste-de-personalidade-musical,Qual gênero musical combina com a sua personalidade?,PERSONALITY,0,0,12,8,2,ok_unclassified,16,0,0,5,0,,,,1,ZERO_ATTEMPTS
+e-amor-ou-amizade-desvende-suas-verdadeiras-emocoes,É amor ou amizade? Descubra o que seus sentimentos estão tentando dizer,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-pizza-voce-e-descubra-seu-tipo-de-pizza-favorito,Qual Pizza Combina com Sua Personalidade? Descubra Seu Sabor Interior,PERSONALITY,0,0,11,12,2,ok_unclassified,18,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-piratas-do-caribe-e-sua-alma-gemea,Quem de Piratas do Caribe Seria Sua Alma Gêmea Nos Sete Mares?,PERSONALITY,0,0,10,6,2,ok_unclassified,10,0,0,6,1,,,,1,ZERO_ATTEMPTS
+que-arvore-sou-eu-descubra-seu-tipo-de-arvore,Que árvore combina com a sua personalidade?,PERSONALITY,0,0,15,10,2,ok_unclassified,21,0,0,5,0,,,,1,ZERO_ATTEMPTS
+e-amor-a-primeira-vista-ou-apenas-uma-faisca-quiz-divertido,Foi amor à primeira vista ou só uma faísca passageira?,PERSONALITY,0,0,8,4,4,ok_unclassified,13,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-phineas-e-ferb-voce-e-descubra-com-nosso-quiz,Qual Personagem de Phineas e Ferb Mais Parece Com Você?,PERSONALITY,0,0,10,6,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+eu-o-amo-descubra-seus-sentimentos-com-este-quiz,Eu amo essa pessoa de verdade? Faça o quiz e entenda seus sinais,PERSONALITY,0,0,23,6,3,ok_unclassified,1,0,0,23,6,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-album-da-taylor-swift-voce-e-desperte-o-swiftie-dentro-de-voce,Qual álbum da Taylor Swift representa sua era atual?,PERSONALITY,0,0,12,11,5,ok_unclassified,15,0,0,9,0,,,,1,ZERO_ATTEMPTS
+sua-escolha-de-palavra-revela-se-voce-e-um-boomer-millennial-ou-gen-z-no-coracao,As palavras que você escolhe revelam sua geração de alma,PERSONALITY,0,0,10,3,4,ok_unclassified,4,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-e-mais-parecido-com-voce-quiz,Qual Personagem de Inuyasha Reflete Seu Coração e Seu Instinto?,PERSONALITY,0,0,12,10,3,ok_unclassified,11,0,0,12,0,,,,1,ZERO_ATTEMPTS
+qual-jogo-de-pc-voce-deve-jogar-a-seguir,Qual jogo de PC você deveria jogar agora?,PERSONALITY,0,0,8,6,4,ok_unclassified,7,0,0,8,0,,,,1,ZERO_ATTEMPTS
+posso-adivinhar-qual-e-o-seu-tipo-de-ferias-favorito-com-base-nos-emojis-que-voce-escolher-neste-quiz,Escolha Emojis Aleatórios e Eu Revelo Seu Tipo de Férias Perfeito,PERSONALITY,0,0,10,6,4,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+que-carta-de-taro-sou-eu-descubra-sua-carta-de-taro,Qual Arcano Maior do Tarô revela sua energia interior?,PERSONALITY,0,0,20,22,2,ok_unclassified,15,0,0,6,22,,,,1,ZERO_ATTEMPTS
+qual-personagem-do-one-punch-man-voce-e,Qual personagem de One-Punch Man combina com sua personalidade?,PERSONALITY,0,0,12,8,2,ok_unclassified,17,0,0,4,0,,,,1,ZERO_ATTEMPTS
+como-sera-sua-vida-daqui-a-dez-anos-descubra-seu-futuro,Como Será Sua Vida Daqui a 10 Anos? A Bola de Cristal Tem um Palpite,PERSONALITY,0,0,12,17,4,ok_unclassified,22,0,0,8,0,,,,1,ZERO_ATTEMPTS
+quem-voce-teria-sido-na-idade-media-quiz-interativo,"Quem você seria na Idade Média: cavaleiro, mago, bardo ou lenda da vila?",PERSONALITY,0,0,8,6,4,ok_unclassified,8,0,0,7,0,,,,1,ZERO_ATTEMPTS
+qual-esporte-voce-e-liberte-o-atleta-interior,Qual Esporte Combina com Sua Personalidade?,PERSONALITY,0,0,12,12,4,ok_unclassified,25,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-jogo-de-game-boy-voce-deve-jogar-a-seguir,Qual clássico do Game Boy combina com seu jeito de jogar?,PERSONALITY,0,0,8,7,2,ok_unclassified,11,0,0,5,0,,,,1,ZERO_ATTEMPTS
+quem-e-voce-na-lenda-arturiana-mergulhe-no-reino-dos-cavaleiros-da-tavola-redonda,Qual lenda arturiana revela sua verdadeira essência?,PERSONALITY,0,0,10,6,2,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+quao-bem-voce-conhece-a-si-mesmo-teste-de-autoconhecimento,Quanto Você Realmente Se Conhece? O Teste Que Expõe Seus Pontos Cegos,PERSONALITY,0,0,26,6,3,ok_unclassified,1,0,0,26,6,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+que-sopa-e-essa-descubra-sua-sopa-interior,Qual Sopa Combina com Sua Personalidade Mais Estranha?,PERSONALITY,0,0,12,12,3,ok_unclassified,20,0,0,5,0,,,,1,ZERO_ATTEMPTS
+como-voce-lida-com-a-raiva-teste-seu-controle-emocional,Como a Sua Raiva Realmente Aparece Quando Ninguém Está Medindo?,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-embrulhador-de-presentes-voce-e-descubra-sua-personalidade-natalina,Que Tipo de Embrulhador de Presentes Você É no Natal?,PERSONALITY,0,0,10,4,4,ok_unclassified,10,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-fruits-basket-voce-e-descubra-com-nosso-quiz,"Qual personagem de Fruits Basket revela seu jeito de amar, lutar e se proteger?",PERSONALITY,0,0,12,8,3,ok_unclassified,13,0,0,0,8,,,,1,ZERO_ATTEMPTS
+qual-deve-ser-sua-resolucao-de-ano-novo-descubra-com-nosso-quiz,Qual resolução de Ano Novo combina de verdade com você?,PERSONALITY,0,0,10,12,2,ok_unclassified,18,0,0,5,0,,,,1,ZERO_ATTEMPTS
+com-quais-alimentos-voce-se-parece,Qual comida icônica revela sua verdadeira personalidade?,PERSONALITY,0,0,15,15,3,ok_unclassified,28,0,0,3,0,,,,1,ZERO_ATTEMPTS
+o-que-voce-deve-construir-em-minecraft,O que você deveria construir no Minecraft agora?,PERSONALITY,0,0,14,8,2,ok_unclassified,18,0,0,5,0,,,,1,ZERO_ATTEMPTS
+o-que-voce-deve-comer-esta-noite-descubra-com-este-quiz,Sem ideia para o jantar? Descubra o prato que combina com sua noite,PERSONALITY,0,0,21,16,2,ok_unclassified,1,0,0,21,16,,,,1,ZERO_ATTEMPTS
+sera-que-conseguimos-adivinhar-o-seu-prato-asiatico-favorito,"Qual prato asiático revela seu jeito de viver, escolher e saborear o mundo?",PERSONALITY,0,0,10,6,3,ok_unclassified,13,0,0,4,0,,,,1,ZERO_ATTEMPTS
+quao-estupido-e,Seu Conhecimento Geral Aguenta Pegadinhas de Verdade?,PERSONALITY,0,0,19,7,3,ok_unclassified,27,0,0,0,0,,,,1,ZERO_ATTEMPTS
+e-um-bom-amigo-descubra-com-este-quiz,Que Tipo de Amigo Você É Quando Ninguém Está Julgando?,PERSONALITY,0,0,15,6,4,ok_unclassified,22,0,0,0,0,,,,1,ZERO_ATTEMPTS
+arquiteto-explorador-sonhador-quem-e-voce,"Arquiteto, Explorador ou Sonhador: Qual Força Guia Sua Personalidade?",PERSONALITY,0,0,8,3,4,ok_unclassified,10,0,0,2,0,,,,1,ZERO_ATTEMPTS
+voce-e-um-super-heroi-vilao-ou-anti-heroi-descubra-com-nosso-quiz,"Você seria herói, vilão ou anti-herói no seu próprio universo?",PERSONALITY,0,0,10,3,3,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-e-uma-sereia-ou-um-peixe-boi-descubra-seu-tipo-com-quiz-divertido,Sua Alma Aquática É de Sereia ou de Peixe-Boi?,PERSONALITY,0,0,15,2,2,ok_unclassified,17,0,0,1,0,,,,1,ZERO_ATTEMPTS
+voce-e-amante-da-natureza-ou-exploradora-de-cidade-descubra-aqui,"Você pertence à natureza, à cidade ou aos dois mundos?",PERSONALITY,0,0,10,3,2,ok_unclassified,12,0,0,2,0,,,,1,ZERO_ATTEMPTS
+sera-que-adivinhamos-o-seu-personagem-favorito-do-mickey-mouse-quiz-divertido,Será que conseguimos adivinhar seu personagem favorito do Mickey Mouse?,PERSONALITY,0,0,10,6,4,ok_unclassified,10,0,0,7,0,,,,1,ZERO_ATTEMPTS
+voce-e-consciente-ou-sua-mente-esta-cheia-descubra-sua-consciencia-do-momento-presente,Sua mente vive no presente ou perdida no piloto automático?,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-e-mais-costa-oeste-ou-costa-leste-descubra-sua-vibe-nos-eua,Sua vibe combina mais com a Costa Oeste ou a Costa Leste dos EUA?,PERSONALITY,0,0,9,3,4,ok_unclassified,12,0,0,1,0,,,,1,ZERO_ATTEMPTS
+es-mais-parecidoa-com-um-gato-ou-um-cao-descobre-aqui,És mais gato ou cão? Descobre que energia animal domina a tua personalidade,PERSONALITY,0,0,12,2,4,ok_unclassified,14,0,0,1,0,,,,1,ZERO_ATTEMPTS
+monte-uma-equipe-de-adoraveis-filhotes-de-animais-e-descubra-o-que-as-pessoas-mais-amam-em-voce,Escolha Filhotes Fofíssimos e Descubra o Traço Que Faz Você Brilhar,PERSONALITY,0,0,8,6,4,ok_unclassified,7,0,0,8,0,,,,1,ZERO_ATTEMPTS
+que-personagem-de-desenho-animado-eu-sou,Qual Personagem de Desenho Animado Combina Com Sua Personalidade?,PERSONALITY,0,0,12,8,3,ok_unclassified,21,0,0,0,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+sou-desastradoa-descubra-com-este-quiz-divertido,Você é mesmo desastrado? Faça o teste e descubra seu nível de trapalhada,PERSONALITY,0,0,13,6,3,ok_unclassified,1,0,0,13,6,,,,1,ZERO_ATTEMPTS
+descubra-quao-atraente-voce-e,Qual é Sua Nota de Atração? Descubra o Que Sua Presença Transmite,PERSONALITY,0,0,18,10,3,ok_unclassified,27,0,0,2,0,keeper,descubra-quao-atraente-voce-e-5,paraphrased,1,ZERO_ATTEMPTS|DUPLICATE:keeper:paraphrased
+com-base-nas-suas-escolhas-de-cores-podemos-dizer-em-que-estacao-voce-nasceu,Escolha cores bonitas e revelaremos a estação em que você nasceu,PERSONALITY,0,0,10,4,4,ok_unclassified,12,0,0,3,0,,,,1,ZERO_ATTEMPTS
+monte-seu-sanduiche-dos-sonhos-e-revele-seu-destino-de-ferias-ideal,Monte Seu Sanduíche Perfeito e Descubra Seu Destino de Férias Ideal,PERSONALITY,0,0,10,6,2,ok_unclassified,14,0,0,3,0,,,,1,ZERO_ATTEMPTS
+monte-um-sanduiche-e-adivinharemos-seu-animal-espiritual-excentrico,Monte seu sanduíche perfeito e descubra seu animal espiritual mais excêntrico,PERSONALITY,0,0,10,6,2,ok_unclassified,11,0,0,6,0,,,,1,ZERO_ATTEMPTS
+responda-essas-10-perguntas-para-revelar-seus-2-lados-mais-marcantes,Quais Dois Lados da Sua Personalidade Dominam Você?,PERSONALITY,0,0,10,15,6,ok_unclassified,1,0,0,10,15,,,,1,ZERO_ATTEMPTS
+voce-e-uma-coruja-ou-um-madrugadormadrugadora-descubra-seu-ritmo-circadiano,"Você é Coruja da Noite, Madrugador ou Energia do Meio-Dia?",PERSONALITY,0,0,10,3,3,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-e-mais-parecidoa-com-um-robo-ou-um-alienigena,"Você tem alma de robô, alienígena ou ciborgue equilibrado?",PERSONALITY,0,0,12,3,2,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-e-uma-fashionista-ou-minimalista-descubra-seu-estilo,"Fashionista, minimalista ou camaleão? Descubra seu estilo de verdade",PERSONALITY,0,0,12,3,4,ok_unclassified,9,0,0,7,0,,,,1,ZERO_ATTEMPTS
+conseguimos-adivinhar-o-seu-prato-americano-favorito-faca-o-quiz,Qual prato americano combina com a sua personalidade?,PERSONALITY,0,0,8,6,2,ok_unclassified,11,0,0,4,0,,,,1,ZERO_ATTEMPTS
+sera-que-adivinhamos-seu-personagem-favorito-de-peter-pan-da-disney,Qual personagem de Peter Pan da Disney vive dentro da sua imaginação?,PERSONALITY,0,0,12,6,4,ok_unclassified,14,0,0,5,0,,,,1,ZERO_ATTEMPTS
+voce-esta-amaldicoado-vamos-descobrir,Qual Maldição Sombria Está Presa a Você?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+este-quiz-vai-revelar-qual-animal-voce-vai-renascer-na-proxima-vida,Qual Animal Você Seria em Uma Próxima Vida?,PERSONALITY,0,0,15,10,6,ok_unclassified,26,0,0,0,0,,,,1,ZERO_ATTEMPTS
+sera-que-conseguimos-adivinhar-seu-super-heroi-favorito,Qual super-herói combina com seu jeito de salvar o dia?,PERSONALITY,0,0,10,6,2,ok_unclassified,10,0,0,7,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+podemos-adivinhar-sua-estacao-favorita-com-base-nas-suas-escolhas-de-cores,Escolha Cores e Revelaremos Qual Estação Combina com Sua Alma,PERSONALITY,0,0,10,4,4,ok_unclassified,11,0,0,4,0,,,,1,ZERO_ATTEMPTS
+sera-que-adivinhamos-o-seu-prato-mexicano-favorito,Será Que Conseguimos Adivinhar Seu Prato Mexicano Favorito?,PERSONALITY,0,0,10,6,4,ok_unclassified,13,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-fnaf-voce-e-descubra-com-nosso-quiz,Qual personagem clássico de FNAF você seria?,PERSONALITY,0,0,15,6,3,ok_unclassified,22,0,0,0,0,,,,1,ZERO_ATTEMPTS
+o-que-devo-desenhar-ideias-para-desenhos-criativos,O Que Desenhar Hoje? Descubra Uma Ideia Criativa Para Começar,PERSONALITY,0,0,10,12,2,ok_unclassified,19,0,0,4,0,,,,1,ZERO_ATTEMPTS
+se-a-sua-vida-fosse-um-livro-qual-seria-o-titulo-quiz-divertido,"Se Sua Vida Fosse um Livro, Qual Seria o Título do Seu Capítulo Mais Épico?",PERSONALITY,0,0,11,10,4,ok_unclassified,22,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quanto-de-super-heroi-voce-e,Qual é a Sua Porcentagem Real de Super-Herói?,PERSONALITY,0,0,18,20,2,ok_unclassified,31,0,0,8,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+que-tipo-de-passaro-voce-e-descubra-com-nosso-divertido-quiz-online,Qual pássaro combina com o seu jeito de ser?,PERSONALITY,0,0,10,6,4,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+desenhe-o-escritorio-dos-seus-sonhos-e-descubra-sua-futura-carreira,Monte Seu Escritório dos Sonhos e Descubra Qual Carreira Combina com Você,PERSONALITY,0,0,10,6,2,ok_unclassified,9,0,0,8,0,,,,1,ZERO_ATTEMPTS
+escolha-seus-petiscos-de-cinema-favoritos-e-descubra-seu-alter-ego-de-super-heroi,Escolha seus petiscos de cinema e revele seu alter ego de super-herói,PERSONALITY,0,0,8,6,2,ok_unclassified,9,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-bebida-festiva-representa-melhor-o-seu-espirito-natalino,Qual bebida natalina revela o seu verdadeiro espírito de fim de ano?,PERSONALITY,0,0,10,4,4,ok_unclassified,8,0,0,7,0,,,,1,ZERO_ATTEMPTS
+sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-naruto,Conseguimos Adivinhar Seu Personagem Favorito de Naruto?,PERSONALITY,0,0,10,6,3,ok_unclassified,16,0,0,1,0,,,,1,ZERO_ATTEMPTS
+escolha-seus-personagens-ficticios-favoritos-para-descobrir-sua-carreira-ideal,Monte seu time de personagens fictícios e descubra a carreira que combina com você,PERSONALITY,0,0,10,6,2,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+todos-tem-uma-forma-unica-de-amar-qual-e-a-sua,Qual é o seu jeito de amar de verdade?,PERSONALITY,0,0,10,6,6,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-romance-de-fantasia-voce-deve-ler-a-seguir,Qual fantasia romântica deveria ser sua próxima obsessão literária?,PERSONALITY,0,0,8,6,4,ok_unclassified,1,0,0,8,6,,,,1,ZERO_ATTEMPTS
+o-que-devo-fazer-na-vespera-de-ano-novo-descubra-sua-vibe-ideal,Qual Plano de Ano Novo Combina Com a Sua Vibe?,PERSONALITY,0,0,10,6,4,ok_unclassified,9,0,0,8,0,,,,1,ZERO_ATTEMPTS
+voce-precisa-de-um-detox-digital-faca-o-quiz-agora,Você Está Precisando de um Detox Digital? Descubra Seu Nível de Dependência das Telas,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-cidade-europeia-voce-deve-visitar-em-seguida-suas-escolhas-de-cafe-da-manha-vao-revelar,Monte seu café da manhã e descubra qual cidade europeia é a sua próxima viagem,PERSONALITY,0,0,8,6,2,ok_unclassified,10,0,0,5,0,,,,1,ZERO_ATTEMPTS
+seu-gato-e-um-sociopata-vamos-descobrir,Seu gato é um vilão genial ou só um dramático profissional?,PERSONALITY,0,0,10,18,6,ok_unclassified,29,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-eddsworld-voce-e-descubra-com-este-quiz,Qual personagem de Eddsworld combina com sua personalidade?,PERSONALITY,0,0,10,4,2,ok_unclassified,8,0,0,7,0,,,,1,ZERO_ATTEMPTS
+qual-e-a-minha-estacao-do-ano-descubra-com-este-quiz-divertido,Qual Estação do Ano Mora na Sua Personalidade?,PERSONALITY,0,0,12,4,2,ok_unclassified,8,0,0,9,0,,,,1,ZERO_ATTEMPTS
+quantas-criancas-eu-terei-descubra-com-este-quiz,Quantos Filhos Combinam com o Futuro que Você Imagina?,PERSONALITY,0,0,12,11,2,ok_unclassified,23,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-e-a-cor-do-sabre-de-luz-i-descubra-a-cor-do-seu-sabre-de-luz-star-wars,Qual Cor de Sabre de Luz Combina com Sua Força Interior?,PERSONALITY,0,0,12,6,3,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quantos-caes-voce-poderia-subornar-para-levar-uma-fotografia-sua-com-um-gato,Quantos cães você conseguiria convencer a tirar uma selfie sua com um gato?,PERSONALITY,0,0,15,20,3,ok_unclassified,36,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quiz-do-dia-da-terra-para-criancas,Quiz do Dia da Terra: Crianças Também Sabem Salvar o Planeta?,PERSONALITY,0,0,10,2,2,ok_unclassified,8,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-membro-do-dream-smp-voce-e-descubra-com-nosso-quiz,Qual membro do Dream SMP você seria no meio do caos?,PERSONALITY,0,0,13,7,3,ok_unclassified,20,0,0,1,0,,,,1,ZERO_ATTEMPTS
+quao-ciumento-voce-e-num-relacionamento-descubra-com-nosso-quiz,Seu ciúme no relacionamento é saudável ou passou do limite?,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-reptil-voce-seria,Que réptil combina com a sua personalidade?,PERSONALITY,0,0,10,6,4,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+teste-de-depressao,Como Está Sua Saúde Emocional Agora? Faça Um Check-in Honesto,PERSONALITY,0,0,20,4,4,ok_unclassified,5,0,0,20,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-dragon-ball-e-voce-quiz-de-personalidade,Qual personagem de Dragon Ball combina com a sua personalidade?,PERSONALITY,0,0,15,16,2,ok_unclassified,25,0,0,7,0,,,,1,ZERO_ATTEMPTS
+sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-gurren-lagann,Qual personagem de Gurren Lagann parece ser o seu favorito?,PERSONALITY,0,0,10,5,4,ok_unclassified,9,0,0,7,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-sabor-de-batata-frita-voce-tem-descubra-seu-sabor-ideal,Qual sabor de batata frita combina com a sua personalidade?,PERSONALITY,0,0,12,12,4,ok_unclassified,22,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-peter-pan-da-disney-seria-seu-melhor-amigo,Qual personagem de Peter Pan seria seu melhor amigo em Neverland?,PERSONALITY,0,0,12,6,2,ok_unclassified,13,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-peter-pan-da-disney-e-sua-alma-gemea,Qual Personagem de Peter Pan Seria Sua Alma Gêmea na Terra do Nunca?,PERSONALITY,0,0,12,6,3,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-ducktales,Qual personagem de DuckTales combina com seu espírito de aventura?,PERSONALITY,0,0,10,6,4,ok_unclassified,13,0,0,4,0,,,,1,ZERO_ATTEMPTS
+quem-e-voce-descubra-seu-arquetipo,"Qual Arquétipo Domina Sua Personalidade: Sábio, Rebelde ou Palhaço?",PERSONALITY,0,0,10,3,2,ok_unclassified,12,0,0,2,0,keeper,quem-e-voce-descubra-seu-arquetipo-6,distinct-ish,1,ZERO_ATTEMPTS|DUPLICATE:keeper:distinct-ish
+que-tipo-de-casa-voce-estara-vivendo-daqui-a-dez-anos,Que tipo de casa combina com o seu futuro daqui a 10 anos?,PERSONALITY,0,0,10,10,2,ok_unclassified,17,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-frozen-da-disney-seria-seu-arqui-inimigo,Qual personagem de Frozen seria seu arqui-inimigo em Arendelle?,PERSONALITY,0,0,12,6,4,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quais-sao-as-suas-chances-de-sobreviver-em-um-filme-de-terror,Você sobreviveria a um filme de terror ou cairia no primeiro susto?,PERSONALITY,0,0,12,8,3,ok_unclassified,20,0,0,1,0,,,,1,ZERO_ATTEMPTS
+responda-essas-perguntas-e-eu-te-direi-se-voce-e-aventureiro-apaixonado-humilde-ou-simplesmente-estranho,"Você é aventureiro, apaixonado, humilde ou deliciosamente estranho?",PERSONALITY,0,0,10,6,4,ok_unclassified,9,0,0,8,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-urso-sou-eu-descubra-seu-urso-interior,Qual urso representa a sua personalidade secreta?,PERSONALITY,0,0,13,7,2,ok_unclassified,13,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-frozen-da-disney-e-voce-descubra-com-nosso-quiz,Qual personagem de Frozen você seria em Arendelle?,PERSONALITY,0,0,12,6,4,ok_unclassified,14,0,0,5,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-e-o-seu-espirito-animal-quiz-divertido-e-revelador,Qual é o Seu Espírito Animal Mais Caótico?,PERSONALITY,0,0,12,12,3,ok_unclassified,18,0,0,7,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-e-o-meu-signo-zodiacal-quiz-de-horoscopo-personalizado,Qual signo do zodíaco tem a sua energia?,PERSONALITY,0,0,10,12,3,ok_unclassified,1,0,0,10,12,,,,1,ZERO_ATTEMPTS
+como-sou-atraente-teste-de-atracao-e-autoconfianca,Que tipo de atração você desperta nos outros?,PERSONALITY,0,0,12,5,5,ok_unclassified,16,0,0,2,0,,,,1,ZERO_ATTEMPTS
+voce-pertence-a-um-conto-de-fadas-ou-a-um-romance-de-ficcao-cientifica-descubra-com-nosso-quiz,Você viveria melhor em um conto de fadas ou numa aventura sci-fi?,PERSONALITY,0,0,12,3,4,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-vilao-da-disney-voce-e-quiz-para-descobrir-seu-vilao-favorito,"Qual vilão da Disney combina com seu lado mais dramático, ambicioso e perigoso?",PERSONALITY,0,0,15,10,2,ok_unclassified,25,0,0,1,0,,,,1,ZERO_ATTEMPTS
+o-que-e-meu-dosha-descubra-seu-dosha-dominante,"Qual é o Seu Dosha Dominante: Vata, Pitta ou Kapha?",PERSONALITY,0,0,20,3,3,ok_unclassified,24,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-casa-voce-deve-escolher,Qual casa de Hogwarts combina com a sua verdadeira personalidade?,PERSONALITY,0,0,15,4,2,ok_unclassified,14,0,0,6,0,keeper,qual-casa-voce-deve-escolher-1,paraphrased,1,ZERO_ATTEMPTS|DUPLICATE:keeper:paraphrased
+pegue-algumas-guloseimas-neste-buffet-de-sobremesas-e-eu-tentarei-adivinhar-seu-pedido-de-cafe-tipico,Monte seu buffet de sobremesas e descubra qual café combina com você,PERSONALITY,0,0,8,6,4,ok_unclassified,10,0,0,5,0,,,,1,ZERO_ATTEMPTS
+voce-pertence-a-um-show-de-comedia-ou-a-uma-serie-de-drama,"Sua vida seria uma comédia, um drama intenso ou uma dramedy irresistível?",PERSONALITY,0,0,12,3,4,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-fantasia-de-halloween-voce-deve-usar,Qual Fantasia de Halloween Tem Tudo a Ver com Você?,PERSONALITY,0,0,13,12,2,ok_unclassified,1,0,0,13,12,,,,1,ZERO_ATTEMPTS
+qual-filme-da-disney-voce-deve-assistir-hoje-a-noite,Qual Filme da Disney Você Deveria Assistir Hoje à Noite?,PERSONALITY,0,0,10,8,3,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-da-disney-seria-seu-arqui-inimigo,Qual Vilão da Disney Seria Seu Arqui-inimigo?,PERSONALITY,0,0,12,8,4,ok_unclassified,20,0,0,1,0,,,,1,ZERO_ATTEMPTS
+voce-e-salgadoa-picante-doce-azedoa-ou-amargoa-qual-sabor-basico-e-o-seu,"Qual sabor combina com a sua personalidade: doce, salgado, picante, azedo, amargo ou umami?",PERSONALITY,0,0,10,6,5,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+em-que-pais-voce-deve-morar,Qual País Combina Secretamente com o Seu Jeito de Viver?,PERSONALITY,0,0,10,27,4,ok_unclassified,34,0,0,4,0,keeper,em-que-pais-voce-deve-morar-1,distinct-ish,1,ZERO_ATTEMPTS|DUPLICATE:keeper:distinct-ish
+qual-geracao-voce-realmente-deveria-ser-baseado-na-sua-personalidade,Qual geração combina secretamente com a sua personalidade?,PERSONALITY,0,0,12,4,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-meu-genero-descubra-sua-identidade-de-genero,"Sua expressão de gênero é mais fluida, masculina ou feminina?",PERSONALITY,0,0,13,3,2,ok_unclassified,16,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-da-disney-voce-e-descubra-com-nosso-quiz,Qual personagem da Disney revela seu lado mais mágico?,PERSONALITY,0,0,10,8,3,ok_unclassified,14,0,0,5,0,,,,1,ZERO_ATTEMPTS
+que-flor-sou-eu-descubra-seu-tipo-de-flor,Qual flor traduz melhor a energia da sua personalidade?,PERSONALITY,0,0,13,8,2,ok_unclassified,14,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-menina-e-sua-alma-gemea-descubra-agora,Qual personagem feminina de Genshin Impact tem mais sintonia com você?,PERSONALITY,0,0,12,10,4,ok_unclassified,20,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-animal-deve-ser-sua-fursona,Qual Animal Combina com a Sua Fursona?,PERSONALITY,0,0,10,10,2,ok_unclassified,20,0,0,1,0,,,,1,ZERO_ATTEMPTS
+voce-e-mais-como-um-viajante-do-tempo-ou-um-explorador-do-espaco,"Você nasceu para viajar no tempo, explorar o espaço ou atravessar dimensões?",PERSONALITY,0,0,12,3,4,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-classe-diablo-immortal-voce-deve-jogar,Qual classe de Diablo Immortal combina com seu jeito de lutar?,PERSONALITY,0,0,10,6,6,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+que-carater-euforico-sou-eu-quiz-de-personagens-de-euphoria,Qual personagem de Euphoria reflete sua intensidade?,PERSONALITY,0,0,15,6,2,ok_unclassified,21,0,0,1,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+que-tipo-de-arquetipo-feminino-sou-eu,Qual Arquétipo Feminino Domina Sua Energia Interior?,PERSONALITY,0,0,15,7,2,ok_unclassified,22,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-famoso-ponto-turistico-americano-representa-a-sua-personalidade,Qual Ponto Turístico dos EUA Combina com a Sua Personalidade?,PERSONALITY,0,0,10,6,4,ok_unclassified,16,0,0,1,0,,,,1,ZERO_ATTEMPTS
+em-qual-mundo-de-videogame-voce-deveria-habitar,Em Qual Mundo dos Videogames Você Deveria Viver?,PERSONALITY,0,0,10,6,4,ok_unclassified,11,0,0,6,0,,,,1,ZERO_ATTEMPTS
+voce-e-mais-um-pirata-ou-um-ninja-descubra-com-nosso-quiz-divertido,Você seria um pirata ousado ou um ninja silencioso?,PERSONALITY,0,0,12,2,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-carater-de-nota-de-obito,"Qual personagem de Death Note combina com sua lógica, ambição e lado mais perigoso?",PERSONALITY,0,0,15,5,2,ok_unclassified,18,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-super-heroi-da-dc-e-sua-alma-gemea-descubra-seu-par-ideal,Qual herói da DC seria sua alma gêmea?,PERSONALITY,0,0,10,6,2,ok_unclassified,9,0,0,8,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+que-personagem-de-encanto-voce-e-teste-de-personalidade-encanto,Qual personagem de Encanto combina com sua personalidade?,PERSONALITY,0,0,12,8,2,ok_unclassified,17,0,0,4,0,,,,1,ZERO_ATTEMPTS
+voce-e-mais-glinda-ou-elphaba-descubra-seu-personagem-de-wicked,Qual personagem de Wicked combina com a sua magia interior?,PERSONALITY,0,0,12,6,4,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-esta-emocionalmente-disponivel-para-o-amor-descubra-com-nosso-quiz,Você está realmente disponível para viver um amor agora?,PERSONALITY,0,0,10,4,4,ok_unclassified,13,0,0,2,0,,,,1,ZERO_ATTEMPTS
+encontre-o-nome-perfeito-para-o-bebe-com-este-questionario-divertido,Qual nome de bebê combina com o estilo da sua família?,PERSONALITY,0,0,8,54,2,ok_unclassified,63,0,0,0,0,,,,1,ZERO_ATTEMPTS
+em-qual-mundo-de-anime-voce-pertence-descubra-com-nosso-quiz,Em qual mundo de anime você realmente viveria?,PERSONALITY,0,0,10,6,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-cao-devo-escolher,Qual raça de cachorro combina com sua vida?,PERSONALITY,0,0,15,15,2,ok_unclassified,31,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-parque-nacional-combina-com-voce,Qual Parque Nacional dos EUA Combina com a Sua Alma Aventureira?,PERSONALITY,0,0,9,6,4,ok_unclassified,14,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-cowboy-bebop-voce-e-quiz-divertido,Qual personagem de Cowboy Bebop carrega a mesma bagagem que você?,PERSONALITY,0,0,10,5,4,ok_unclassified,14,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-pais-e-o-seu-destino-ideal-para-ferias-de-inverno,Qual país combina com as suas férias de inverno dos sonhos?,PERSONALITY,0,0,8,8,4,ok_unclassified,15,0,0,2,0,,,,1,ZERO_ATTEMPTS
+coma-uma-fruta-e-nos-diremos-qual-e-o-seu-destino-de-viagem-perfeito-na-europa,Escolha frutas e descubra seu destino perfeito na Europa,PERSONALITY,0,0,8,6,4,ok_unclassified,7,0,0,8,0,,,,1,ZERO_ATTEMPTS
+que-raca-de-dd-voce-e,Qual Espécie de D&D Combina com Sua Alma de Aventureiro?,PERSONALITY,0,0,14,12,3,ok_unclassified,13,0,0,14,0,,,,1,ZERO_ATTEMPTS
+qual-comida-conforto-voce-e-baseado-na-sua-personalidade,Qual comida conforto representa a sua personalidade?,PERSONALITY,0,0,12,8,3,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+beba-uns-drinks-chiques-para-descobrir-com-qual-celebridade-voce-se-apaixonaria-numa-noite-em-hollywood,Escolha drinks de luxo e descubra qual celebridade seria seu romance em Hollywood,PERSONALITY,0,0,8,6,2,ok_unclassified,8,0,0,7,0,,,,1,ZERO_ATTEMPTS
+voce-e-um-rato-de-biblioteca-ou-um-cinefilo-quiz-divertido,"Livro, filme ou os dois? Descubra que tipo de fã de histórias você é",PERSONALITY,0,0,10,3,3,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-classe-dd-sou-eu-descubra-sua-classe-de-dungeons-and-dragons,Qual classe de D&D nasceu para a sua aventura?,PERSONALITY,0,0,12,14,3,ok_unclassified,25,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-console-classico-de-videogame-reflete-o-seu-espirito-gamer,Qual Console Clássico de Videogame Combina com Seu Espírito Gamer?,PERSONALITY,0,0,10,6,4,ok_unclassified,11,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-sobremesa-voce-e-descubra-sua-sobremesa-ideal,Qual sobremesa combina com a sua personalidade?,PERSONALITY,0,0,10,8,2,ok_unclassified,18,0,0,1,0,,,,1,ZERO_ATTEMPTS
+que-criatura-sobrenatural-guarda-seus-sonhos,Qual criatura sobrenatural protege seus sonhos enquanto você dorme?,PERSONALITY,0,0,12,6,3,ok_unclassified,10,0,0,9,0,keeper,que-criatura-sobrenatural-guarda-seus-sonhos-5,paraphrased,1,ZERO_ATTEMPTS|DUPLICATE:keeper:paraphrased
+que-filme-de-natal-devo-assistir-quiz-para-escolher-seu-filme-natalino,Qual filme de Natal combina perfeitamente com o seu clima de fim de ano?,PERSONALITY,0,0,15,6,3,ok_unclassified,12,0,0,10,0,,,,1,ZERO_ATTEMPTS
+voce-pertence-a-uma-cidade-futurista-cyberpunk-ou-a-um-mundo-steampunk-descubra-aqui,Você viveria melhor no neon cyberpunk ou nas engrenagens steampunk?,PERSONALITY,0,0,12,3,4,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-autor-classico-dos-eua-mais-combina-com-voce-descubra-com-nosso-quiz,Qual escritor clássico dos EUA teria criado você como personagem?,PERSONALITY,0,0,9,6,4,ok_unclassified,12,0,0,4,0,,,,1,ZERO_ATTEMPTS
+que-carro-devo-comprar-baseado-na-minha-personalidade-descubra-aqui,Qual carro combina com a sua personalidade?,PERSONALITY,0,0,12,6,2,ok_unclassified,13,0,0,6,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+meu-marido-me-ama-descubra-com-este-questionario,Seu marido ainda demonstra amor? Faça o teste e veja os sinais,PERSONALITY,0,0,12,4,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+lugares-incriveis-do-mundo,Você Reconhece os Lugares Mais Incríveis do Mundo?,TRIVIA,0,0,5,0,4,ok_unclassified,6,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-clash-of-clans-tropa-e-voce-descubra-sua-tropa-coc,Qual tropa de Clash of Clans combina com sua personalidade?,PERSONALITY,0,0,10,23,2,ok_unclassified,34,0,0,0,0,,,,1,ZERO_ATTEMPTS
+ele-tem-uma-queda-por-mim-quiz-de-romance,Ele Está Afim de Você? Descubra os Sinais Que Talvez Você Não Tenha Notado,PERSONALITY,0,0,12,6,3,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+escolha-suas-cores-favoritas-e-nos-lhe-diremos-quem-voce-e,Escolha suas cores favoritas e descubra o traço que mais brilha em você,PERSONALITY,0,0,10,6,6,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-do-charlie-brown-voce-e,Qual personagem de Charlie Brown combina com seu jeito?,PERSONALITY,0,0,10,6,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-anime-devo-assistir-descubra-com-este-quiz,Qual anime combina com seu gosto agora?,PERSONALITY,0,0,10,6,3,ok_unclassified,16,0,0,1,0,,,,1,ZERO_ATTEMPTS
+voce-se-sente-valorizado-no-trabalho-descubra-com-nosso-quiz,Você É Valorizado no Trabalho? Descubra Como Seu Ambiente Realmente Te Trata,PERSONALITY,0,0,9,4,4,ok_unclassified,11,0,0,3,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-macarrao-voce-e,Que Tipo de Macarrão Combina com a Sua Personalidade?,PERSONALITY,0,0,10,4,4,ok_unclassified,1,0,0,10,4,,,,1,ZERO_ATTEMPTS
+qual-refrigerante-voce-e-descubra-com-nosso-quiz-divertido,Qual refrigerante combina com a sua personalidade?,PERSONALITY,0,0,13,8,2,ok_unclassified,13,0,0,9,0,,,,1,ZERO_ATTEMPTS
+ainda-amo-meu-ex-teste-para-descobrir-seus-sentimentos,Você ainda ama seu ex ou só sente saudade? Faça o teste e descubra,PERSONALITY,0,0,12,6,4,ok_unclassified,18,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-fnaf-security-breach-voce-e,Qual personagem de FNAF: Security Breach vive dentro da sua personalidade?,PERSONALITY,0,0,12,6,3,ok_unclassified,13,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-shrek-voce-e-descubra-com-este-quiz-divertido,Qual personagem de Shrek combina com suas camadas mais secretas?,PERSONALITY,0,0,15,8,3,ok_unclassified,21,0,0,3,0,,,,1,ZERO_ATTEMPTS
+que-estereotipo-de-carater-animico-voce-e,Qual arquétipo de anime domina sua personalidade?,PERSONALITY,0,0,15,5,2,ok_unclassified,13,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-dos-animais-mais-mortais-do-mundo-voce-seria,Qual Animal Mortal Combina Com a Sua Personalidade?,PERSONALITY,0,0,10,6,2,ok_unclassified,11,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-ser-festivo-ressoa-com-o-seu-espirito,Qual Ícone Natalino Combina com o Seu Espírito Festivo?,PERSONALITY,0,0,10,6,4,ok_unclassified,11,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-romance-policial-ou-de-suspense-voce-deve-ler-a-seguir,Qual suspense ou romance policial combina com sua próxima noite de leitura?,PERSONALITY,0,0,8,6,4,ok_unclassified,3,0,0,6,6,,,,1,ZERO_ATTEMPTS
+qual-das-seguintes-afirmacoes-e-verdadeira,Você Consegue Separar Fatos Reais de Pegadinhas?,PERSONALITY,0,0,20,2,3,ok_unclassified,3,0,0,20,0,,,,1,ZERO_ATTEMPTS
+o-que-devo-fazer-com-minha-vida-descubra-seu-caminho,O Que Você Deveria Fazer da Vida? Descubra o Caminho Que Combina com Você,PERSONALITY,0,0,14,16,2,ok_unclassified,30,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-papel-na-mudanca-social,Qual é o Seu Papel na Transformação Social?,PERSONALITY,0,0,10,3,3,ok_unclassified,12,0,0,2,0,,,,1,ZERO_ATTEMPTS
+quando-vou-morrer-questionario,Qual seria seu destino fictício em uma história de humor sombrio?,PERSONALITY,0,0,20,30,2,ok_unclassified,9,0,0,12,30,,,,1,ZERO_ATTEMPTS
+qual-das-renas-do-papai-noel-voce-mais-se-parece-quiz-natalino-de-personalidade,Qual Rena do Papai Noel Tem a Sua Personalidade?,PERSONALITY,0,0,10,8,4,ok_unclassified,9,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-classe-voce-deve-escolher,Qual Classe de Fantasia Combina Com Seu Estilo de Jogo?,PERSONALITY,0,0,12,5,6,ok_unclassified,18,0,0,0,0,keeper,qual-classe-voce-deve-escolher-5,paraphrased,1,ZERO_ATTEMPTS|DUPLICATE:keeper:paraphrased
+qual-e-o-personagem-de-my-hero-academia-que-voce-e,Qual personagem de My Hero Academia realmente combina com você?,PERSONALITY,0,0,15,12,2,ok_unclassified,24,0,0,4,0,,,,1,ZERO_ATTEMPTS
+no-que-eu-sou-bom-descubra-seus-talentos,No que você é naturalmente bom? Descubra seu talento secreto,PERSONALITY,0,0,17,6,2,ok_unclassified,13,0,0,11,0,,,,1,ZERO_ATTEMPTS
+qual-e-a-sua-abordagem-para-resolver-problemas,"Você Resolve Problemas Como Detetive, Diplomata ou Aventureiro?",PERSONALITY,0,0,10,3,2,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+podemos-dizer-qual-emoji-de-macaco-voce-e-pelas-cores-que-voce-escolhe,Escolha seus gradientes favoritos e revele qual emoji de macaco traduz sua vibe,PERSONALITY,0,0,10,4,4,ok_unclassified,1,0,0,10,4,,,,1,ZERO_ATTEMPTS
+podemos-dizer-qual-pokemon-inicial-voce-escolheu-com-base-no-que-voce-valoriza-na-vida,Qual Pokémon inicial combina com o que você mais valoriza?,PERSONALITY,0,0,10,4,4,ok_unclassified,5,0,0,10,0,,,,1,ZERO_ATTEMPTS
+decore-seu-escritorio-dos-sonhos-em-casa-e-adivinharemos-sua-memoria-de-infancia-mais-constrangedora,Decore Seu Escritório dos Sonhos e Revelaremos Sua Memória de Infância Mais Constrangedora,PERSONALITY,0,0,9,6,2,ok_unclassified,7,0,0,9,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-neon-genesis-evangelion-voce-e-teste-de-personalidade-nge,Qual personagem de Neon Genesis Evangelion vive dentro de você?,PERSONALITY,0,0,12,6,2,ok_unclassified,16,0,0,3,0,,,,1,ZERO_ATTEMPTS
+voce-e-kira-ou-l,Você pensa mais como Kira ou como L?,PERSONALITY,0,0,14,2,2,ok_unclassified,17,0,0,0,0,keeper,voce-e-kira-ou-l-5,distinct-ish,1,ZERO_ATTEMPTS|DUPLICATE:keeper:distinct-ish
+podemos-determinar-com-precisao-quao-saudavel-sua-mente-esta-com-base-nos-gifs-que-voce-escolher-neste-questionario,Escolha alguns GIFs e descubra em que estado sua mente está hoje,PERSONALITY,0,0,10,20,2,ok_unclassified,21,0,0,10,0,,,,1,ZERO_ATTEMPTS
+os-frutos-que-voce-escolhe-neste-quiz-revelam-o-quao-puro-voce-e,Escolha frutas e descubra qual porcentagem de pureza combina com você,PERSONALITY,0,0,10,20,4,ok_unclassified,21,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-naruto-seria-seu-arqui-inimigo-descubra-seu-rival-ninja,Quem seria seu arqui-inimigo em Naruto?,PERSONALITY,0,0,10,6,3,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+crie-sua-salada-perfeita-e-descubra-seu-vegetal-espiritual,Monte Sua Salada Ideal e Descubra Seu Vegetal Espiritual,PERSONALITY,0,0,10,6,4,ok_unclassified,13,0,0,4,0,,,,1,ZERO_ATTEMPTS
+este-quiz-lhe-dara-conselhos-que-mudarao-sua-vida-no-futuro,Que aviso o seu eu do futuro voltaria no tempo para te dar?,PERSONALITY,0,0,30,6,2,ok_unclassified,19,0,0,18,0,,,,1,ZERO_ATTEMPTS
+crie-a-pizza-perfeita-para-descobrir-qual-personagem-da-disney-voce-e,Monte sua pizza dos sonhos e descubra qual personagem da Disney combina com você,PERSONALITY,0,0,8,6,2,ok_unclassified,7,0,0,8,0,,,,1,ZERO_ATTEMPTS
+crie-sua-salada-de-frutas-dos-sonhos-e-descubra-o-que-voce-deve-visar-na-vida,Monte a Salada de Frutas Perfeita e Descubra Qual Meta Vai Guiar Sua Vida,PERSONALITY,0,0,8,10,2,ok_unclassified,11,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-personagem-naruto,Qual ninja de Naruto combina com seu jeito de agir?,PERSONALITY,0,0,18,9,4,ok_unclassified,25,0,0,3,0,,,,1,ZERO_ATTEMPTS
+este-teste-de-emojis-vai-revelar-o-seu-maior-desejo-oculto,Escolha alguns emojis e descubra qual desejo secreto vive escondido em você,PERSONALITY,0,0,10,6,4,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-segredo-mais-sombrio-5,O Que Sua Primeira Impressão Revela Sobre Sua Sombra Interior?,PERSONALITY,0,0,12,5,5,ok_unclassified,1,0,0,12,5,,,,1,ZERO_ATTEMPTS
+qual-e-a-sua-fuga-ideal,Sua Fuga Ideal É Cidade Elétrica ou Natureza Selvagem?,PERSONALITY,0,0,10,2,2,ok_unclassified,6,0,0,7,0,,,,1,ZERO_ATTEMPTS
+qual-ser-mitico-do-folclore-irlandes-voce-e,Qual ser mítico do folclore irlandês combina com sua alma?,PERSONALITY,0,0,10,6,2,ok_unclassified,10,0,0,7,0,,,,1,ZERO_ATTEMPTS
+escolha-suas-condicoes-climaticas-preferidas-e-adivinharemos-seu-destino-de-viagem-dos-sonhos,Escolha seus climas favoritos e descubra sua viagem dos sonhos,PERSONALITY,0,0,8,6,2,ok_unclassified,7,0,0,8,0,,,,1,ZERO_ATTEMPTS
+este-quiz-maluco-de-animais-pode-revelar-como-sera-sua-vida-daqui-a-5-anos,Reaja a animais em situações absurdas e descubra sua vida daqui a 5 anos,PERSONALITY,0,0,8,6,4,ok_unclassified,12,0,0,3,0,,,,1,ZERO_ATTEMPTS
+estas-perguntas-doidonas-vao-descobrir-a-sua-caracteristica-de-personalidade-dominante,Estas perguntas malucas revelam seu traço de personalidade dominante,PERSONALITY,0,0,10,8,2,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-emocao-sou-eu-descubra-com-este-quiz-de-sentimentos,Qual emoção secreta guia suas escolhas?,PERSONALITY,0,0,15,10,2,ok_unclassified,1,0,0,15,10,,,,1,ZERO_ATTEMPTS
+existem-6-estereotipos-de-personagens-comuns-vamos-descobrir-qual-voce-e,Qual estereótipo clássico de personagem combina com você?,PERSONALITY,0,0,10,6,4,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-my-hero-academia-e-sua-alma-gemea,Quem de My Hero Academia seria sua alma gêmea?,PERSONALITY,0,0,10,6,2,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+como-voce-lida-com-o-estresse,Como você realmente lida com o estresse?,PERSONALITY,0,0,10,8,3,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+conseguimos-adivinhar-o-seu-prato-japones-favorito-quiz-divertido,Qual Prato Japonês Combina Com Seu Jeito de Ser?,PERSONALITY,0,0,10,6,4,ok_unclassified,11,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-instrumento-musical-devo-tocar-descubra-com-este-questionario,Qual instrumento musical combina com sua personalidade?,PERSONALITY,0,0,12,16,4,ok_unclassified,21,0,0,8,0,,,,1,ZERO_ATTEMPTS
+conseguimos-adivinhar-o-seu-prato-italiano-favorito-quiz-divertido,Qual Prato Italiano Traduz Seu Jeito de Viver?,PERSONALITY,0,0,10,6,3,ok_unclassified,11,0,0,6,0,,,,1,ZERO_ATTEMPTS
+que-personagem-de-mortal-kombat-voce-e-descubra-seu-lutador,Qual lutador de Mortal Kombat combina com sua personalidade?,PERSONALITY,0,0,10,10,4,ok_unclassified,18,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-miraculous-voce-e-descubra-com-nosso-quiz,Qual personagem de Miraculous combina com seu lado herói?,PERSONALITY,0,0,12,6,4,ok_unclassified,15,0,0,0,4,,,,1,ZERO_ATTEMPTS
+voce-prioriza-a-sua-propria-felicidade-nos-relacionamentos,Você Coloca Sua Felicidade em Primeiro Lugar nos Relacionamentos?,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+conseguimos-adivinhar-seu-personagem-favorito-de-dragon-ball-quiz-divertido,Podemos Adivinhar Seu Personagem Favorito de Dragon Ball?,PERSONALITY,0,0,10,6,4,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-prato-mexicano-voce-e-descubra-sua-personalidade-culinaria-hoje,Qual prato mexicano revela sua verdadeira personalidade?,PERSONALITY,0,0,10,6,4,ok_unclassified,10,0,0,7,0,,,,1,ZERO_ATTEMPTS
+quantas-batatas-eu-valho,Quantas Batatas Você Vale? O Cálculo Mais Sem Sentido e Divertido da Internet,PERSONALITY,0,0,20,20,3,ok_unclassified,39,0,0,2,0,,,,1,ZERO_ATTEMPTS
+podemos-adivinhar-seu-mes-de-nascimento-teste-agora,Será que conseguimos adivinhar seu mês de nascimento pelas suas escolhas?,PERSONALITY,0,0,12,12,2,ok_unclassified,20,0,0,5,0,,,,1,ZERO_ATTEMPTS
+voce-e-seu-crush-foram-feitos-um-para-o-outro,Você e seu crush combinam de verdade?,PERSONALITY,0,0,11,4,4,ok_unclassified,14,0,0,2,0,,,,1,ZERO_ATTEMPTS
+podemos-adivinhar-se-voce-e-otimista-ou-pessimista-com-este-quiz-de-cores,As Cores Que Você Escolhe Dizem Se Sua Mente É Mais Solar ou Cautelosa?,PERSONALITY,0,0,10,2,4,ok_unclassified,13,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-criatura-magica-de-harry-potter-voce-e-descubra-seu-alter-ego-magico,Qual criatura mágica de Harry Potter combina com sua personalidade?,PERSONALITY,0,0,12,8,3,ok_unclassified,20,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-horror-lovecraftiano-voce-e-descubra-seu-monstro-interior,Qual entidade lovecraftiana habita sua mente?,PERSONALITY,0,0,12,6,3,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quantos-camelos-eu-valho,Quantos Camelos Você Valeria? O Quiz Mais Absurdo da Caravana,PERSONALITY,0,0,15,20,3,ok_unclassified,35,0,0,1,0,,,,1,ZERO_ATTEMPTS
+monte-o-sorvete-mais-delicioso-e-descubra-seu-emoji-mais-usado,Monte Seu Sorvete dos Sonhos e Descubra Qual Emoji Define Você,PERSONALITY,0,0,10,6,2,ok_unclassified,1,0,0,10,6,,,,1,ZERO_ATTEMPTS
+qual-e-o-senhor-dos-aneis-que-voce-e,Qual personagem de O Senhor dos Anéis revela sua verdadeira jornada?,PERSONALITY,0,0,15,8,2,ok_unclassified,23,0,0,1,0,,,,1,ZERO_ATTEMPTS
+perguntas-com-truques-e-desafios,Você Cai nas Pegadinhas Mais Óbvias da Internet?,PERSONALITY,0,0,20,2,4,ok_unclassified,3,0,0,20,0,,,,1,ZERO_ATTEMPTS
+quao-grande-e-o-seu-cerebro,Quão grande é o seu cérebro? Responda este quiz de conhecimentos gerais,PERSONALITY,0,0,11,4,7,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-cavalo-sou-eu-descubra-seu-tipo-de-cavalo,Que tipo de cavalo combina com a sua alma?,PERSONALITY,0,0,12,8,2,ok_unclassified,13,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-idioma-devo-aprender-descubra-o-melhor-para-voce,Qual idioma você deveria aprender agora?,PERSONALITY,0,0,14,10,5,ok_unclassified,25,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-meu-fetiche-descubra-seu-fetiche-sexual,Qual fantasia adulta combina com seu lado mais reservado?,PERSONALITY,0,0,18,7,3,ok_unclassified,8,0,0,18,0,keeper,qual-e-o-meu-fetiche-descubra-seu-fetiche-sexual-5,paraphrased,1,ZERO_ATTEMPTS|DUPLICATE:keeper:paraphrased
+quais-peixes-voce-e,Que Peixe Caótico Representa a Sua Personalidade?,PERSONALITY,0,0,15,10,2,ok_unclassified,23,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-voce-e-teste-de-personalidade,Qual Personagem de Attack on Titan Você Seria?,PERSONALITY,0,0,10,10,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-joia-voce-e-descubra-sua-joia-ideal,Qual joia revela o brilho secreto da sua personalidade?,PERSONALITY,0,0,10,10,4,ok_unclassified,11,0,0,0,10,,,,1,ZERO_ATTEMPTS
+qual-prato-italiano-voce-e-descubra-com-nosso-quiz-divertido,Qual Prato Italiano Traduz a Sua Personalidade?,PERSONALITY,0,0,10,6,4,ok_unclassified,10,0,0,7,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-meu-estilo-de-apego,Qual Estilo de Apego Guia Seus Relacionamentos?,PERSONALITY,0,0,25,4,2,ok_unclassified,5,0,0,25,0,keeper,qual-e-o-meu-estilo-de-apego-5,distinct-ish,1,ZERO_ATTEMPTS|DUPLICATE:keeper:distinct-ish
+qual-sabor-de-sorvete-voce-e-descubra-seu-sabor-ideal,Qual sabor de sorvete combina com a sua personalidade?,PERSONALITY,0,0,10,5,5,ok_unclassified,11,0,0,0,5,,,,1,ZERO_ATTEMPTS
+qual-constelacao-representa-sua-persona-mitologica,Qual Constelação Mitológica Combina com a Sua Personalidade?,PERSONALITY,0,0,10,6,2,ok_unclassified,9,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-assassino-de-filme-de-terror-voce-sobreviveria-descubra-agora,Qual vilão de terror você conseguiria sobreviver?,PERSONALITY,0,0,12,8,3,ok_unclassified,21,0,0,0,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+voce-e-mais-acucar-ou-sal,"Você tem mais personalidade de açúcar, sal ou caramelo salgado?",PERSONALITY,0,0,10,3,4,ok_unclassified,12,0,0,2,0,keeper,voce-e-mais-acucar-ou-sal-5,paraphrased,1,ZERO_ATTEMPTS|DUPLICATE:keeper:paraphrased
+qual-hobby-devo-experimentar-descubra-seu-proximo-hobby-aqui,Qual hobby novo combina com a sua personalidade?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-e-mais-parecido-com-sherlock-holmes-ou-indiana-jones-quiz-de-personalidade,Você é mais Sherlock Holmes ou Indiana Jones?,PERSONALITY,0,0,12,2,3,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-e-introvertido-ou-extrovertido-descubra-pelos-numeros-que-voce-escolhe,Escolha Números Aleatórios e Descubra Sua Energia Social,PERSONALITY,0,0,10,3,4,ok_unclassified,4,0,0,10,0,,,,1,ZERO_ATTEMPTS
+o-que-as-estrelas-revelam-sobre-o-seu-futuro,O Que as Estrelas Estão Tentando Te Contar Sobre o Seu Futuro?,PERSONALITY,0,0,10,6,4,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+crie-a-refeicao-perfeita-e-descubra-qual-personagem-de-hogwarts-voce-e,Monte sua refeição perfeita e descubra qual personagem de Hogwarts você seria,PERSONALITY,0,0,8,6,2,ok_unclassified,8,0,0,7,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-caminho-artistico,Qual caminho artístico combina com a sua forma de criar?,PERSONALITY,0,0,10,3,4,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-pertence-a-uma-cabana-aconchegante-ou-a-um-vibrante-apartamento-na-cidade,"Seu refúgio ideal é uma cabana na floresta, um apê na cidade ou um bangalô à beira-mar?",PERSONALITY,0,0,12,3,4,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-esta-pronto-para-um-relacionamento-quiz-de-autoconhecimento,Você está realmente pronto/a para um relacionamento?,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-pode-sobreviver-a-casa-de-horror-assombrada-do-halloween,Você Escaparia da Casa Assombrada ou Viraria Parte Dela?,PERSONALITY,0,0,13,14,2,ok_unclassified,1,0,0,13,14,,,,1,ZERO_ATTEMPTS
+qual-e-a-cor-do-meu-personagem-descubra-sua-cor-de-carater,Qual cor revela a essência da sua personalidade?,PERSONALITY,0,0,10,12,4,ok_unclassified,19,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-e-a-sua-contribuicao-para-a-tribo,Qual Seria o Seu Papel em Uma Tribo Mística?,PERSONALITY,0,0,10,3,2,ok_unclassified,13,0,0,1,0,,,,1,ZERO_ATTEMPTS
+decifre-seus-desejos-sexuais-com-este-quiz-envolvente,Qual é a linguagem secreta dos seus desejos?,PERSONALITY,0,0,8,6,4,ok_unclassified,8,0,0,7,0,,,,1,ZERO_ATTEMPTS
+se-sua-vida-fosse-um-videogame-qual-seria-o-titulo,"Se Sua Vida Fosse um Videogame, Qual Seria o Título Épico?",PERSONALITY,0,0,12,10,5,ok_unclassified,23,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quiz-de-personalidade,Qual professor de Hogwarts combina com sua personalidade?,PERSONALITY,0,0,12,8,2,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+o-que-os-teus-sonhos-te-revelam-sobre-ti,O que seus sonhos revelam sobre sua mente?,PERSONALITY,0,0,10,8,4,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-voce-e-descubra-aqui,Qual Personagem de Danny Phantom Combina com Você?,PERSONALITY,0,0,9,6,3,ok_unclassified,7,0,0,9,0,,,,1,ZERO_ATTEMPTS
+se-a-sua-vida-fosse-um-filme-qual-seria-o-titulo,"Se Sua Vida Fosse Um Filme, Qual Seria o Título?",PERSONALITY,0,0,9,10,3,ok_unclassified,20,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-tem-o-espirito-natalino-mais-alegre-da-sala-descubra-com-nosso-quiz,"Qual É o Seu Nível de Espírito Natalino? Descubra Se Você É Elfo, Rena ou Grinch",PERSONALITY,0,0,10,4,3,ok_unclassified,9,0,0,6,0,,,,1,ZERO_ATTEMPTS
+seu-crush-gosta-de-voce-descubra-agora,Seu Crush Gosta de Você ou Você Está Lendo Sinais Demais?,PERSONALITY,0,0,16,6,3,ok_unclassified,7,0,0,16,0,,,,1,ZERO_ATTEMPTS
+se-a-sua-vida-fosse-um-filme-de-terror-qual-seria-o-titulo,"Se sua vida virasse um filme de terror, qual seria o título?",PERSONALITY,0,0,10,10,4,ok_unclassified,11,0,0,0,10,,,,1,ZERO_ATTEMPTS
+qual-cara-e-sua-alma-gemea-descubra-aqui,Qual Personagem Masculino de Genshin Impact Seria Sua Alma Gêmea?,PERSONALITY,0,0,12,10,3,ok_unclassified,21,0,0,2,0,,,,1,ZERO_ATTEMPTS
+voce-tem-o-que-e-preciso-para-se-tornar-famoso,Você Tem Perfil de Pessoa Famosa? Descubra Como o Mundo Te Veria,PERSONALITY,0,0,11,6,3,ok_unclassified,18,0,0,0,0,,,,1,ZERO_ATTEMPTS
+sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-harry-potter,Será que conseguimos adivinhar seu personagem favorito de Harry Potter?,PERSONALITY,0,0,10,6,4,ok_unclassified,15,0,0,2,0,,,,1,ZERO_ATTEMPTS
+voce-pertence-a-praia-ou-as-montanhas-descubra-com-nosso-quiz,Você combina mais com a energia da praia ou com o chamado das montanhas?,PERSONALITY,0,0,10,3,3,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+descubra-se-voce-conhece-bem-o-nosso-planeta,Você Sabe Mesmo Como a Terra Funciona?,PERSONALITY,0,0,10,2,2,ok_unclassified,11,0,0,2,0,keeper,descubra-se-voce-conhece-bem-o-nosso-planeta-5,distinct-ish,1,ZERO_ATTEMPTS|DUPLICATE:keeper:distinct-ish
+qual-e-o-seu-nome-de-fantasia,Descubra o Nome de Fantasia Que Soaria Perfeito na Sua Lenda,PERSONALITY,0,0,12,16,3,ok_unclassified,25,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-prato-tipico-dos-eua-voce-seria,Qual prato clássico dos EUA combina com a sua personalidade?,PERSONALITY,0,0,10,6,2,ok_unclassified,16,0,0,1,0,,,,1,ZERO_ATTEMPTS
+descubra-seu-alter-ego-criptideo-comendo-um-bolo,Qual Criptídeo é o Seu Alter Ego? Monte um Bolo e Descubra,PERSONALITY,0,0,8,6,2,ok_unclassified,9,0,0,6,0,,,,1,ZERO_ATTEMPTS
+descubra-o-que-as-pessoas-que-voce-acha-atraente-revelam-sobre-voce,O Que Seu Tipo de Pessoa Atraente Revela Sobre o Seu Jeito de Amar?,PERSONALITY,0,0,29,6,2,ok_unclassified,36,0,0,0,0,keeper,descubra-o-que-as-pessoas-que-voce-acha-atraente-revelam-sobre-voce-5,distinct-ish,1,ZERO_ATTEMPTS|DUPLICATE:keeper:distinct-ish
+como-sao-mortais-seus-peidos-em-uma-escala-de-1-a-10,Quão letais são seus peidos na escala do caos?,PERSONALITY,0,0,15,10,2,ok_unclassified,24,0,0,2,0,,,,1,ZERO_ATTEMPTS
+se-voce-fosse-um-rei-ou-uma-rainha-qual-apelido-os-camponeses-lhe-dariam,"Se você governasse um reino, qual apelido cruel o povo daria a você?",PERSONALITY,0,0,12,10,4,ok_unclassified,23,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quao-facilmente-voce-se-deixa-seduzir-descubra-seu-perfil-de-seducao,Você cai fácil no charme dos outros ou é quase impossível te conquistar?,PERSONALITY,0,0,10,6,4,ok_unclassified,11,0,0,6,0,keeper,quao-facilmente-voce-se-deixa-seduzir-descubra-seu-perfil-de-seducao-5,paraphrased,1,ZERO_ATTEMPTS|DUPLICATE:keeper:paraphrased
+quantos-de-seus-amigos-sao-realmente-imaginarios,Quantos Amigos Imaginários Vivem no Seu Círculo Social?,PERSONALITY,0,0,15,20,4,ok_unclassified,33,0,0,3,0,,,,1,ZERO_ATTEMPTS
+descubra-qual-e-a-sua-linguagem-do-amor-1,Qual linguagem do amor domina seu jeito de amar e ser amado?,PERSONALITY,0,0,10,5,2,ok_unclassified,14,0,0,2,0,,,,1,ZERO_ATTEMPTS
+quantas-pessoas-tem-uma-queda-por-mim,Quantas Pessoas Têm uma Queda por Você? Descubra Seu Magnetismo Oculto,PERSONALITY,0,0,18,20,3,ok_unclassified,37,0,0,2,0,,,,1,ZERO_ATTEMPTS
+quantos-anos-eu-realmente-tenho-descubra-sua-idade-interior,Qual é a sua idade interior? Descubra quantos anos sua alma parece ter,PERSONALITY,0,0,12,12,3,ok_unclassified,18,0,0,7,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+por-quanto-tempo-voce-sobreviveria-a-um-apocalipse-zumbi,Você sobreviveria quanto tempo em um apocalipse zumbi?,PERSONALITY,0,0,12,7,3,ok_unclassified,20,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-aventura-louca-voce-deve-continuar-descubra-sua-proxima-aventura,Qual aventura impossível está chamando pelo seu nome?,PERSONALITY,0,0,16,10,2,ok_unclassified,21,0,0,6,0,,,,1,ZERO_ATTEMPTS
+que-bicho-estranho-voce-e-descubra-com-nosso-quiz-divertido,Que Bicho Estranho Combina com a Sua Personalidade?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-personagem-ficticio-voce-e-descubra-seu-personagem-ideal,Qual Personagem Fictício Você Seria em Outra História?,PERSONALITY,0,0,10,8,3,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+ele-e-minha-alma-gemea-descubra-seu-destino-amoroso,Ele é sua alma gêmea ou só uma paixão intensa?,PERSONALITY,0,0,12,6,3,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+se-fosses-uma-youtuber-que-tipo-de-canal-terias,"Se Você Fosse YouTuber, Que Tipo de Canal Viralizaria com a Sua Personalidade?",PERSONALITY,0,0,11,10,6,ok_unclassified,22,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-paleta-de-cores-sua-vida-representa-descubra-seu-espectro-pessoal,Qual paleta de cores revela a energia da sua vida?,PERSONALITY,0,0,10,6,5,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+o-mundo-esta-ficando-cada-dia-mais-estranho-ou-voce-esta,O Mundo Ficou Mais Estranho ou Você Virou Parte do Caos?,PERSONALITY,0,0,20,5,2,ok_unclassified,26,0,0,0,0,,,,1,ZERO_ATTEMPTS
+parece-loucura-mas-os-animais-que-voce-escolhe-neste-quiz-revelam-o-quao-sexy-as-pessoas-acham-que-voce-e,Os animais que você escolhe revelam o quanto seu charme chama atenção,PERSONALITY,0,0,8,6,2,ok_unclassified,7,0,0,8,0,,,,1,ZERO_ATTEMPTS
+que-animal-voce-poderia-vencer-em-uma-briga-de-peixe,Qual Animal Você Conseguiria Vencer Numa Briga Totalmente Absurda?,PERSONALITY,0,0,10,12,3,ok_unclassified,23,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-namorada-voce-e-descubra-seu-estilo-de-relacionamento,Que Tipo de Namorada Você É Quando Está Apaixonada?,PERSONALITY,0,0,11,6,4,ok_unclassified,18,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-clima-voce-e-descubra-seu-clima-interior,Que Tipo de Clima Combina com a Sua Personalidade?,PERSONALITY,0,0,10,6,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-coisas-estranhas-voce-e,Qual Personagem de Stranger Things Combina com Seu Lado Mais Estranho?,PERSONALITY,0,0,12,12,2,ok_unclassified,18,0,0,7,0,,,,1,ZERO_ATTEMPTS
+que-personagem-da-marvel-es-tu,Qual Personagem da Marvel Mais Combina com Você?,PERSONALITY,0,0,11,12,2,ok_unclassified,15,0,0,9,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-dragao-voce-e-descubra-seu-dragao-interior,Que Dragão Lendário Vive Dentro de Você?,PERSONALITY,0,0,8,4,4,ok_unclassified,1,0,0,8,4,,,,1,ZERO_ATTEMPTS
+qual-personagem-voce-e-descubra-agora,Qual personagem de Lucifer combina com seu caos interior?,PERSONALITY,0,0,10,5,3,ok_unclassified,1,0,0,10,5,,,,1,ZERO_ATTEMPTS
+voce-esta-realmente-apaixonado-descubra-agora,Você está apaixonado de verdade ou é só uma faísca?,PERSONALITY,0,0,9,4,4,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+seus-emojis-favoritos-revelam-o-quanto-voce-e-preguicoso,Escolha seus emojis favoritos e descubra seu percentual real de preguiça,PERSONALITY,0,0,10,20,4,ok_unclassified,21,0,0,10,0,,,,1,ZERO_ATTEMPTS
+seu-amor-por-comida-pode-revelar-qual-personagem-da-disney-voce-vai-acordar-sendo-um-dia,Monte seu cardápio ideal e descubra qual personagem da Disney combina com você,PERSONALITY,0,0,10,6,4,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+quantos-amigos-falsos-voce-tem-descubra-com-este-quiz,Seu círculo tem amigos falsos? Descubra os sinais que talvez você esteja ignorando,PERSONALITY,0,0,20,20,6,ok_unclassified,41,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quantos-rapazes-gostam-de-voce,Quantos garotos têm uma queda por você? Descubra pelo seu jeito de amar,PERSONALITY,0,0,12,6,3,ok_unclassified,18,0,0,1,0,,,,1,ZERO_ATTEMPTS
+quao-boa-pessoa-voce-e-quiz-interativo-de-autoconhecimento,Quão Boa Pessoa Você É de Verdade?,PERSONALITY,0,0,9,6,2,ok_unclassified,1,0,0,9,6,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-nome-de-pirata,Qual Seria Seu Nome de Pirata nos Sete Mares?,PERSONALITY,0,0,10,30,3,ok_unclassified,41,0,0,0,0,,,,1,ZERO_ATTEMPTS
+descubra-seu-ajudante-ideal-nos-videogames,Qual Ajudante Clássico dos Videogames Seria Seu Parceiro Ideal?,PERSONALITY,0,0,10,6,4,ok_unclassified,13,0,0,4,0,,,,1,ZERO_ATTEMPTS
+escolha-coisas-aleatorias-para-descobrir-o-quao-bobo-voce-e,Escolha coisas totalmente aleatórias e descubra qual ícone da bobice combina com você,PERSONALITY,0,0,10,4,4,ok_unclassified,8,0,0,7,0,,,,1,ZERO_ATTEMPTS
+numa-escala-de-1-a-10-quao-esportista-voce-e,"De 1 a 10, qual é o seu verdadeiro nível esportista?",PERSONALITY,0,0,12,10,4,ok_unclassified,23,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-cavaleiro-voce-teria-sido-na-idade-media-descubra-com-nosso-quiz,Que cavaleiro medieval viveria dentro da sua lenda?,PERSONALITY,0,0,12,4,2,ok_unclassified,5,0,0,12,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-guerreiro-antigo-voce-e-5,Que Guerreiro Antigo Combina com Sua Alma?,PERSONALITY,0,0,10,4,2,ok_unclassified,5,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-a-porcentagem-do-tempo-em-que-voce-e-uma-batata,Qual Porcentagem da Sua Alma é Batata?,PERSONALITY,0,0,15,22,2,ok_unclassified,34,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-pokemon-voce-deve-jogar-como,Qual Pokémon Combina com Seu Estilo em Pokémon Unite?,PERSONALITY,0,0,10,25,2,ok_unclassified,23,0,0,10,3,,,,1,ZERO_ATTEMPTS
+qual-pokemon-inicial-voce-deve-escolher,Qual Inicial de Paldea Combina Com Seu Jeito de Jogar Pokémon?,PERSONALITY,0,0,15,3,3,ok_unclassified,19,0,0,0,0,keeper,qual-pokemon-inicial-voce-deve-escolher-5,paraphrased,1,ZERO_ATTEMPTS|DUPLICATE:keeper:paraphrased
+voce-e-um-sith-ou-um-jedi-4,Você Tem Alma de Jedi ou Sith? Suas Escolhas Revelam Seu Lado da Força,PERSONALITY,0,0,15,2,2,ok_unclassified,12,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-tartaruga-ninja-dos-adolescentes-mutantes-e-voce-3,Qual Tartaruga Ninja Combina com Sua Personalidade?,PERSONALITY,0,0,12,4,2,ok_unclassified,15,0,0,2,0,,,,1,ZERO_ATTEMPTS
+the-ultimate-wine-connoisseurs-quiz-4,Você Entende Mesmo de Vinhos ou Só Sabe Girar a Taça?,PERSONALITY,0,0,10,5,4,ok_unclassified,1,0,0,10,5,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-estilo-de-vida-tecnologico-4,"Seu estilo de vida é hiperconectado, minimalista ou quase offline?",PERSONALITY,0,0,10,3,4,ok_unclassified,13,0,0,1,0,,,,1,ZERO_ATTEMPTS
+avalie-esses-sabores-de-sorvete-e-descubra-seu-talento-secreto,Escolha sabores de sorvete e descubra o talento secreto que combina com você,PERSONALITY,0,0,10,6,2,ok_unclassified,8,0,0,9,0,,,,1,ZERO_ATTEMPTS
+que-emoji-sou-eu-quiz-de-personalidade-com-emojis,Qual emoji traduz sua personalidade secreta?,PERSONALITY,0,0,14,40,2,ok_unclassified,8,0,0,7,40,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+quantas-pessoas-voce-vai-beijar-na-vida,Quantas pessoas você ainda vai beijar? O quiz mais indiscreto da sua vida amorosa,PERSONALITY,0,0,20,20,3,ok_unclassified,36,0,0,5,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-cafe-voce-e-quiz-de-personalidade,Que tipo de café revela a sua personalidade?,PERSONALITY,0,0,10,6,3,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+podemos-dizer-o-quao-assustador-voce-e-pelo-seu-gosto-por-doces,Escolha doces tentadores e descubra o quanto sua vibe é assustadora,PERSONALITY,0,0,10,20,2,ok_unclassified,21,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-rival-voce-e-descubra-seu-personagem-rival-3,Qual Rival de Yandere Simulator Mora na Sua Personalidade?,PERSONALITY,0,0,10,10,4,ok_unclassified,1,0,0,10,10,,,,1,ZERO_ATTEMPTS
+podemos-facilmente-dizer-quao-brilhante-sera-o-seu-futuro,Suas escolhas revelam o quanto seu futuro será brilhante,PERSONALITY,0,0,10,6,2,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+descubra-seu-papel-na-historia-cosmica,Qual é o Seu Papel na Grande História Cósmica?,PERSONALITY,0,0,10,3,4,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+devo-adotar-um-gato-quiz-para-quem-ama-felinos,Você Está Mesmo Pronto para Adotar um Gato?,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-raca-da-terra-media-voce-e,Qual raça da Terra Média combina com sua alma?,PERSONALITY,0,0,20,12,4,ok_unclassified,32,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-estilo-de-batalha,Qual É o Seu Verdadeiro Estilo de Batalha?,PERSONALITY,0,0,10,3,4,ok_unclassified,12,0,0,2,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-historia-deves-escrever,Que Tipo de História Você Deveria Escrever?,PERSONALITY,0,0,15,8,3,ok_unclassified,24,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-cha-voce-e-descubra-com-nosso-quiz-divertido,Que tipo de chá combina com a sua personalidade?,PERSONALITY,0,0,10,6,2,ok_unclassified,16,0,0,1,0,,,,1,ZERO_ATTEMPTS
+faca-o-teste-mais-longo-que-ja-fizemos-para-descobrir-sua-verdade-universal,Responda 70 Escolhas Aleatórias e Descubra Sua Verdade Universal,PERSONALITY,0,0,70,6,4,ok_unclassified,34,0,0,43,0,,,,1,ZERO_ATTEMPTS
+os-animais-que-voce-escolher-neste-quiz-revelam-sua-caracteristica-toxica,Escolha Animais e Descubra o Traço Tóxico que Você Esconde Sob Pressão,PERSONALITY,0,0,15,10,2,ok_unclassified,11,0,0,15,0,,,,1,ZERO_ATTEMPTS
+faca-este-teste-para-encontrar-o-presente-perfeito-do-dia-dos-namorados,Qual presente de Dia dos Namorados tem tudo a ver com o seu amor?,PERSONALITY,0,0,16,26,3,ok_unclassified,37,0,0,6,0,,,,1,ZERO_ATTEMPTS
+conta-pra-gente-um-pouquinho-sobre-voce-e-vamos-revelar-o-quao-bobo-voce-parece,Responda situações absurdas e descubra o quão bobo você parece,PERSONALITY,0,0,10,6,2,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quao-procrastinador-voce-e,Quão Procrastinador Você Realmente É?,PERSONALITY,0,0,10,4,4,ok_unclassified,13,0,0,2,0,,,,1,ZERO_ATTEMPTS
+as-imagens-que-voce-escolhe-revelam-seu-proposito-de-vida,Escolha imagens e descubra o propósito que move sua vida,PERSONALITY,0,0,10,6,4,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+seu-parceiro-e-o-tal-para-voce,Seu Parceiro É Mesmo “O Tal”? Descubra Pela Dinâmica de Vocês,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-chocolate-voce-e,Que Tipo de Chocolate Combina com a Sua Personalidade?,PERSONALITY,0,0,10,10,4,ok_unclassified,13,0,0,8,0,,,,1,ZERO_ATTEMPTS
+quao-quente-esta-o-seu-relacionamento,Seu relacionamento está pegando fogo ou esfriando?,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+descubra-seus-desejos-subconscientes,O Que Seus Desejos Subconscientes Revelam Sobre Você?,PERSONALITY,0,0,10,8,3,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quao-empatico-voce-e-descubra-agora,Quão Empático Você Realmente É?,PERSONALITY,0,0,10,4,4,ok_unclassified,14,0,0,1,0,,,,1,ZERO_ATTEMPTS
+este-teste-de-cores-revela-se-voce-adora-gatos-ou-cachorros,"Suas Cores Revelam: Você Tem Energia de Gato, Cachorro, dos Dois ou de Nenhum?",PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+os-vegetais-que-voce-escolhe-neste-quiz-revelam-seu-desejo-oculto,Escolha vegetais e revele o desejo secreto que guia seu coração,PERSONALITY,0,0,10,6,2,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+as-palavras-que-voce-escolhe-neste-quiz-revelam-se-voce-esta-pronto-para-o-amor,Escolha palavras e descubra se seu coração está pronto para amar de novo,PERSONALITY,0,0,10,3,4,ok_unclassified,4,0,0,10,0,,,,1,ZERO_ATTEMPTS
+estas-10-perguntas-podem-determinar-se-voce-sobreviveria-ao-apocalipse-zumbi,Você sobreviveria a um apocalipse zumbi ou viraria um deles?,PERSONALITY,0,0,10,4,2,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+sua-relacao-e-baseada-na-confianca,Sua relação é realmente baseada em confiança?,PERSONALITY,0,0,9,4,4,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+sua-presenca-online-e-saudavel,Sua Vida Online Está Saudável ou Virou Um Labirinto Digital?,PERSONALITY,0,0,10,4,2,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+quais-sao-suas-estatisticas-de-rpg-descubra-seu-nivel-e-atributos,"Quais seriam seus atributos em um RPG? Descubra seu nível, classe e build",PERSONALITY,0,0,15,1024,2,ok_unclassified,1040,0,0,0,0,,,,1,ZERO_ATTEMPTS
+o-que-voce-esta-fazendo-com-sua-vida-descubra-seu-caminho,Que caminho sua vida está tomando? Descubra sua direção interior,PERSONALITY,0,0,12,6,4,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+com-qual-celebridade-eu-pareco-descubra-seu-sosia-famoso,Qual Celebridade Combina com o Seu Visual e Sua Presença?,PERSONALITY,0,0,10,7,4,ok_unclassified,18,0,0,0,0,,,,1,ZERO_ATTEMPTS
+do-que-voce-tem-medo-descubra-seus-medos-mais-profundos,Qual medo estranho combina com sua personalidade?,PERSONALITY,0,0,14,7,2,ok_unclassified,18,0,0,4,0,,,,1,ZERO_ATTEMPTS
+que-livro-eu-deveria-ler-descubra-com-nosso-quiz-literario,Qual livro combina com seu próximo vício literário?,PERSONALITY,0,0,13,12,3,ok_unclassified,18,0,0,8,0,,,,1,ZERO_ATTEMPTS
+este-quiz-de-fast-food-vai-revelar-qual-personagem-do-bob-esponja-voce-e,Monte seu pedido de fast food e descubra qual personagem de Bob Esponja combina com você,PERSONALITY,0,0,10,6,2,ok_unclassified,15,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-corte-de-cabelo-combina-mais-com-voce-descubra-com-nosso-quiz,"Qual corte de cabelo combina com seu rosto, rotina e estilo?",PERSONALITY,0,0,11,6,3,ok_unclassified,1,0,0,11,6,,,,1,ZERO_ATTEMPTS
+que-fruto-sou-eu-descubra-com-nosso-quiz-de-frutas,Que Fruta Traduz a Sua Personalidade Por Dentro?,PERSONALITY,0,0,15,12,2,ok_unclassified,24,0,0,4,0,,,,1,ZERO_ATTEMPTS
+que-emprego-devo-ter-com-base-na-minha-personalidade,Qual carreira combina com a sua personalidade?,PERSONALITY,0,0,12,16,2,ok_unclassified,26,0,0,3,0,,,,1,ZERO_ATTEMPTS
+que-filme-de-halloween-eu-deveria-assistir-descubra-o-filme-perfeito,Qual Filme de Halloween Combina com Sua Noite Assombrada?,PERSONALITY,0,0,10,9,3,ok_unclassified,19,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-numero-do-meu-anjo-descubra-seu-numero-de-anjo,Qual Número de Anjo Está Guiando Você Agora?,PERSONALITY,0,0,12,14,2,ok_unclassified,27,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-a-minha-religiao-descubra-a-sua-fe-com-este-teste,Qual Tradição Espiritual Mais Combina com Sua Visão de Mundo?,PERSONALITY,0,0,12,9,3,ok_unclassified,22,0,0,0,0,,,,1,ZERO_ATTEMPTS
+de-que-geracao-eu-sou-descubra-sua-geracao-com-nosso-quiz,De qual geração é a sua alma? Faça o teste e descubra,PERSONALITY,0,0,12,4,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+o-que-devo-comer-guia-para-escolher-o-prato-ideal,O Que Comer Agora? Um Quiz Absurdo Para Decidir Seu Prato,PERSONALITY,0,0,15,13,3,ok_unclassified,22,0,0,7,0,,,,1,ZERO_ATTEMPTS
+o-que-devo-fazer-agora-ideias-para-o-que-fazer-hoje,O Que Você Deve Fazer Agora? Descubra o Plano Ideal Para o Seu Momento,PERSONALITY,0,0,28,11,3,ok_unclassified,1,0,0,28,11,,,,1,ZERO_ATTEMPTS
+que-tipo-de-aranha-voce-e-teca-uma-teia-de-descobertas-com-este-quiz,"Que Aranha Representa Sua Personalidade? Descubra Seu Lado Misterioso, Ágil ou Brilhante",PERSONALITY,0,0,10,6,2,ok_unclassified,10,0,0,7,0,,,,1,ZERO_ATTEMPTS
+o-que-devo-assistir-na-netflix-quiz-de-sugestoes-personalizadas,O Que Assistir na Netflix Hoje? Descubra Sua Próxima Maratona,PERSONALITY,0,0,10,12,3,ok_unclassified,20,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-apelido-secreto-que-as-pessoas-usam-para-voce,Qual Apelido Secreto Seus Amigos Dariam Para Você?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-instrumento-musical-voce-e-descubra-com-este-questionario,Que instrumento musical traduz a sua personalidade?,PERSONALITY,0,0,15,16,2,ok_unclassified,29,0,0,3,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-roedor-voce-e,Que Roedor Representa Sua Personalidade Secreta?,PERSONALITY,0,0,10,6,4,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+que-tatuagem-devo-fazer-descubra-sua-proxima-tattoo,Qual tatuagem combina de verdade com sua personalidade?,PERSONALITY,0,0,10,10,3,ok_unclassified,20,0,0,1,0,,,,1,ZERO_ATTEMPTS
+que-personagem-de-videogame-voce-e-descubra-seu-personagem-favorito,Qual ícone dos videogames tem a mesma energia que você?,PERSONALITY,0,0,15,12,2,ok_unclassified,20,0,0,8,0,,,,1,ZERO_ATTEMPTS
+o-que-e-o-personagem-aquela-vez-em-que-me-reencarnei-como-um-lodo,Qual personagem de That Time I Got Reincarnated as a Slime combina com você?,PERSONALITY,0,0,13,6,2,ok_unclassified,16,0,0,4,0,,,,1,ZERO_ATTEMPTS
+o-que-a-sua-mensagem-personalizada-de-biscoito-da-sorte-diria,Qual mensagem secreta o seu biscoito da sorte escreveria para você?,PERSONALITY,0,0,10,6,2,ok_unclassified,8,0,0,9,0,,,,1,ZERO_ATTEMPTS
+o-que-voce-realmente-faria-se-ganhasse-na-loteria,O que você faria de verdade se ganhasse na loteria?,PERSONALITY,0,0,10,6,2,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-acessorio-de-mesa-de-escritorio-voce-e,Qual acessório de mesa revela seu jeito de trabalhar?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+onde-devo-viver-descubra-o-lugar-ideal-para-morar,Em Qual Lugar do Mundo Você Deveria Morar?,PERSONALITY,0,0,10,12,3,ok_unclassified,18,0,0,5,0,,,,1,ZERO_ATTEMPTS
+quando-encontrarei-minha-alma-gemea-teste-de-amor-e-relacionamento,Em que momento da sua vida sua alma gêmea cruza o seu caminho?,PERSONALITY,0,0,20,25,2,ok_unclassified,41,0,0,5,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-e-o-seu-personagem-do-adventure-time-quiz-oficial,Qual personagem de Adventure Time tem a sua energia?,PERSONALITY,0,0,10,10,3,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-prato-americano-voce-e-um-divertido-quiz-de-personalidade-culinaria,Qual prato clássico dos EUA combina com a sua personalidade?,PERSONALITY,0,0,8,6,4,ok_unclassified,11,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-coquetel-exclusivo-descubra-seu-drink-perfeito,Qual Coquetel Combina com a Sua Personalidade?,PERSONALITY,0,0,12,12,2,ok_unclassified,17,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-estilo-cognitivo-voce-e-analitico-criativo-ou-pratico,"Seu jeito de pensar é analítico, criativo ou prático?",PERSONALITY,0,0,10,3,4,ok_unclassified,14,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-estilo-de-tradicao-na-vespera-de-natal-descubra-com-nosso-quiz,Qual tradição de véspera de Natal combina com você?,PERSONALITY,0,0,10,4,2,ok_unclassified,10,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-pegadinha-de-primeiro-de-abril-voce-deve-fazer,Qual pegadinha de Primeiro de Abril tem exatamente o seu tipo de humor?,PERSONALITY,0,0,9,12,2,ok_unclassified,22,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-garota-de-anime-e-o-seu-verdadeiro-amor-descubra-sua-waifu-ideal,Qual personagem feminina de anime combina com o seu tipo ideal?,PERSONALITY,0,0,10,6,3,ok_unclassified,15,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-anime-e-sua-alma-gemea-descubra-agora,Qual personagem de anime combina com sua alma gêmea?,PERSONALITY,0,0,10,6,3,ok_unclassified,13,0,0,4,0,,,,1,ZERO_ATTEMPTS
+e-maluco-mas-essas-perguntas-podem-revelar-qual-personagem-de-anime-seria-seu-arqui-inimigo,Qual personagem de anime seria seu arqui-inimigo perfeito?,PERSONALITY,0,0,10,6,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-teu-animal-quando-estas-irritadoa-descubra-aqui,Qual animal aparece quando a tua raiva acorda?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-superpoder-animal-voce-teria-descubra-seu-poder-animal,Qual superpoder animal combina com sua personalidade?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-animal-voce-se-transforma-na-lua-cheia-descubra-seu-animal-lunar,Qual animal você viraria em uma noite de lua cheia?,PERSONALITY,0,0,11,8,4,ok_unclassified,20,0,0,0,0,,,,1,ZERO_ATTEMPTS
+que-tipo-de-cerveja-voce-e-descubra-com-nosso-quiz-divertido,Que Estilo de Cerveja Combina com Sua Personalidade?,PERSONALITY,0,0,9,5,3,ok_unclassified,7,0,0,3,5,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-personagem-de-chainsaw-man,Qual personagem de Chainsaw Man combina com sua personalidade?,PERSONALITY,0,0,15,8,3,ok_unclassified,20,0,0,4,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-hamburguer-voce-e-descubra-seu-estilo-de-hamburguer-ideal,Qual hambúrguer combina com a sua personalidade?,PERSONALITY,0,0,10,8,4,ok_unclassified,15,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-ingrediente-de-cereal-de-cafe-da-manha-voce-seria,Qual ingrediente de cereal de café da manhã combina com a sua personalidade?,PERSONALITY,0,0,12,8,2,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-deus-grego-e-voce,Qual deus grego desperta seu poder oculto?,PERSONALITY,0,0,12,15,4,ok_unclassified,18,0,0,10,0,,,,1,ZERO_ATTEMPTS
+com-qual-monstro-classico-voce-mais-se-parece,Qual monstro clássico revela o seu lado mais sombrio?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-peca-de-xadrez-voce-e-descubra-sua-peca-ideal-no-xadrez,Qual peça de xadrez revela sua estratégia na vida?,PERSONALITY,0,0,15,6,2,ok_unclassified,22,0,0,0,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-e-a-sua-cor-de-algodao-doce-descubra-com-nosso-quiz-divertido,Qual cor de algodão-doce combina com a sua personalidade?,PERSONALITY,0,0,10,6,3,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-condimento-voce-e-descubra-seu-tempero-ideal,Qual condimento combina com o seu jeito de ser?,PERSONALITY,0,0,12,8,2,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-a-minha-cor-descubra-sua-cor-sona-com-nosso-quiz,Qual Cor Revela a Sua Personalidade Secreta?,PERSONALITY,0,0,12,12,4,ok_unclassified,24,0,0,0,1,,,,1,ZERO_ATTEMPTS
+qual-personagem-disney-e-sua-alma-gemea,Qual personagem da Disney seria sua alma gêmea perfeita?,PERSONALITY,0,0,16,12,2,ok_unclassified,25,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-danganronpa-voce-e-descubra-com-este-quiz,Qual personagem de Danganronpa você seria quando o julgamento começa?,PERSONALITY,0,0,12,10,5,ok_unclassified,23,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-da-disney-seria-seu-melhor-amigo-descubra-agora,Qual Personagem da Disney Seria Seu Melhor Amigo de Verdade?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-princesa-da-disney-voce-e-descubra-com-nosso-quiz-divertido,Qual Princesa da Disney Mais Combina com Sua Personalidade?,PERSONALITY,0,0,10,6,3,ok_unclassified,11,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-pecado-mortal-voce-e-descubra-seu-lado-sombrio,Qual dos Sete Pecados Capitais Mora em Você?,PERSONALITY,0,0,12,7,3,ok_unclassified,20,0,0,0,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-divindade-egipcia-ressoa-com-o-seu-espirito,Qual divindade egípcia combina com a sua alma?,PERSONALITY,0,0,10,6,2,ok_unclassified,11,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-bleach-voce-e,Qual personagem de Bleach combina com a sua alma?,PERSONALITY,0,0,10,8,3,ok_unclassified,19,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-frozen-da-disney-seria-seu-melhor-amigo,Qual Personagem de Frozen Seria Seu Melhor Amigo em Arendelle?,PERSONALITY,0,0,12,6,4,ok_unclassified,13,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-frozen-da-disney-e-sua-alma-gemea,Qual personagem de Frozen é sua alma gêmea?,PERSONALITY,0,0,12,6,4,ok_unclassified,13,0,0,6,0,,,,1,ZERO_ATTEMPTS
+desvende-sua-personalidade-culinaria,Qual Prato Japonês Combina com a Sua Personalidade?,PERSONALITY,0,0,10,6,4,ok_unclassified,9,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-gintama-voce-e-descubra-seu-alter-ego-do-anime,Qual personagem de Gintama combina com o seu caos interior?,PERSONALITY,0,0,12,8,4,ok_unclassified,20,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-elemento-genshin-voce-e-teste-de-genshin-impact,Qual elemento de Genshin Impact revela a sua verdadeira energia?,PERSONALITY,0,0,10,7,4,ok_unclassified,17,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-family-guy-voce-e-descubra-seu-personagem-favorito,Qual personagem de Family Guy combina com o seu caos interior?,PERSONALITY,0,0,10,6,2,ok_unclassified,15,0,0,2,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-e-o-seu-carater-de-amigo-descubra-seu-personagem-friends,Qual personagem de Friends é a sua versão em sitcom?,PERSONALITY,0,0,15,6,6,ok_unclassified,18,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-emoji-arruinara-sua-vida-um-dia-descubra-seu-destino-emoji,Qual emoji ainda vai causar caos na sua vida?,PERSONALITY,0,0,12,8,2,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-golden-girl-e-voce-descubra-com-este-quiz,Qual Golden Girl é a alma secreta da sua personalidade?,PERSONALITY,0,0,10,4,3,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-livro-do-harry-potter-voce-e-descubra-seu-livro-magico,Qual livro de Harry Potter reflete sua jornada mágica?,PERSONALITY,0,0,12,8,2,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-feitico-de-harry-potter-seria-o-seu-feitico-de-assinatura,Qual feitiço de Harry Potter seria sua marca registrada?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-gurren-lagann-e-voce-descubra-seu-personagem-de-anime-ttgl,Qual personagem de Gurren Lagann combina com sua alma espiral?,PERSONALITY,0,0,15,8,2,ok_unclassified,21,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-haikyuu-e-voce-descubra-com-quiz-divertido,Qual Personagem de Haikyuu!! Você Seria Dentro e Fora da Quadra?,PERSONALITY,0,0,10,10,5,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-eletrodomestico-voce-e-descubra-seu-aparelho-interno,Qual eletrodoméstico revela o seu jeito secreto de funcionar?,PERSONALITY,0,0,10,14,2,ok_unclassified,19,0,0,6,0,,,,1,ZERO_ATTEMPTS
+qual-genero-literario-combina-com-a-tua-personalidade,Qual gênero literário revela sua verdadeira personalidade?,PERSONALITY,0,0,15,8,6,ok_unclassified,24,0,0,0,0,,,,1,ZERO_ATTEMPTS
+em-qual-era-historica-voce-se-daria-bem-descubra-agora,Em Qual Era Histórica Você Teria Nascido Para Brilhar?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-seu-personagem-jujutsu-kaisen-descubra-seu-personagem-favorito,Qual Personagem de Jujutsu Kaisen Combina Com Sua Personalidade?,PERSONALITY,0,0,15,8,2,ok_unclassified,20,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-jojo-e-voce-descubra-com-nosso-quiz,Qual Personagem de JoJo’s Bizarre Adventure Você Seria?,PERSONALITY,0,0,15,10,2,ok_unclassified,16,0,0,10,0,,,,1,ZERO_ATTEMPTS
+qual-magnata-dos-negocios-americanos-iconico-voce-e,Qual Magnata Americano Icônico Combina com Sua Ambição?,PERSONALITY,0,0,10,6,2,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+fogo-agua-terra-ou-ar,"Seu elemento interior é Fogo, Água, Terra ou Ar?",PERSONALITY,0,0,15,4,2,ok_unclassified,12,0,0,8,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-super-heroi-da-marvel-e-sua-alma-gemea-descubra-agora,Qual herói da Marvel seria sua alma gêmea?,PERSONALITY,0,0,10,6,2,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-luca-voce-e-descubra-seu-personagem-favorito,Qual personagem de Luca revela seu espírito aventureiro?,PERSONALITY,0,0,11,6,3,ok_unclassified,18,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-do-mickey-mouse-e-sua-alma-gemea,Qual personagem clássico do Mickey Mouse seria sua alma gêmea?,PERSONALITY,0,0,10,6,2,ok_unclassified,8,0,0,9,0,,,,1,ZERO_ATTEMPTS
+qual-comida-do-mcdonalds-voce-e-descubra-seu-alter-ego-do-fast-food,Qual item do McDonald's combina com a sua personalidade?,PERSONALITY,0,0,10,6,2,ok_unclassified,9,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-criatura-mitica-e-voce-descubra-sua-criatura-lendaria,Qual criatura mítica vive escondida dentro da sua personalidade?,PERSONALITY,0,0,8,35,5,ok_unclassified,39,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-deus-nordico-voce-e-descubra-sua-identidade-divina,Qual deus nórdico vive dentro de você?,PERSONALITY,0,0,10,6,2,ok_unclassified,12,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-jogo-de-nintendo-3ds-voce-deve-jogar-a-seguir,Qual clássico do Nintendo 3DS combina com seu jeito de jogar?,PERSONALITY,0,0,8,6,4,ok_unclassified,7,0,0,8,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-naruto-seria-seu-melhor-amigo,Quem seria seu melhor amigo em Naruto?,PERSONALITY,0,0,10,6,5,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-naruto-e-a-sua-alma-gemea,Qual personagem de Naruto seria sua alma gêmea ninja?,PERSONALITY,0,0,10,6,4,ok_unclassified,17,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-nanbaka-e-voce-descubra-seu-alter-ego,Qual personagem de Nanbaka revela seu lado mais caótico?,PERSONALITY,0,0,12,8,3,ok_unclassified,20,0,0,1,0,,,,1,ZERO_ATTEMPTS
+que-movel-voce-e-descubra-sua-peca-de-mobiliario-ideal,Que Móvel Representa Sua Personalidade? A Resposta Pode Ser Estranhamente Certa,PERSONALITY,0,0,15,12,3,ok_unclassified,19,0,0,9,0,,,,1,ZERO_ATTEMPTS
+qual-sou-o-personagem-de-gilmore-girls,Qual personagem de Gilmore Girls combina com sua energia em Stars Hollow?,PERSONALITY,0,0,12,7,2,ok_unclassified,20,0,0,0,0,,,,1,POSSIBLE_TRUNCATION|ZERO_ATTEMPTS
+qual-cobertura-de-pizza-voce-e-descubra-sua-pizza-ideal,Qual cobertura de pizza revela sua verdadeira personalidade?,PERSONALITY,0,0,10,11,4,ok_unclassified,21,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-pinguim-de-madagascar-e-voce-descubra-seu-personagem,Qual personagem de Os Pinguins de Madagascar é você?,PERSONALITY,0,0,10,5,4,ok_unclassified,16,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-powerpuff-girl-e-voce-descubra-sua-personagem-favorita,"Você é Florzinha, Lindinha ou Docinho? Descubra sua Menina Superpoderosa",PERSONALITY,0,0,10,3,2,ok_unclassified,11,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-geracao-de-pokemon-voce-e-descubra-agora,Qual geração de Pokémon combina com a sua personalidade?,PERSONALITY,0,0,13,9,2,ok_unclassified,18,0,0,5,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-bob-esponja-voce-e-descubra-com-nosso-quiz,Qual personagem de Bob Esponja combina com você?,PERSONALITY,0,0,13,8,2,ok_unclassified,15,0,0,7,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-south-park-voce-e-descubra-seu-alter-ego,Qual personagem de South Park revela seu lado mais caótico?,PERSONALITY,0,0,15,4,2,ok_unclassified,19,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-super-heroi-e-sua-alma-gemea-descubra-com-nosso-quiz,Qual super-herói seria sua alma gêmea?,PERSONALITY,0,0,10,6,2,ok_unclassified,2,0,0,9,6,,,,1,ZERO_ATTEMPTS
+qual-personagem-de-sex-and-the-city-voce-e,Qual personagem de Sex and the City vive dentro de você?,PERSONALITY,0,0,14,6,2,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-crepusculo-voce-e,Qual Personagem de Crepúsculo Revela Seu Lado Mais Intenso?,PERSONALITY,0,0,15,10,3,ok_unclassified,26,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-tokyo-revengers-e-seu-personagem,Qual Personagem de Tokyo Revengers Você Seria na Toman?,PERSONALITY,0,0,12,4,2,ok_unclassified,14,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-celebracao-de-feriado-dos-eua-combina-mais-com-a-sua-personalidade,Qual feriado americano combina com a sua personalidade?,PERSONALITY,0,0,10,6,2,ok_unclassified,14,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-personagem-undertale-voce-e-descubra-com-nosso-quiz,Qual personagem de Undertale combina com sua alma?,PERSONALITY,0,0,8,6,3,ok_unclassified,14,0,0,1,0,,,,1,ZERO_ATTEMPTS
+qual-teletubby-e-voce-descubra-seu-personagem-favorito,Qual Teletubby você seria em Teletubbyland?,PERSONALITY,0,0,10,4,3,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+qual-jogo-de-wii-voce-deve-jogar-a-seguir,Qual Jogo de Wii Você Deveria Jogar Agora?,PERSONALITY,0,0,8,6,4,ok_unclassified,11,0,0,4,0,,,,1,ZERO_ATTEMPTS
+qual-esporte-de-inverno-combina-mais-com-voce-descubra-sua-persona-movida-a-neve,Qual esporte de inverno combina com sua energia?,PERSONALITY,0,0,8,6,4,ok_unclassified,12,0,0,3,0,,,,1,ZERO_ATTEMPTS
+qual-comida-confortavel-de-inverno-voce-e,Qual comida de inverno combina com o seu jeito de ser?,PERSONALITY,0,0,10,6,4,ok_unclassified,10,0,0,7,0,,,,1,ZERO_ATTEMPTS
+quais-personagens-de-diarios-de-vampiros-voce-e,Qual personagem de Diários de um Vampiro combina com a sua personalidade?,PERSONALITY,0,0,15,6,2,ok_unclassified,22,0,0,0,0,,,,1,ZERO_ATTEMPTS
+descubra-o-que-o-hoje-tem-a-oferecer,Qual Mensagem Simbólica Seu Dia Quer Te Entregar Hoje?,PERSONALITY,0,0,10,60,4,ok_unclassified,68,0,0,3,0,,,,1,ZERO_ATTEMPTS
+suas-frutas-favoritas-podem-dizer-qual-vilao-de-filme-voce-e,Suas Escolhas de Frutas Revelam Qual Vilão de Filme Você Seria,PERSONALITY,0,0,8,6,2,ok_unclassified,1,0,0,8,6,,,,1,ZERO_ATTEMPTS
+qual-personagem-overwatch-e-voce,Qual Herói de Overwatch Combina com Seu Estilo de Batalha?,PERSONALITY,0,0,10,10,2,ok_unclassified,13,0,0,8,0,,,,1,ZERO_ATTEMPTS
+por-que-estou-solteiroa-descubra-as-razoes-do-seu-status,Por que você ainda está solteiro(a)? O motivo pode te surpreender,PERSONALITY,0,0,10,4,4,ok_unclassified,15,0,0,0,0,,,,1,ZERO_ATTEMPTS
+a-sua-escolha-de-palavras-pode-revelar-o-que-lhe-falta-na-vida,Sua escolha de palavras revela o que está faltando na sua vida,PERSONALITY,0,0,10,6,4,ok_unclassified,7,0,0,10,0,,,,1,ZERO_ATTEMPTS
+como-sera-seu-2024,Como 2024 Vai Virar o Seu Jogo?,PERSONALITY,0,0,8,6,4,ok_unclassified,9,0,0,6,0,keeper,como-sera-seu-2024-6,paraphrased,1,ZERO_ATTEMPTS|DUPLICATE:keeper:paraphrased
+qual-avatar-do-ultimo-airbender-sou-eu,Qual Personagem de Avatar: A Lenda de Aang Revela Sua Verdadeira Personalidade?,PERSONALITY,0,0,15,7,2,ok_unclassified,14,0,0,9,0,,,,1,ZERO_ATTEMPTS
+sou-gay-quiz-de-orientacao-sexual,Qual Orientação Sexual Mais Combina com o Que Você Sente Hoje?,PERSONALITY,0,0,15,5,4,ok_unclassified,19,0,0,2,0,,,,1,ZERO_ATTEMPTS
+qual-e-o-teutua-animal-de-apoio-emocional,Qual Animal de Apoio Emocional Combina com Você?,PERSONALITY,0,0,12,8,4,ok_unclassified,21,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-preferiria-o-teste-de-personalidade-final,Você Preferiria...? 15 Escolhas Impossíveis Que Revelam Seu Lado Oculto,PERSONALITY,0,0,15,6,2,ok_unclassified,22,0,0,0,0,,,,1,ZERO_ATTEMPTS
+voce-e-um-lobisomem-ou-um-vampiro-descubra-com-este-questionario,Lobisomem ou Vampiro: Qual Criatura da Noite Vive em Você?,PERSONALITY,1,0,15,2,2,ok_unclassified,1,0,0,15,2,,,,0,
+que-personagem-dxd-do-ensino-medio-sou-eu,Qual personagem de High School DxD desperta o seu lado sobrenatural?,PERSONALITY,1,0,12,5,3,ok_unclassified,15,0,0,3,0,,,,0,
+qual-e-a-cor-da-minha-aura,Qual É a Cor da Sua Aura? Descubra a Energia Que Você Deixa no Ar,PERSONALITY,2,1,10,8,4,ok_unclassified,15,0,0,4,0,,,,0,
+workshop---gesto-de-riscos-corporativos,Gestão de Riscos Corporativos: Você Está Preparado para o Desafio?,TRIVIA,2,1,4,0,4,ok_unclassified,1,0,0,4,0,,,,0,
+qual-o-seu-nvel-de-satisfao-com-a-vida-hoje,Seu Nível de Satisfação com a Vida Está Mais Alto ou Mais Baixo do Que Parece?,PERSONALITY,1,0,11,4,4,ok_unclassified,1,0,0,11,4,,,,0,
+qual-e-o-meu-nome-star-wars,Qual Seria o Seu Nome em Star Wars?,PERSONALITY,2,0,12,16,3,ok_unclassified,23,0,0,6,0,,,,0,
+qual-personagem-de-rick-e-morty-voce-e-descubra-com-este-quiz,Qual personagem de Rick and Morty você seria no multiverso?,PERSONALITY,2,0,10,12,3,ok_unclassified,23,0,0,0,0,,,,0,
+reencarnacao-sem-emprego-sou-eu,Qual personagem de Mushoku Tensei reflete sua personalidade?,PERSONALITY,3,0,15,4,2,ok_unclassified,15,0,0,5,0,,,,0,
+quem-sao-voces-entre-os-quatro-cavaleiros-do-apocalipse,Qual Cavaleiro do Apocalipse Habita a Sua Personalidade?,PERSONALITY,1,0,15,4,2,ok_unclassified,13,0,0,3,4,,,,0,
+qual-personagem-de-genshin-impact-e-voce-teste-divertido-e-rapido,Qual personagem de Genshin Impact combina com a sua personalidade?,PERSONALITY,1,0,12,12,3,ok_unclassified,24,0,0,1,0,,,,0,
+voce-e-um-anjo-ou-um-demonio-descubra-com-este-questionario,"Você Tem Alma de Anjo, Demônio ou Híbrido? Revele Sua Energia Oculta",PERSONALITY,1,0,15,3,3,ok_unclassified,1,0,0,15,3,,,,0,
+que-dinossauro-sou-eu,Que Dinossauro Revela Seu Instinto Mais Primitivo?,PERSONALITY,1,0,10,9,3,ok_unclassified,17,0,0,3,0,,,,0,
+qual-cidade-dos-eua-voce-deveria-morar-descubra-sua-combinacao-metropolitana-ideal,Em qual cidade dos EUA você realmente deveria morar?,PERSONALITY,1,0,10,8,2,ok_unclassified,9,0,0,10,0,,,,0,
+qual-historia-assustadora-voce-contaria-ao-redor-da-fogueira-descubra-seu-conto-de-terror-ideal,Qual conto assustador combina com você ao redor da fogueira?,PERSONALITY,1,0,13,6,2,ok_unclassified,11,0,0,9,0,,,,0,
+qual-parte-do-corpo-voce-e-descubra-sua-personalidade,Qual parte do corpo combina com a sua personalidade?,PERSONALITY,2,1,12,11,2,ok_unclassified,21,0,0,3,0,,,,0,
+qual-vingador-voce-e-descubra-seu-vingador-marvel,Qual Vingador da Marvel Mais Parece com Você?,PERSONALITY,2,0,12,6,2,ok_unclassified,18,0,0,1,0,,,,0,
+que-tipo-de-macaco-voce-e,Que Primata Representa Sua Personalidade Mais Instintiva?,PERSONALITY,4,0,20,12,2,ok_unclassified,30,0,0,3,0,keeper,que-tipo-de-macaco-voce-e-5,paraphrased,0,DUPLICATE:keeper:paraphrased
+qual-bungou-stray-dogs-e-seu-personagem,Qual personagem de Bungou Stray Dogs combina com sua mente e seus instintos?,PERSONALITY,1,0,15,7,3,ok_unclassified,20,0,0,3,0,,,,0,
+qual-personagem-de-soul-eater-e-mais-parecido-com-voce,Qual Personagem de Soul Eater Revela Seu Lado Mais Sombrio?,PERSONALITY,1,0,10,8,2,ok_unclassified,9,0,0,10,0,,,,0,
+qual-personagem-de-seven-deadly-sins-e-sua-alma-gemea,Quem de Seven Deadly Sins seria sua alma gêmea?,PERSONALITY,1,0,8,6,3,ok_unclassified,12,0,0,3,0,,,,0,
+qual-personagem-de-saiki-k-voce-e,Qual personagem de Saiki K. combina com o seu caos social?,PERSONALITY,2,0,18,6,3,ok_unclassified,25,0,0,0,0,,,,0,
+qual-e-o-signo-do-zodiaco-do-seu-verdadeiro-amor,Qual signo combina com o amor que nasceu para mexer com você?,PERSONALITY,2,0,10,12,3,ok_unclassified,18,0,0,5,0,,,,0,
+qual-figura-historica-voce-e-descubra-com-quiz,"Qual figura histórica combina com sua mente, sua coragem e seu jeito de viver?",PERSONALITY,2,1,15,12,2,ok_unclassified,25,0,0,3,0,,,,0,
+verifique-sua-visao-de-cores,Teste de Cores: Seus Olhos Enxergam os Números Escondidos?,PERSONALITY,2,1,18,2,4,ok_unclassified,21,0,0,0,0,,,,0,
+qual-jogo-de-xbox-voce-deve-jogar-a-seguir,Qual jogo de Xbox deveria ser sua próxima aventura?,PERSONALITY,1,0,8,6,4,ok_unclassified,7,0,0,8,0,,,,0,
+que-personagem-de-outer-banks-voce-e-descubra-com-nosso-teste,Qual personagem de Outer Banks combina com seu lado Pogue ou Kook?,PERSONALITY,2,1,10,8,2,ok_unclassified,17,0,0,2,0,,,,0,
+voce-e-bom-em-beijar-teste-suas-habilidades-de-beijo,Que Tipo de Beijo Combina com o Seu Jeito de Amar?,PERSONALITY,1,0,12,6,4,ok_unclassified,19,0,0,0,0,,,,0,
+responde-a-estas-perguntas-e-nos-dizemos-te-qual-e-o-teu-cocktail-de-assinatura,Qual é o seu cocktail de assinatura? Monte sua vibe e descubra,PERSONALITY,1,0,8,6,2,ok_unclassified,8,0,0,7,0,,,,0,
+internet-das-coisas-iot-1777921094606,Você domina IoT de verdade? Teste sua visão sobre dispositivos conectados,TRIVIA,4,2,20,0,5,ok_unclassified,4,0,0,17,0,,,,0,
+voce-e-mais-como-um-zumbi-ou-um-vampiro-quiz-divertido,"Você tem alma de zumbi, vampiro ou uma mistura dos dois?",PERSONALITY,1,0,12,3,4,ok_unclassified,16,0,0,0,0,,,,0,
+que-classe-de-elden-ring-voce-deve-jogar,Qual classe de Elden Ring combina com seu estilo de jogo?,PERSONALITY,1,0,15,10,3,ok_unclassified,23,0,0,3,0,,,,0,
+voce-e-lider-ou-seguidor-descubra-com-este-quiz-divertido,"Você Lidera, Segue ou Faz Tudo do Seu Jeito?",PERSONALITY,2,1,10,4,2,ok_unclassified,15,0,0,0,0,,,,0,
+voce-e-um-valentao-descubra-com-nosso-quiz-interativo,Você intimida sem perceber? Faça o quiz e descubra seu estilo social,PERSONALITY,2,1,12,6,3,ok_unclassified,19,0,0,0,0,,,,0,POSSIBLE_TRUNCATION
+voce-pertence-a-um-futuro-de-ficcao-cientifica-ou-a-um-mundo-de-fantasia-medieval,Seu lugar é em uma galáxia futurista ou em um reino de fantasia medieval?,PERSONALITY,2,1,12,3,4,ok_unclassified,16,0,0,0,0,,,,0,
+qual-time-da-nfl-voce-e-descubra-seu-time-ideal-da-nfl,Qual franquia da NFL tem a mesma energia que você?,PERSONALITY,1,0,10,10,7,ok_unclassified,9,0,0,2,10,,,,0,
+sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-o-rei-leao,Qual personagem de O Rei Leão combina com seu jeito de encarar a savana?,PERSONALITY,1,0,10,6,2,ok_unclassified,14,0,0,3,0,,,,0,
+qual-e-o-meu-pequeno-ponei-que-voce-e,Qual pônei de My Little Pony combina com a sua personalidade?,PERSONALITY,2,0,12,6,3,ok_unclassified,17,0,0,2,0,,,,0,
+sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-star-wars,Qual personagem de Star Wars revela seu lado da Força?,PERSONALITY,1,0,10,6,2,ok_unclassified,14,0,0,3,0,,,,0,
+voc-conhece-a-fazenda-futuro-vamos-testar,Você Realmente Conhece a Fazenda Futuro? Teste Seu Radar Plant-Based,TRIVIA,5,1,5,0,4,ok_unclassified,4,0,0,2,0,,,,0,
+sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-my-hero-academia,Conseguimos adivinhar seu personagem favorito de My Hero Academia?,PERSONALITY,2,0,9,6,3,ok_unclassified,11,0,0,5,0,,,,0,
+qual-personagem-e-mais-parecido-com-voce,Qual Personagem de Hunter x Hunter Tem a Mesma Energia Que Você?,PERSONALITY,1,0,10,6,4,ok_unclassified,16,0,0,1,0,,,,0,
+que-arma-voce-tem-descubra-sua-arma-interior,Qual Arma Combina com Sua Personalidade?,PERSONALITY,4,0,12,10,4,ok_unclassified,21,0,0,2,0,,,,0,
+qual-console-de-jogos-e-voce-5,Qual console combina com sua alma gamer?,PERSONALITY,1,0,10,3,2,ok_unclassified,9,0,0,5,0,,,,0,
+devo-terminar-com-meu-namorado-teste-para-ajudar-na-decisao,Devo terminar com meu namorado? Um teste para organizar seus sentimentos,PERSONALITY,1,0,15,4,4,ok_unclassified,20,0,0,0,0,,,,0,
+que-personagem-do-demon-slayer-e-descubra-com-este-questionario,Qual Personagem de Demon Slayer Mais Combina com Você?,PERSONALITY,1,0,10,6,3,ok_unclassified,16,0,0,1,0,,,,0,
+qual-personagem-do-peter-pan-da-disney-voce-e,Qual Personagem de Peter Pan da Disney Você Seria na Terra do Nunca?,PERSONALITY,3,0,10,6,4,ok_unclassified,13,0,0,4,0,,,,0,
+qual-personagem-de-harry-potter-e-o-seu-arqui-inimigo,Qual personagem de Harry Potter seria seu arqui-inimigo em Hogwarts?,PERSONALITY,1,0,12,8,2,ok_unclassified,21,0,0,0,0,,,,0,
+qual-personagem-dos-x-men-e-voce-descubra-seu-alter-ego-mutante,Qual X-Men combina com sua personalidade mutante?,PERSONALITY,2,0,12,6,2,ok_unclassified,18,0,0,1,0,,,,0,
+voce-e-um-gamer-profissional-ou-um-noob-qual-e-a-sua-pontuacao,"Você é pro player, gamer casual ou noob? Descubra seu nível gamer",PERSONALITY,2,1,10,4,2,ok_unclassified,5,0,0,10,0,,,,0,
