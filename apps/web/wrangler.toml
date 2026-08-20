@@ -5,3 +5,13 @@ pages_build_output_dir = "./dist"
 [[kv_namespaces]]
 binding = "SESSION"
 id = "02dbd51b0bac4b67a0edafee77697595"
+
+# Clerk's Astro integration reads this specific var through Astro's typed
+# astro:env schema system rather than plain import.meta.env, so the value
+# in .env.production alone doesn't reach the Cloudflare Pages build output —
+# it needs to also be defined as a wrangler-managed var (the dashboard only
+# lets you manage Secrets once a project has a wrangler.toml, see
+# Settings > Variables and secrets). Safe to commit: this is the publishable
+# key, designed to ship in frontend code.
+[vars]
+PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_Y2xlcmsuZnVuc29uYS5jb20k"
