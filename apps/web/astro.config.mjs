@@ -30,32 +30,15 @@ export default defineConfig({
   }),
   integrations: [
     react(),
-    // These options are JSON-serialized into the injected Clerk script, so
-    // only plain values work here (no functions). The site is pt-BR-first
-    // and always dark; Clerk's new UI (@clerk/ui, loaded from the Frontend
-    // API at runtime) ignores the legacy `elements` slot classes the forms
-    // used to pass, so theming has to happen here via `variables`.
-    // `elevation: "flush"` strips the card chrome (white background, border,
-    // shadow, padding) so the widget sits flat inside the page's own card.
+    // Auth UI is fully custom (LoginForm/RegisterForm build their own forms
+    // on top of window.Clerk — see lib/clerk-client.ts), so no prebuilt
+    // Clerk widget renders and prefetching the @clerk/ui bundle would be
+    // wasted bytes. Localization still applies to Clerk-generated texts
+    // (verification emails, error longMessages). Options here are
+    // JSON-serialized into the injected script, so only plain values work.
     clerk({
       localization: ptBR,
-      appearance: {
-        options: {
-          elevation: "flush",
-          logoPlacement: "none",
-        },
-        variables: {
-          colorPrimary: "#4f46e5",
-          colorBackground: "#1e293b",
-          colorForeground: "#f8fafc",
-          colorMutedForeground: "#94a3b8",
-          colorInput: "#0f172a",
-          colorInputForeground: "#f8fafc",
-          colorBorder: "#334155",
-          colorNeutral: "#f8fafc",
-          borderRadius: "1rem",
-        },
-      },
+      prefetchUI: false,
     }),
   ],
   prefetch: {

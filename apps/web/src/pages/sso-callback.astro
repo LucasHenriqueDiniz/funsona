@@ -1,0 +1,21 @@
+---
+import { AuthenticateWithRedirectCallback } from "@clerk/astro/components";
+import Layout from "@/layouts/Layout.astro";
+
+// Landing page for Clerk's OAuth redirect flow (see lib/clerk-client.ts
+// beginOAuth). Clerk's handleRedirectCallback runs here, finishes the
+// social sign-in/sign-up and forwards to redirectUrlComplete.
+---
+
+<Layout title="Entrando... | FunSona" description="Concluindo login" hideNav={true} hideFooter={true} noindex={true}>
+  <div class="flex min-h-screen items-center justify-center bg-[var(--color-surface)]">
+    <div class="flex flex-col items-center gap-4">
+      <svg class="h-10 w-10 animate-spin text-brand-500" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <p class="font-bold text-[var(--color-text-secondary)]">Concluindo login...</p>
+    </div>
+  </div>
+  <AuthenticateWithRedirectCallback signInFallbackRedirectUrl="/profile/me" signUpFallbackRedirectUrl="/profile/me" />
+</Layout>
