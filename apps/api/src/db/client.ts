@@ -247,6 +247,7 @@ export type QuizRow = {
   favorites_count: number;
   attempts_count: number;
   completions_count: number;
+  ads_eligible: number;
   created_at: string;
   updated_at: string;
 };
@@ -258,6 +259,7 @@ export function serializeQuiz(row: QuizRow, author?: { handle: string; display_n
     intro_content: parseJson(row.intro_content, null),
     settings: parseJson(row.settings, {}),
     tags: parseJson(row.tags, [] as string[]),
+    ads_eligible: toBool(row.ads_eligible),
     author: author ?? undefined,
   };
 }

@@ -31,7 +31,7 @@ const CARD_ACCENTS = [
   { bar: "bg-amber-500",   gradient: "from-amber-900 via-orange-900 to-slate-900",   emoji: "🎵" },
 ];
 
-const [{ data: topQuizzes }, { data: trendingQuizzes }, { data: recentQuizzes }] = await Promise.all([
+const [{ data: topQuizzes, meta: topMeta }, { data: trendingQuizzes }, { data: recentQuizzes }] = await Promise.all([
   apiFetch("/quizzes?limit=8&sort=likes"),
   apiFetch("/quizzes?limit=6&sort=plays&min_attempts=1"),
   apiFetch("/quizzes?limit=6"),
@@ -41,11 +41,19 @@ const heroQuizzes = (topQuizzes?.length ? topQuizzes : SAMPLE_QUIZZES).slice(0, 
 const displayTrending = trendingQuizzes?.length ? trendingQuizzes : SAMPLE_QUIZZES.slice(0, 3);
 const displayRecent = recentQuizzes?.length ? recentQuizzes : SAMPLE_QUIZZES.slice(2, 5);
 
+// Round down to the nearest 100 so the stat stays true as the catalog grows
+// or shrinks slightly, instead of hardcoding a number that goes stale. Only
+// trust the total when the API actually returned quizzes — if it failed and
+// we fell back to SAMPLE_QUIZZES, topMeta.total would be null/0 and show a
+// misleading "0 Quizzes" instead of just not rendering a live number.
+const totalQuizzes = topQuizzes?.length ? topMeta?.total ?? 0 : 0;
+const quizzesStat = totalQuizzes >= 100 ? `+${Math.floor(totalQuizzes / 100) * 100}` : "+700";
+
 const faqs = [
   {
     question: "O que é o FunSona?",
     answer:
-      "FunSona é uma plataforma gratuita de quizzes onde você pode jogar testes de personalidade, trivia e curiosidades, além de criar e publicar seus próprios quizzes para compartilhar com amigos. Temos mais de 1.000 quizzes organizados em categorias como personalidade, trivia, amor, games, filmes, música, TV e conhecimentos gerais.",
+      `FunSona é uma plataforma gratuita de quizzes onde você pode jogar testes de personalidade, trivia e curiosidades, além de criar e publicar seus próprios quizzes para compartilhar com amigos. Temos ${quizzesStat} quizzes organizados em categorias como personalidade, trivia, amor, games, filmes, música, TV e conhecimentos gerais.`,
   },
   {
     question: "Preciso pagar para jogar os quizzes?",
@@ -114,7 +122,7 @@ const faqs = [
 
             <div class="mt-10 flex items-center gap-7 border-t border-slate-800 pt-8">
               <div>
-                <div class="text-xl font-black text-white">+1.000</div>
+                <div class="text-xl font-black text-white">{quizzesStat}</div>
                 <div class="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Quizzes</div>
               </div>
               <div class="h-6 w-px bg-slate-800"></div>

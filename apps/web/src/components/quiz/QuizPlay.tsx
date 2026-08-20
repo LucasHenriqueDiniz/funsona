@@ -61,6 +61,11 @@ export interface QuizPayload {
   type: "TRIVIA" | "PERSONALITY";
   content: QuizContent;
   tags?: string[];
+  // Community quizzes publish instantly with no review, so ads are gated
+  // separately from publishing — only quizzes an admin has vetted (or the
+  // platform's own editorial catalog) render AdSlot. See migration
+  // 0004_ads_eligible.sql for why.
+  ads_eligible?: boolean;
 }
 
 interface TriviaResult {
@@ -244,6 +249,7 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
           resultValue={result.value}
           quizId={quiz.id}
           tags={quiz.tags}
+          adsEligible={quiz.ads_eligible}
           onRestart={restart}
           onShare={shareResult}
           onBackToQuiz={() => window.location.href = `/quiz/${quiz.slug}`}
@@ -288,7 +294,7 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
             <p className="mt-3 line-clamp-4 text-sm font-medium leading-relaxed text-white/55">{quiz.description}</p>
           )}
         </div>
-        <AdSlot slot="quiz-play-interval" />
+        {quiz.ads_eligible && <AdSlot slot="quiz-play-interval" />}
       </div>
 
       <section className="space-y-5 lg:col-start-1 lg:row-start-1">

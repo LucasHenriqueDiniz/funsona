@@ -10,6 +10,9 @@ interface QuizResultScreenProps {
   resultValue?: string;
   quizId?: string;
   tags?: string[];
+  // See QuizPayload.ads_eligible in QuizPlay.tsx — community quizzes don't
+  // show ads until an admin reviews them.
+  adsEligible?: boolean;
   onRestart: () => void;
   onShare: () => void;
   onBackToQuiz: () => void;
@@ -24,6 +27,7 @@ export default function QuizResultScreen({
   resultValue,
   quizId,
   tags,
+  adsEligible,
   onRestart,
   onShare,
   onBackToQuiz,
@@ -145,9 +149,11 @@ export default function QuizResultScreen({
           </button>
         </div>
 
-        <div className="mt-8 border-t border-white/10 pt-6">
-          <AdSlot slot="quiz-result" />
-        </div>
+        {adsEligible && (
+          <div className="mt-8 border-t border-white/10 pt-6">
+            <AdSlot slot="quiz-result" />
+          </div>
+        )}
       </div>
 
       <div className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20 backdrop-blur-xl sm:rounded-[2.5rem] sm:p-8">

@@ -1,11 +1,13 @@
-# Security Headers - Applied to all routes
-/*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://www.google-analytics.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com;
-  X-Frame-Options: SAMEORIGIN
-  X-Content-Type-Options: nosniff
-  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-  X-XSS-Protection: 1; mode=block
-  Referrer-Policy: no-referrer-when-downgrade
+# Security headers used to live here, but they never actually applied: the
+# Cloudflare adapter builds a custom _worker.js (Pages "Advanced Mode"), and
+# in that mode Cloudflare ignores this file for any route the worker handles
+# — which per _routes.json is nearly every route. They're set in
+# src/middleware.ts instead, which is the only place they actually take
+# effect. The Cache-Control rules below have the same limitation: they only
+# apply to the paths _routes.json excludes from the worker (currently just
+# /_astro/* and a few static files) — none of the routes below are excluded,
+# so those rules are also inert today. Left as-is since fixing that is a
+# separate change from the security-header bug this comment documents.
 
 # Cache explore pages at the edge for fast category switching
 /explore

@@ -424,4 +424,21 @@ quizzesApp.post("/:id/hide", authMiddleware, requireAdmin, async (c) => {
   return c.json({ success: true });
 });
 
+// Community quizzes publish instantly with no review (see POST "/" above),
+// so ads are gated separately: a quiz only shows AdSlot once an admin has
+// looked at it and flipped this flag. See migration 0004_ads_eligible.sql.
+quizzesApp.post("/:id/approve-ads", authMiddleware, requireAdmin, async (c) => {
+  const quizId = c.req.param("id");
+  const updated = await updateQuiz(c.env, quizId, { ads_eligible: 1 });
+  if (!updated) return c.json({ success: false, error: "Quiz not found" }, 404);
+  return c.json({ success: true, data: serializeQuiz(updated) });
+});
+
+quizzesApp.post("/:id/revoke-ads", authMiddleware, requireAdmin, async (c) => {
+  const quizId = c.req.param("id");
+  const updated = await updateQuiz(c.env, quizId, { ads_eligible: 0 });
+  if (!updated) return c.json({ success: false, error: "Quiz not found" }, 404);
+  return c.json({ success: true, data: serializeQuiz(updated) });
+});
+
 export { quizzesApp };
