@@ -6,12 +6,8 @@ pages_build_output_dir = "./dist"
 binding = "SESSION"
 id = "02dbd51b0bac4b67a0edafee77697595"
 
-# Clerk's Astro integration reads this specific var through Astro's typed
-# astro:env schema system rather than plain import.meta.env, so the value
-# in .env.production alone doesn't reach the Cloudflare Pages build output —
-# it needs to also be defined as a wrangler-managed var (the dashboard only
-# lets you manage Secrets once a project has a wrangler.toml, see
-# Settings > Variables and secrets). Safe to commit: this is the publishable
-# key, designed to ship in frontend code.
-[vars]
-PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_Y2xlcmsuZnVuc29uYS5jb20k"
+# PUBLIC_CLERK_PUBLISHABLE_KEY lives in the repo-root wrangler.toml instead —
+# that's the file Cloudflare Pages' Git-integration build actually reads
+# (see ccb2811). Declaring it here too made `wrangler pages deploy` fail with
+# "Binding name 'PUBLIC_CLERK_PUBLISHABLE_KEY' already in use" — this file is
+# still needed locally for dev/type-generation and the SESSION KV binding.
