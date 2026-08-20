@@ -1,3 +1,13 @@
 name = "funsona-web"
 compatibility_date = "2026-05-22"
 pages_build_output_dir = "./apps/web/dist"
+
+# Cloudflare Pages' Git-integration build detects THIS file (repo root, Root
+# directory setting is unset — see the ccb2811 commit), not
+# apps/web/wrangler.toml, so build-time vars must live here too. Clerk's
+# Astro integration reads this one through the typed astro:env schema rather
+# than plain import.meta.env, so .env.production alone doesn't reach the
+# production bundle. Safe to commit: this is the publishable key, designed
+# to ship in frontend code.
+[vars]
+PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_Y2xlcmsuZnVuc29uYS5jb20k"
