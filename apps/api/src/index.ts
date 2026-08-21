@@ -15,6 +15,7 @@ import { moderationApp } from "./routes/moderation.js";
 import { clerkWebhookApp } from "./routes/webhooks/clerk.js";
 import { mediaApp } from "./routes/media.js";
 import { isAllowedOrigin } from "./lib/origins.js";
+import { secret } from "./lib/env.js";
 import type { AuthState } from "./middleware/auth.js";
 
 export type Env = {
@@ -58,7 +59,7 @@ app.use(
 app.use(async (c, next) => {
   const required = ["CLERK_PUBLISHABLE_KEY", "CLERK_SECRET_KEY"] as const;
   for (const key of required) {
-    if (!c.env[key]) {
+    if (!secret(c.env, key)) {
       console.error(`Missing required environment variable: ${key}`);
       return c.json({ success: false, error: "Server configuration error" }, 500);
     }
@@ -73,8 +74,8 @@ app.get("/health", (c) => c.json({ ok: true, env: c.env.ENVIRONMENT }));
 // API host encoded in the publishable key. A `pk_live_` paired with an
 // `sk_test_` rejects every real session and is otherwise invisible.
 app.get("/health/auth", (c) => {
-  const pk = c.env.CLERK_PUBLISHABLE_KEY ?? "";
-  const sk = c.env.CLERK_SECRET_KEY ?? "";
+  const pk = secret(c.env, "CLERK_PUBLISHABLE_KEY");
+  const sk = secret(c.env, "CLERK_SECRET_KEY");
   let frontendApi: string | null = null;
   try {
     // pk_(live|test)_<base64 of "fapi.host$">

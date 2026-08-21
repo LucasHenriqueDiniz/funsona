@@ -3,6 +3,7 @@ import { createClerkClient } from "@clerk/backend";
 import type { Env } from "../index.js";
 import { findProfileIdByClerkUserId, resolveProfileIdForClerkUser } from "../db/client.js";
 import { authorizedPartiesFor } from "../lib/origins.js";
+import { secret } from "../lib/env.js";
 
 // Verifies the Clerk session for the incoming request (cookie or Bearer
 // token — authenticateRequest handles both) and resolves that Clerk user to a
@@ -39,8 +40,8 @@ type ClerkIdentity = Parameters<typeof resolveProfileIdForClerkUser>[2];
 
 export const authMiddleware: MiddlewareHandler<Env> = async (c, next) => {
   const clerk = createClerkClient({
-    secretKey: c.env.CLERK_SECRET_KEY,
-    publishableKey: c.env.CLERK_PUBLISHABLE_KEY,
+    secretKey: secret(c.env, "CLERK_SECRET_KEY"),
+    publishableKey: secret(c.env, "CLERK_PUBLISHABLE_KEY"),
   });
 
   const bearer = c.req.header("Authorization")?.startsWith("Bearer ") ?? false;
@@ -59,8 +60,8 @@ export const authMiddleware: MiddlewareHandler<Env> = async (c, next) => {
         path: new URL(c.req.url).pathname,
         origin: c.req.header("Origin") ?? null,
         transport: bearer ? "bearer" : "cookie",
-        keyKind: c.env.CLERK_PUBLISHABLE_KEY?.slice(0, 8) ?? null,
-        secretKind: c.env.CLERK_SECRET_KEY?.slice(0, 8) ?? null,
+        keyKind: secret(c.env, "CLERK_PUBLISHABLE_KEY").slice(0, 8) || null,
+        secretKind: secret(c.env, "CLERK_SECRET_KEY").slice(0, 8) || null,
       })
     );
     c.set("authState", { state: "failed", reason });
