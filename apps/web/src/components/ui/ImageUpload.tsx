@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { PUBLIC_API_ORIGIN } from "@/lib/public-env";
+import { apiFetchRaw } from "@/lib/auth-fetch";
 
 interface ImageUploadProps {
   onUpload: (url: string) => void;
@@ -41,11 +41,13 @@ export default function ImageUpload({ onUpload, currentUrl, label = "Imagem" }: 
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch(`${PUBLIC_API_ORIGIN}/media/quiz-images/upload`, {
+      // apiFetchRaw so FormData keeps its own multipart boundary.
+      const res = await apiFetchRaw("/media/quiz-images/upload", {
         method: "POST",
-        credentials: "include",
+        auth: "required",
         body: formData,
       });
+      if (!res) throw new Error("Sua sessão expirou. Entre novamente.");
       const json = await res.json();
       if (!res.ok || !json.success) throw new Error(json.error || "Falha no upload.");
       onUpload(json.data.publicUrl);

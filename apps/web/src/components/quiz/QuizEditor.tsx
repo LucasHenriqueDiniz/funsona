@@ -1,7 +1,7 @@
 import { useState, type ComponentProps } from "react";
 import type { QuizType, CreateQuiz } from "@FunSona/shared";
 import ImageUpload from "@/components/ui/ImageUpload";
-import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { apiFetch } from "@/lib/auth-fetch";
 
 type FormSubmitEvent = Parameters<NonNullable<ComponentProps<"form">["onSubmit"]>>[0];
 
@@ -106,18 +106,17 @@ export default function QuizEditor() {
       tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
     };
 
-    try {
-      const res = await fetch(`${PUBLIC_API_BASE_URL}/quizzes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(quizData),
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (!data.success) { setError(data.error || "Erro ao criar quiz"); return; }
-      window.location.href = `/quiz/${data.data.slug}`;
-    } catch { setError("Erro de conexão. Tente novamente."); }
-    finally { setLoading(false); }
+    const res = await apiFetch<{ slug: string }>("/quizzes", {
+      method: "POST",
+      auth: "required",
+      body: JSON.stringify(quizData),
+    });
+    if (!res.data) {
+      setError(res.unauthenticated ? "Sua sessão expirou. Entre novamente." : res.error || "Erro ao criar quiz");
+      setLoading(false);
+      return;
+    }
+    window.location.href = `/quiz/${res.data.slug}`;
   }
 
   const tabs = [

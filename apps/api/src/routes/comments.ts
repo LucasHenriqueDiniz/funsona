@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import type { Env } from "../index.js";
-import { authMiddleware } from "../middleware/auth.js";
+import { authMiddleware, requireAuth, currentUserId } from "../middleware/auth.js";
 import { requireAdmin } from "../middleware/admin.js";
 import {
   getQuizBySlug,
@@ -47,9 +47,8 @@ commentsApp.get("/", async (c) => {
 });
 
 // Create comment (auth required)
-commentsApp.post("/", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+commentsApp.post("/", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const quizSlug = c.req.param("slug");
   const body = await c.req.json();
@@ -68,9 +67,8 @@ commentsApp.post("/", authMiddleware, async (c) => {
 });
 
 // Delete comment (auth required)
-commentsApp.delete("/:commentId", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+commentsApp.delete("/:commentId", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const commentId = c.req.param("commentId");
   const ownerId = await getCommentOwner(c.env, commentId);
@@ -88,9 +86,8 @@ commentsApp.delete("/:commentId", authMiddleware, async (c) => {
 });
 
 // Report a comment (auth required)
-commentsApp.post("/:commentId/report", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+commentsApp.post("/:commentId/report", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const commentId = c.req.param("commentId");
   const body = await c.req.json().catch(() => ({}));

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { apiFetch } from "@/lib/auth-fetch";
 
 interface LikeButtonProps {
   quizId: string;
@@ -17,18 +17,11 @@ export default function LikeButton({ quizId, initialLikes, initialLiked = false 
     let cancelled = false;
 
     async function loadLikeState() {
-      try {
-        const res = await fetch(`${PUBLIC_API_BASE_URL}/quizzes/${quizId}/like`, {
-          credentials: "include",
-        });
-        if (!res.ok) return;
-
-        const data = await res.json();
-        if (!cancelled && !userHasToggled.current && typeof data?.liked === "boolean") {
-          setLiked(data.liked);
-        }
-      } catch {
-        // Ignore: the count still renders and the action can retry later.
+      // Signed-out visitors skip the request entirely (auth: "required"): the
+      // count still renders and there is no like state to read.
+      const res = await apiFetch<{ liked: boolean }>(`/quizzes/${quizId}/like`, { auth: "required" });
+      if (!cancelled && !userHasToggled.current && typeof res.data?.liked === "boolean") {
+        setLiked(res.data.liked);
       }
     }
 
@@ -44,27 +37,20 @@ export default function LikeButton({ quizId, initialLikes, initialLiked = false 
     setLoading(true);
     userHasToggled.current = true;
 
-    try {
-      const res = await fetch(`${PUBLIC_API_BASE_URL}/quizzes/${quizId}/like`, {
-        method: liked ? "DELETE" : "POST",
-        credentials: "include",
-      });
+    const res = await apiFetch(`/quizzes/${quizId}/like`, { method: liked ? "DELETE" : "POST" });
 
-      if (res.status === 401) {
-        const currentPath = window.location.pathname + window.location.search + window.location.hash;
-        window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
-        return;
-      }
-
-      if (res.ok) {
-        setLiked(!liked);
-        setLikes((prev) => (liked ? prev - 1 : prev + 1));
-      }
-    } catch {
-      // Silently fail
-    } finally {
-      setLoading(false);
+    if (res.unauthenticated) {
+      const currentPath = window.location.pathname + window.location.search + window.location.hash;
+      window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+      return;
     }
+
+    if (!res.error) {
+      setLiked(!liked);
+      setLikes((prev) => (liked ? prev - 1 : prev + 1));
+    }
+
+    setLoading(false);
   }
 
   return (

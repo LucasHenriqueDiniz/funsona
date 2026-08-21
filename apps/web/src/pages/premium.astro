@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import CheckoutButton from "@/components/premium/CheckoutButton";
 
 const { data: settings } = await fetch(`${PUBLIC_API_BASE_URL}/settings/public`).then(r => r.json()).catch(() => null);
 ---
@@ -32,12 +33,7 @@ const { data: settings } = await fetch(`${PUBLIC_API_BASE_URL}/settings/public`)
         ))}
       </ul>
 
-      <button
-        id="checkout-btn"
-        class="w-full max-w-md mx-auto px-8 py-4 bg-indigo-600 text-white text-lg font-bold rounded-xl hover:bg-indigo-700 transition shadow-lg"
-      >
-        Assinar Premium
-      </button>
+      <CheckoutButton client:load />
     </div>
 
     <p class="text-sm text-gray-500">
@@ -46,33 +42,3 @@ const { data: settings } = await fetch(`${PUBLIC_API_BASE_URL}/settings/public`)
     </p>
   </div>
 </Layout>
-
-<script is:inline define:vars={{ PUBLIC_API_BASE_URL }}>
-  const btn = document.getElementById('checkout-btn');
-  if (btn instanceof HTMLButtonElement) {
-    btn.addEventListener('click', async () => {
-      btn.textContent = 'Redirecionando...';
-      btn.disabled = true;
-      
-      try {
-        const res = await fetch(`${PUBLIC_API_BASE_URL}/stripe/checkout`, {
-          method: 'POST',
-          credentials: 'include',
-        });
-        const data = await res.json();
-        
-        if (data.success && data.data?.url) {
-          window.location.href = data.data.url;
-        } else {
-          alert(data.error || 'Erro ao iniciar checkout');
-          btn.textContent = 'Assinar Premium';
-          btn.disabled = false;
-        }
-      } catch {
-        alert('Erro de conexão. Tente novamente.');
-        btn.textContent = 'Assinar Premium';
-        btn.disabled = false;
-      }
-    });
-  }
-</script>

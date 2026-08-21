@@ -1,24 +1,25 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import ProfileActivityTabs from "@/components/profile/ProfileActivityTabs";
-import { apiFetch } from "@/lib/api";
+import ProfileActivityTabs, { type ProfileQuiz } from "@/components/profile/ProfileActivityTabs";
+import { apiFetchServer, getProfile } from "@/lib/api-server";
 
-const profile = Astro.locals.user;
+// clerkMiddleware already redirected anonymous visitors away from /profile/me;
+// a missing profile here means the Clerk user has no local row yet.
+const profile = await getProfile(Astro);
 if (!profile) return Astro.redirect("/login");
 
 const userInitial = profile.display_name?.charAt(0).toUpperCase() || "?";
 
-let stats = null;
-try {
-  const statsRes = await apiFetch(`/users/me/stats`, {
-    headers: { cookie: Astro.request.headers.get("cookie") || "" },
-  });
-  stats = statsRes?.data || null;
-} catch { /* ignore */ }
+const { data: stats } = await apiFetchServer<{
+  current_streak?: number;
+  quizzes_played?: number;
+  quizzes_created?: number;
+}>(Astro, "/users/me/stats");
 
-const { data: activity } = await apiFetch(`/users/me/activity`, {
-  headers: { cookie: Astro.request.headers.get("cookie") || "" },
-});
+const { data: activity } = await apiFetchServer<{
+  created_quizzes?: ProfileQuiz[];
+  played_quizzes?: ProfileQuiz[];
+}>(Astro, "/users/me/activity");
 const createdQuizzes = activity?.created_quizzes || [];
 const playedQuizzes = activity?.played_quizzes || [];
 

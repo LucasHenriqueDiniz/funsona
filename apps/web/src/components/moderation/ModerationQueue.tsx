@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { apiFetch } from "@/lib/auth-fetch";
 
 interface Report {
   id: string;
@@ -27,19 +27,13 @@ export default function ModerationQueue() {
   async function fetchReports() {
     setLoading(true);
     setError("");
-    try {
-      const res = await fetch(`${PUBLIC_API_BASE_URL}/moderation/reports`, { credentials: "include" });
-      const json = await res.json();
-      if (json.success) {
-        setReports(json.data || []);
-      } else {
-        setError(json.error || "Erro ao carregar denúncias");
-      }
-    } catch {
-      setError("Erro ao carregar denúncias");
-    } finally {
-      setLoading(false);
+    const res = await apiFetch<Report[]>("/moderation/reports", { auth: "required" });
+    if (res.data) {
+      setReports(res.data);
+    } else {
+      setError(res.error || "Erro ao carregar denúncias");
     }
+    setLoading(false);
   }
 
   async function handleHide(report: Report) {
@@ -49,9 +43,8 @@ export default function ModerationQueue() {
         report.target_type === "comment"
           ? `/quizzes/_/comments/${report.target_id}/hide`
           : `/quizzes/${report.target_id}/hide`;
-      const res = await fetch(`${PUBLIC_API_BASE_URL}${path}`, { method: "POST", credentials: "include" });
-      const json = await res.json();
-      if (json.success) {
+      const res = await apiFetch(path, { method: "POST", auth: "required" });
+      if (!res.error) {
         setReports((prev) => prev.filter((r) => r.id !== report.id));
       }
     } finally {

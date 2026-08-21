@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { Env } from "../index.js";
+import { secret } from "../lib/env.js";
 
 const settingsApp = new Hono<Env>();
 
@@ -8,7 +9,7 @@ settingsApp.get("/public", (c) => {
   return c.json({
     success: true,
     data: {
-      stripe_enabled: Boolean(c.env.STRIPE_SECRET_KEY),
+      stripe_enabled: Boolean(secret(c.env, "STRIPE_SECRET_KEY")),
       premium_price: "R$ 19,90/mês",
       features: [
         "Remover anúncios",

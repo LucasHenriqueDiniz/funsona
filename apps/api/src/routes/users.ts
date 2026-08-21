@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import type { Env } from "../index.js";
-import { authMiddleware } from "../middleware/auth.js";
+import { authMiddleware, requireAuth, currentUserId } from "../middleware/auth.js";
 import {
   getDb,
   getProfileById,
@@ -29,9 +29,8 @@ function getProfileMediaColumns(kind: "avatar" | "banner") {
     : { url: "banner_url", path: "banner_path", source: "banner_source" };
 }
 
-usersApp.get("/me/streak", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+usersApp.get("/me/streak", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const row = await getDb(c.env)
     .prepare("SELECT current_streak, longest_streak, last_activity_date FROM user_streaks WHERE user_id = ?")
@@ -48,9 +47,8 @@ usersApp.get("/me/streak", authMiddleware, async (c) => {
   return c.json({ success: true, data: row });
 });
 
-usersApp.get("/me/stats", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+usersApp.get("/me/stats", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const db = getDb(c.env);
   const [profile, streak, resultsCount, createdCount] = await Promise.all([
@@ -77,9 +75,8 @@ usersApp.get("/me/stats", authMiddleware, async (c) => {
   });
 });
 
-usersApp.get("/me/activity", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+usersApp.get("/me/activity", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const [created, played] = await Promise.all([
     getUserCreatedQuizzes(c.env, userId, 6),
@@ -92,9 +89,8 @@ usersApp.get("/me/activity", authMiddleware, async (c) => {
   });
 });
 
-usersApp.patch("/me", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+usersApp.patch("/me", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const body = await c.req.json().catch(() => null);
   const parsed = UpdateProfileSchema.safeParse(body);
@@ -114,9 +110,8 @@ usersApp.patch("/me", authMiddleware, async (c) => {
   return c.json({ success: true, data });
 });
 
-usersApp.post("/me/media", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+usersApp.post("/me/media", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const body = await c.req.parseBody();
   const kindRaw = body.kind;
@@ -188,9 +183,8 @@ usersApp.post("/me/media", authMiddleware, async (c) => {
 });
 
 // Get current user achievements
-usersApp.get("/me/achievements", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+usersApp.get("/me/achievements", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const data = await getUserAchievements(c.env, userId);
   return c.json({ success: true, data });

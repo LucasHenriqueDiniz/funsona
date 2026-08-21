@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { CreateQuizSchema, UpdateQuizSchema, CreateQuizResultSchema } from "@FunSona/shared";
 import type { Env } from "../index.js";
-import { authMiddleware } from "../middleware/auth.js";
+import { authMiddleware, requireAuth, currentUserId } from "../middleware/auth.js";
 import { requireAdmin } from "../middleware/admin.js";
 import {
   getDb,
@@ -182,9 +182,8 @@ quizzesApp.get("/:slug", async (c) => {
 });
 
 // Recommended quizzes for authenticated users
-quizzesApp.get("/recommended/for-me", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+quizzesApp.get("/recommended/for-me", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const db = getDb(c.env);
 
@@ -242,9 +241,8 @@ quizzesApp.get("/recommended/for-me", authMiddleware, async (c) => {
 });
 
 // Create quiz (auth required)
-quizzesApp.post("/", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+quizzesApp.post("/", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const body = await c.req.json();
   const parsed = CreateQuizSchema.safeParse(body);
@@ -284,9 +282,8 @@ quizzesApp.post("/", authMiddleware, async (c) => {
 });
 
 // Update quiz (auth required)
-quizzesApp.patch("/:id", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+quizzesApp.patch("/:id", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const id = c.req.param("id");
   const body = await c.req.json();
@@ -317,9 +314,8 @@ quizzesApp.patch("/:id", authMiddleware, async (c) => {
 });
 
 // Delete quiz (auth required)
-quizzesApp.delete("/:id", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+quizzesApp.delete("/:id", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const id = c.req.param("id");
   const quiz = await getQuizById(c.env, id);
@@ -366,9 +362,8 @@ quizzesApp.post("/:id/results", authMiddleware, async (c) => {
 });
 
 // Like a quiz
-quizzesApp.post("/:id/like", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+quizzesApp.post("/:id/like", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const quizId = c.req.param("id");
   await likeQuiz(c.env, quizId, userId);
@@ -376,9 +371,8 @@ quizzesApp.post("/:id/like", authMiddleware, async (c) => {
 });
 
 // Unlike a quiz
-quizzesApp.delete("/:id/like", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+quizzesApp.delete("/:id/like", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const quizId = c.req.param("id");
   await unlikeQuiz(c.env, quizId, userId);
@@ -388,17 +382,16 @@ quizzesApp.delete("/:id/like", authMiddleware, async (c) => {
 // Check if user liked a quiz
 quizzesApp.get("/:id/like", authMiddleware, async (c) => {
   const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, liked: false });
+  if (!userId) return c.json({ success: true, data: { liked: false } });
 
   const quizId = c.req.param("id");
   const liked = await hasLiked(c.env, quizId, userId);
-  return c.json({ success: true, liked });
+  return c.json({ success: true, data: { liked } });
 });
 
 // Report a quiz (auth required)
-quizzesApp.post("/:id/report", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+quizzesApp.post("/:id/report", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const quizId = c.req.param("id");
   const body = await c.req.json().catch(() => ({}));

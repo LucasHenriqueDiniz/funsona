@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { apiFetch } from "@/lib/auth-fetch";
 
 type LeaderboardWindow = "weekly" | "monthly";
 
@@ -47,17 +48,12 @@ export default function ExploreEngagementRail() {
     let cancelled = false;
 
     async function loadStatic() {
-      const [authRes] = await Promise.all([
-        fetch(`${API_BASE}/auth/me`, { credentials: "include", headers: { Accept: "application/json" } }),
-      ]);
-
-      const authJson = await authRes.json().catch(() => null);
+      const res = await apiFetch<AuthUser>("/auth/me", { auth: "required" });
 
       if (cancelled) return;
 
-      const logged = !!authJson?.success;
-      setIsLoggedIn(logged);
-      setAuthUser(logged ? authJson?.data || null : null);
+      setIsLoggedIn(!!res.data);
+      setAuthUser(res.data);
     }
 
     loadStatic().catch(() => {
@@ -84,13 +80,11 @@ export default function ExploreEngagementRail() {
       }
 
       if (isLoggedIn) {
-        const meRes = await fetch(`${API_BASE}/leaderboard/me?window=${leaderboardWindow}`, {
-          credentials: "include",
-          headers: { Accept: "application/json" },
+        const meRes = await apiFetch<MyRank>(`/leaderboard/me?window=${leaderboardWindow}`, {
+          auth: "required",
         });
-        const meJson = await meRes.json().catch(() => null);
         if (!cancelled) {
-          setMyRank(meJson?.success ? meJson.data || null : null);
+          setMyRank(meRes.data);
         }
       } else if (!cancelled) {
         setMyRank(null);

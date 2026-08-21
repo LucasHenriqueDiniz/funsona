@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AchievementBadges from "@/components/profile/AchievementBadges";
 
-type Quiz = {
+export type ProfileQuiz = {
   id: string;
   slug: string;
   title: string;
@@ -14,8 +14,8 @@ type Quiz = {
 
 type Props = {
   userId: string;
-  createdQuizzes: Quiz[];
-  playedQuizzes: Quiz[];
+  createdQuizzes: ProfileQuiz[];
+  playedQuizzes: ProfileQuiz[];
   isOwnProfile?: boolean;
 };
 
@@ -28,7 +28,7 @@ const tabs = [
 export default function ProfileActivityTabs({ userId, createdQuizzes, playedQuizzes, isOwnProfile = false }: Props) {
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]["id"]>("created");
 
-  const renderQuizCard = (quiz: Quiz) => {
+  const renderQuizCard = (quiz: ProfileQuiz) => {
     const isHot = quiz.likes_count > 50 || quiz.attempts_count > 100;
 
     return (

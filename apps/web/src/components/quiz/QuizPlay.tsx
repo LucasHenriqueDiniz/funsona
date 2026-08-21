@@ -5,7 +5,7 @@ import QuizOptionButton from "./QuizOptionButton";
 import QuizResultScreen from "./QuizResultScreen";
 import QuizExitControl from "./QuizExitControl";
 import AdSlot from "@/components/ads/AdSlot";
-import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { apiFetch } from "@/lib/auth-fetch";
 
 // Support both old imported data format and new schema format
 interface RawOption {
@@ -199,15 +199,15 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
     setLoading(true);
     const quizResult = quizType === "TRIVIA" ? calculateTriviaResult() : calculatePersonalityResult();
     try {
-      await fetch(`${PUBLIC_API_BASE_URL}/quizzes/${quiz.id}/results`, {
+      // Auth is optional here on purpose: anonymous plays are still recorded,
+      // they just don't earn XP for anyone.
+      await apiFetch(`/quizzes/${quiz.id}/results`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           result_type: quizType === "TRIVIA" ? "TRIVIA_SUM" : "PERSONALITY_TALLY",
           result_value: quizResult.value,
           xp_gained: quizResult.xpGained,
         }),
-        credentials: "include",
       });
     } catch (err) {
       console.error("Failed to save quiz result:", err);

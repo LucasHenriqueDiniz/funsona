@@ -1,13 +1,14 @@
 import { Hono } from "hono";
 import Stripe from "stripe";
 import type { Env } from "../index.js";
-import { authMiddleware } from "../middleware/auth.js";
+import { authMiddleware, requireAuth, currentUserId } from "../middleware/auth.js";
+import { secret } from "../lib/env.js";
 import { getProfileById, updateProfile } from "../db/client.js";
 
 const stripeApp = new Hono<Env>();
 
 function getStripe(env: Env["Bindings"]) {
-  return new Stripe(env.STRIPE_SECRET_KEY, { apiVersion: "2025-02-24.acacia" });
+  return new Stripe(secret(env, "STRIPE_SECRET_KEY"), { apiVersion: "2025-02-24.acacia" });
 }
 
 function getErrorMessage(err: unknown) {
@@ -16,9 +17,8 @@ function getErrorMessage(err: unknown) {
 }
 
 // Create checkout session
-stripeApp.post("/checkout", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+stripeApp.post("/checkout", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const profile = await getProfileById(c.env, userId);
 
@@ -75,7 +75,7 @@ stripeApp.post("/webhook", async (c) => {
 
   let event;
   try {
-    event = stripe.webhooks.constructEvent(rawBody, signature, c.env.STRIPE_WEBHOOK_SECRET);
+    event = stripe.webhooks.constructEvent(rawBody, signature, secret(c.env, "STRIPE_WEBHOOK_SECRET"));
   } catch (err: unknown) {
     return c.json({ success: false, error: `Webhook error: ${getErrorMessage(err)}` }, 400);
   }
