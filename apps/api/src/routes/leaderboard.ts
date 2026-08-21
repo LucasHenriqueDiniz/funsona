@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import type { Env } from "../index.js";
-import { authMiddleware } from "../middleware/auth.js";
+import { authMiddleware, requireAuth, currentUserId } from "../middleware/auth.js";
 import { getLeaderboardWindow, getMyLeaderboardRank } from "../db/client.js";
 
 const leaderboardApp = new Hono<Env>();
@@ -33,9 +33,8 @@ leaderboardApp.get("/", async (c) => {
   });
 });
 
-leaderboardApp.get("/me", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+leaderboardApp.get("/me", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const { window = "weekly" } = c.req.query();
   const meRow = await getMyLeaderboardRank(c.env, userId, window);

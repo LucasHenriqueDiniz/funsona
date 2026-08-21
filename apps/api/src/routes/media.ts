@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import type { Env } from "../index.js";
-import { authMiddleware } from "../middleware/auth.js";
+import { authMiddleware, requireAuth, currentUserId } from "../middleware/auth.js";
 
 const mediaApp = new Hono<Env>();
 
@@ -63,9 +63,8 @@ mediaApp.get("/:bucket/*", async (c) => {
 // the shape of POST /api/users/me/media but targets the quiz-images bucket
 // and isn't tied to a specific quiz id (the editor uploads images ad hoc as
 // the author builds the quiz, same as the old direct-to-Supabase flow).
-mediaApp.post("/quiz-images/upload", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+mediaApp.post("/quiz-images/upload", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const body = await c.req.parseBody();
   const fileRaw = body.file;

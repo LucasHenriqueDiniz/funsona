@@ -14,6 +14,8 @@ import { profilesApp } from "./routes/profiles.js";
 import { moderationApp } from "./routes/moderation.js";
 import { clerkWebhookApp } from "./routes/webhooks/clerk.js";
 import { mediaApp } from "./routes/media.js";
+import { isAllowedOrigin } from "./lib/origins.js";
+import type { AuthState } from "./middleware/auth.js";
 
 export type Env = {
   Bindings: {
@@ -31,6 +33,7 @@ export type Env = {
   Variables: {
     userId?: string;
     session?: Record<string, unknown>;
+    authState?: AuthState;
   };
 };
 
@@ -40,31 +43,14 @@ app.use(logger());
 app.use(prettyJSON());
 app.use(
   cors({
-    origin: (origin, c) => {
-      const env = c.env.ENVIRONMENT;
-      if (env === "development") {
-        const devOrigins = new Set(["http://localhost:4321", "http://localhost:3000"]);
-        return devOrigins.has(origin) ? origin : "";
-      }
-      if (!origin) return "";
-      try {
-        const { hostname } = new URL(origin);
-        const allowedHosts = new Set([
-          "funsona.com",
-          "www.funsona.com",
-          "api.funsona.com",
-          "funsona-v2.pages.dev",
-        ]);
-        const allowed =
-          allowedHosts.has(hostname) ||
-          hostname.endsWith(".funsona.com") ||
-          hostname.endsWith(".funsona-v2.pages.dev");
-        if (allowed) return origin;
-      } catch {
-        return "";
-      }
-      return "";
-    },
+    // The allowlist lives in lib/origins.ts because Clerk's authorizedParties
+    // check in middleware/auth.ts has to agree with it exactly.
+    origin: (origin, c) => (isAllowedOrigin(origin, c.env.ENVIRONMENT) ? origin : ""),
+    // Authorization is listed explicitly: Hono echoes whatever the preflight
+    // asks for when allowHeaders is empty, so Bearer worked only by accident.
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    maxAge: 86400,
     credentials: true,
   })
 );
@@ -81,6 +67,31 @@ app.use(async (c, next) => {
 });
 
 app.get("/health", (c) => c.json({ ok: true, env: c.env.ENVIRONMENT }));
+
+// Answers "are the frontend and this worker talking to the same Clerk
+// instance?" without exposing a secret — only key prefixes and the Frontend
+// API host encoded in the publishable key. A `pk_live_` paired with an
+// `sk_test_` rejects every real session and is otherwise invisible.
+app.get("/health/auth", (c) => {
+  const pk = c.env.CLERK_PUBLISHABLE_KEY ?? "";
+  const sk = c.env.CLERK_SECRET_KEY ?? "";
+  let frontendApi: string | null = null;
+  try {
+    // pk_(live|test)_<base64 of "fapi.host$">
+    frontendApi = atob(pk.replace(/^pk_(live|test)_/, "")).replace(/\$$/, "") || null;
+  } catch {
+    frontendApi = null;
+  }
+  const kind = (key: string) => (key.startsWith("sk_live_") || key.startsWith("pk_live_") ? "live" : key ? "test" : null);
+  return c.json({
+    ok: true,
+    environment: c.env.ENVIRONMENT,
+    publishableKeyPrefix: pk.slice(0, 8) || null,
+    secretKeyPrefix: sk.slice(0, 8) || null,
+    frontendApi,
+    instanceKindMatches: !!pk && !!sk && kind(pk) === kind(sk),
+  });
+});
 
 app.route("/api/auth", authApp);
 app.route("/api/quizzes", quizzesApp);

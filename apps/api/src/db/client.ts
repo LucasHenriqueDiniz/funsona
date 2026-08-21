@@ -129,6 +129,24 @@ export type ClerkIdentity = {
 };
 
 /**
+ * The cheap half of {@link resolveProfileIdForClerkUser}: one indexed lookup,
+ * no Clerk Backend API call. This is the only branch that runs for an
+ * established user, so the auth middleware calls it directly on the hot path
+ * and falls back to the full resolve (which may hit Clerk and create a row)
+ * only when it misses.
+ */
+export async function findProfileIdByClerkUserId(
+  env: Env["Bindings"],
+  clerkUserId: string
+): Promise<string | null> {
+  const row = await getDb(env)
+    .prepare("SELECT id FROM profiles WHERE clerk_user_id = ?")
+    .bind(clerkUserId)
+    .first<{ id: string }>();
+  return row?.id ?? null;
+}
+
+/**
  * Maps a Clerk user id onto the internal `profiles.id`, which for users carried
  * over from Supabase is a Supabase auth UUID rather than the Clerk id.
  *
@@ -149,11 +167,8 @@ export async function resolveProfileIdForClerkUser(
 ): Promise<string> {
   const db = getDb(env);
 
-  const linked = await db
-    .prepare("SELECT id FROM profiles WHERE clerk_user_id = ?")
-    .bind(clerkUserId)
-    .first<{ id: string }>();
-  if (linked) return linked.id;
+  const linked = await findProfileIdByClerkUserId(env, clerkUserId);
+  if (linked) return linked;
 
   if (identity.email && identity.emailVerified) {
     const byEmail = await db

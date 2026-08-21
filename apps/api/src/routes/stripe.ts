@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import Stripe from "stripe";
 import type { Env } from "../index.js";
-import { authMiddleware } from "../middleware/auth.js";
+import { authMiddleware, requireAuth, currentUserId } from "../middleware/auth.js";
 import { getProfileById, updateProfile } from "../db/client.js";
 
 const stripeApp = new Hono<Env>();
@@ -16,9 +16,8 @@ function getErrorMessage(err: unknown) {
 }
 
 // Create checkout session
-stripeApp.post("/checkout", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+stripeApp.post("/checkout", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const profile = await getProfileById(c.env, userId);
 

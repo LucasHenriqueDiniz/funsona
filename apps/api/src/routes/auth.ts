@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import type { Env } from "../index.js";
-import { authMiddleware } from "../middleware/auth.js";
+import { authMiddleware, requireAuth, currentUserId } from "../middleware/auth.js";
 import { getProfileById } from "../db/client.js";
 
 // Sign-up/sign-in/sign-out are handled entirely by Clerk's frontend SDK in
@@ -12,9 +12,8 @@ import { getProfileById } from "../db/client.js";
 // and the lazy-create fallback in authMiddleware).
 const authApp = new Hono<Env>();
 
-authApp.get("/me", authMiddleware, async (c) => {
-  const userId = c.get("userId");
-  if (!userId) return c.json({ success: false, error: "Unauthorized" }, 401);
+authApp.get("/me", authMiddleware, requireAuth, async (c) => {
+  const userId = currentUserId(c);
 
   const data = await getProfileById(c.env, userId);
   if (!data) {

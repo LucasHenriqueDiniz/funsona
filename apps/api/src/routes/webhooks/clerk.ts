@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { Webhook } from "svix";
 import type { Env } from "../../index.js";
 import { upsertProfileFromClerk, deleteProfileByClerkUserId, resolveProfileIdForClerkUser } from "../../db/client.js";
+import { invalidateProfileCache } from "../../middleware/auth.js";
 
 const clerkWebhookApp = new Hono<Env>();
 
@@ -67,6 +68,9 @@ clerkWebhookApp.post("/", async (c) => {
     });
   } else if (event.type === "user.deleted") {
     await deleteProfileByClerkUserId(c.env, event.data.id);
+    // authMiddleware caches the Clerk id -> profile id mapping in KV for an
+    // hour; without this a deleted user keeps resolving until it expires.
+    await invalidateProfileCache(c.env, event.data.id);
   }
 
   return c.json({ success: true });
