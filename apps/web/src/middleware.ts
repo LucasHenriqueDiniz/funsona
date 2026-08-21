@@ -84,12 +84,40 @@ const SECURITY_HEADERS: Record<string, string> = {
 // sends as a Bearer token.
 const PROTECTED_PATHS = ["/profile/me", "/quiz/new", "/settings"];
 
-const auth = clerkMiddleware((authFn, context, next) => {
-  const path = context.url.pathname;
-  if (PROTECTED_PATHS.some((p) => path.startsWith(p)) && !authFn().userId) {
-    return context.redirect(`/login?redirect=${encodeURIComponent(path)}`);
-  }
-  return next();
+// Cloudflare's environment injection prepends a UTF-8 BOM (U+FEFF) to the
+// values it hands the Worker. Clerk then holds a secret key that isn't a key,
+// fails to verify a perfectly good session, and every protected route bounces
+// a signed-in user to /login. The same BOM was already caught on the frontend
+// publishable key (astro.config.mjs) and on the API's secrets
+// (apps/api/src/lib/env.ts) — it is not specific to one binding type, so the
+// keys are sanitized here rather than trusted.
+//
+// The options are built per request because that is the only place the
+// Worker's runtime env is reachable; constructing the middleware per request
+// is cheap.
+const clean = (value: unknown): string | undefined => {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.replace(/^﻿/, "").trim();
+  return trimmed || undefined;
+};
+
+const auth = defineMiddleware((context, next) => {
+  const runtimeEnv = (context.locals as { runtime?: { env?: Record<string, unknown> } }).runtime?.env ?? {};
+
+  return clerkMiddleware(
+    (authFn, ctx, nextFn) => {
+      const path = ctx.url.pathname;
+      if (PROTECTED_PATHS.some((p) => path.startsWith(p)) && !authFn().userId) {
+        return ctx.redirect(`/login?redirect=${encodeURIComponent(path)}`);
+      }
+      return nextFn();
+    },
+    {
+      secretKey: clean(runtimeEnv.CLERK_SECRET_KEY),
+      publishableKey:
+        clean(runtimeEnv.PUBLIC_CLERK_PUBLISHABLE_KEY) ?? clean(import.meta.env.PUBLIC_CLERK_PUBLISHABLE_KEY),
+    }
+  )(context, next);
 });
 
 // A quiz is authored in exactly one language (quizzes.language) and is never
