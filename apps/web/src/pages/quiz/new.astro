@@ -1,8 +1,11 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import QuizEditor from "@/components/quiz/QuizEditor";
+import { getProfile } from "@/lib/api-server";
 
-const user = Astro.locals.user;
+// clerkMiddleware already turns anonymous visitors away; reaching here without
+// a profile means the Clerk user has no local row yet.
+const user = await getProfile(Astro);
 if (!user) {
   return Astro.redirect("/login");
 }
