@@ -1,10 +1,12 @@
 name = "funsona-web"
 compatibility_date = "2026-05-22"
 # Clerk's server-side code (clerkMiddleware, used in apps/web/src/middleware.ts)
-# builds an AsyncLocalStorage, which is node:async_hooks. Without this flag the
-# Worker throws `No such module "node:async_hooks"` on EVERY render — the whole
-# site 500s, not just the authenticated parts.
-compatibility_flags = ["nodejs_als"]
+# reaches for Node built-ins — AsyncLocalStorage from node:async_hooks, and
+# node:fs further down its bundle. The Workers runtime only provides those
+# behind this flag, and without it module resolution fails during SSR, which
+# takes down EVERY route rather than just the authenticated ones.
+# nodejs_als alone is not enough: it covers AsyncLocalStorage and nothing else.
+compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "./apps/web/dist"
 
 # Cloudflare Pages' Git-integration build detects THIS file (repo root, Root
