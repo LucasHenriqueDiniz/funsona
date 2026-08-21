@@ -1,31 +1,72 @@
-import { defineMiddleware } from "astro:middleware";
-import { PUBLIC_API_BASE_URL, PUBLIC_API_ORIGIN } from "@/lib/public-env";
+import { defineMiddleware, sequence } from "astro:middleware";
+import { clerkMiddleware } from "@clerk/astro/server";
+import { PUBLIC_API_ORIGIN } from "@/lib/public-env";
 
 // Astro's Cloudflare adapter builds a custom _worker.js, which puts Pages in
 // "Advanced Mode" — Cloudflare then ignores public/_headers entirely for any
 // route the worker handles (i.e. everything _routes.json doesn't exclude, which
 // is nearly every route here). So security headers have to be set here instead.
 //
-// The CSP that used to live in public/_headers was dead code (never actually
-// applied) and was wrong: it didn't allow Clerk, Google Fonts, or the API
-// origin. Enforcing it as written would have broken login, fonts, and every
-// API call. This version is scoped to what the site actually loads, checked
-// against browser console errors while testing this change: Clerk's
-// clerk-js/ui bundles and API, Google Fonts' stylesheet + font files, this
-// site's own API origin, and the AdSense/GA domains already in use for ads
-// and analytics (including the iframe/creative domains AdSense needs beyond
-// just the loader script, since ad slots are already configured in prod).
-const CSP =
-  "default-src 'self'; " +
-  "script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://*.clerk.accounts.dev https://clerk.funsona.com https://*.clerk.com; " +
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-  "font-src 'self' https://fonts.gstatic.com data:; " +
-  "img-src 'self' data: https:; " +
-  `connect-src 'self' ${PUBLIC_API_ORIGIN} https://www.google-analytics.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.clerk.accounts.dev https://clerk.funsona.com https://*.clerk.com; ` +
-  "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://*.clerk.accounts.dev https://clerk.funsona.com; " +
+// Every host below is here because something the site actually loads was seen
+// being blocked in the browser console. The Clerk entries follow Clerk's own
+// CSP guide (clerk.com/docs/security/clerk-csp): the FAPI host, the bot
+// protection proxy, and Cloudflare Turnstile — which needs BOTH script-src and
+// frame-src, since it loads a script that then renders in an iframe. Allowing
+// only one of the two is what made every sign-up fail with
+// "Failed to load the CAPTCHA script" and a 400 from /v1/client/sign_ups.
+//
+// Directives are a list rather than one concatenated string so a missing space
+// can't silently merge two directives into one.
+const CSP = [
+  "default-src 'self'",
+  [
+    "script-src 'self' 'unsafe-inline'",
+    // Clerk: FAPI, bot protection proxy, Turnstile.
+    "https://clerk.funsona.com https://*.clerk.com https://*.clerk.accounts.dev",
+    "https://*.protect.clerk.com https://challenges.cloudflare.com",
+    // Cloudflare Web Analytics injects this from the dashboard, not the repo.
+    "https://static.cloudflareinsights.com",
+    // AdSense loader, GA/GTM, and the ad-traffic-quality (sodar) hosts.
+    "https://pagead2.googlesyndication.com https://tpc.googlesyndication.com",
+    "https://googleads.g.doubleclick.net https://www.googletagmanager.com",
+    "https://www.google-analytics.com https://ep1.adtrafficquality.google",
+    "https://ep2.adtrafficquality.google https://fundingchoicesmessages.google.com",
+  ].join(" "),
+  // Clerk styles at runtime via CSS-in-JS, so 'unsafe-inline' is required here.
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' https://fonts.gstatic.com data:",
+  // blob: covers the local preview in components/ui/ImageUpload.tsx.
+  "img-src 'self' data: blob: https:",
+  [
+    `connect-src 'self' ${PUBLIC_API_ORIGIN}`,
+    "https://clerk.funsona.com https://*.clerk.com https://*.clerk.accounts.dev",
+    "https://*.protect.clerk.com https://challenges.cloudflare.com",
+    "https://cloudflareinsights.com https://static.cloudflareinsights.com",
+    "https://www.google-analytics.com https://*.google-analytics.com",
+    "https://analytics.google.com https://www.googletagmanager.com",
+    "https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net",
+    "https://*.adtrafficquality.google https://fundingchoicesmessages.google.com",
+    // AdSense's client-side timing beacon.
+    "https://csi.gstatic.com",
+  ].join(" "),
+  [
+    "frame-src 'self'",
+    "https://challenges.cloudflare.com https://*.protect.clerk.com",
+    "https://clerk.funsona.com https://*.clerk.accounts.dev https://accounts.funsona.com",
+    "https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
+    "https://www.google.com https://*.adtrafficquality.google",
+  ].join(" "),
   // Clerk spins up a Web Worker from a blob: URL for session refresh; without
   // this it silently falls back to script-src, which doesn't allow blob:.
-  "worker-src 'self' blob:;";
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  // Clerk posts sign-in forms to its own FAPI/account portal.
+  "form-action 'self' https://clerk.funsona.com https://accounts.funsona.com",
+  // Modern equivalent of the X-Frame-Options header below; both are kept so
+  // browsers that only understand one are still covered.
+  "frame-ancestors 'self'",
+].join("; ");
 
 const SECURITY_HEADERS: Record<string, string> = {
   "Content-Security-Policy": CSP,
@@ -36,44 +77,41 @@ const SECURITY_HEADERS: Record<string, string> = {
   "Referrer-Policy": "no-referrer-when-downgrade",
 };
 
-export const onRequest = defineMiddleware(async (context, next) => {
-  const protectedPaths = ["/profile/me", "/quiz/new", "/settings"];
-  const path = context.url.pathname;
+// Protected routes are gated by Clerk directly. They used to be gated by
+// fetching /auth/me on the API with the browser's cookie replayed — a
+// cross-origin round-trip on every render whose failure logged the user out.
+// clerkMiddleware also populates locals.authToken, which lib/api-server.ts
+// sends as a Bearer token.
+const PROTECTED_PATHS = ["/profile/me", "/quiz/new", "/settings"];
 
-  // A quiz is authored in exactly one language (quizzes.language) and is never
-  // translated, so it has no locale variants — yet Astro's i18n routing happily
-  // served /en/quiz/x and /es/quiz/x as byte-identical copies of /quiz/x. That
-  // tripled every quiz URL and reads as scaled/duplicate content. Collapse them
-  // onto the single canonical URL. Static pages are genuinely translated, so
-  // this deliberately only covers /quiz/*.
-  const localizedQuizPath = path.match(/^\/(?:en|es)(\/quiz\/.+)$/);
+const auth = clerkMiddleware((authFn, context, next) => {
+  const path = context.url.pathname;
+  if (PROTECTED_PATHS.some((p) => path.startsWith(p)) && !authFn().userId) {
+    return context.redirect(`/login?redirect=${encodeURIComponent(path)}`);
+  }
+  return next();
+});
+
+// A quiz is authored in exactly one language (quizzes.language) and is never
+// translated, so it has no locale variants — yet Astro's i18n routing happily
+// served /en/quiz/x and /es/quiz/x as byte-identical copies of /quiz/x. That
+// tripled every quiz URL and reads as scaled/duplicate content. Collapse them
+// onto the single canonical URL. Static pages are genuinely translated, so
+// this deliberately only covers /quiz/*.
+const canonicalQuizUrl = defineMiddleware((context, next) => {
+  const localizedQuizPath = context.url.pathname.match(/^\/(?:en|es)(\/quiz\/.+)$/);
   if (localizedQuizPath) {
     return context.redirect(`${localizedQuizPath[1]}${context.url.search}`, 301);
   }
+  return next();
+});
 
-  if (protectedPaths.some((p) => path.startsWith(p))) {
-    // Try to fetch /auth/me to check session
-    try {
-      const res = await fetch(`${PUBLIC_API_BASE_URL}/auth/me`, {
-        credentials: "include",
-        headers: {
-          cookie: context.request.headers.get("cookie") || "",
-        },
-      });
-      const data = await res.json();
-      if (!data.success) {
-        return context.redirect("/login");
-      }
-      // Attach user to locals for use in pages
-      context.locals.user = data.data;
-    } catch {
-      return context.redirect("/login");
-    }
-  }
-
+const securityHeaders = defineMiddleware(async (_context, next) => {
   const response = await next();
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
     response.headers.set(name, value);
   }
   return response;
 });
+
+export const onRequest = sequence(auth, canonicalQuizUrl, securityHeaders);

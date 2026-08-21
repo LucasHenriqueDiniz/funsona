@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, type ComponentProps } from "react";
-import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { apiFetch, apiFetchRaw } from "@/lib/auth-fetch";
 
 type FormSubmitEvent = Parameters<NonNullable<ComponentProps<"form">["onSubmit"]>>[0];
 type ErrorWithMessage = { message?: string };
@@ -23,7 +23,7 @@ function getExt(file: File) {
   return "jpg";
 }
 
-async function uploadProfileMedia(apiBase: string, folder: "avatar" | "banner", file: File) {
+async function uploadProfileMedia(folder: "avatar" | "banner", file: File) {
   if (!ACCEPTED_TYPES.includes(file.type)) {
     throw new Error("Formato nao suportado. Use JPEG, PNG, WebP ou AVIF.");
   }
@@ -38,11 +38,10 @@ async function uploadProfileMedia(apiBase: string, folder: "avatar" | "banner", 
   form.append("kind", folder);
   form.append("file", renamed);
 
-  const res = await fetch(`${apiBase}/users/me/media`, {
-    method: "POST",
-    credentials: "include",
-    body: form,
-  });
+  // apiFetchRaw, not apiFetch: FormData has to set its own multipart boundary,
+  // so no Content-Type of ours may be attached.
+  const res = await apiFetchRaw("/users/me/media", { method: "POST", auth: "required", body: form });
+  if (!res) throw new Error("Sua sessão expirou. Entre novamente.");
 
   const data = await res.json().catch(() => null);
   if (!res.ok || !data?.success) {
@@ -83,7 +82,7 @@ export default function ProfileSettingsForm({
     setMessage(null);
     setUploadingAvatar(true);
     try {
-      const publicUrl = await uploadProfileMedia(PUBLIC_API_BASE_URL, "avatar", file);
+      const publicUrl = await uploadProfileMedia("avatar", file);
       setAvatarUrl(publicUrl);
       setMessage("Avatar atualizado com sucesso.");
     } catch (err: unknown) {
@@ -101,7 +100,7 @@ export default function ProfileSettingsForm({
     setMessage(null);
     setUploadingBanner(true);
     try {
-      const publicUrl = await uploadProfileMedia(PUBLIC_API_BASE_URL, "banner", file);
+      const publicUrl = await uploadProfileMedia("banner", file);
       setBannerUrl(publicUrl);
       setMessage("Banner atualizado com sucesso.");
     } catch (err: unknown) {
@@ -120,10 +119,9 @@ export default function ProfileSettingsForm({
     setSaving(true);
 
     try {
-      const res = await fetch(`${PUBLIC_API_BASE_URL}/users/me`, {
+      const res = await apiFetch("/users/me", {
         method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        auth: "required",
         body: JSON.stringify({
           display_name: displayName.trim(),
           bio: bio.trim() || null,
@@ -132,9 +130,8 @@ export default function ProfileSettingsForm({
         }),
       });
 
-      const data = await res.json().catch(() => null);
-      if (!res.ok || !data?.success) {
-        throw new Error(data?.error || "Falha ao atualizar perfil.");
+      if (res.error) {
+        throw new Error(res.unauthenticated ? "Sua sessão expirou. Entre novamente." : res.error);
       }
 
       setMessage("Perfil atualizado com sucesso.");

@@ -1,21 +1,11 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import ModerationQueue from "@/components/moderation/ModerationQueue";
-import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { getProfile } from "@/lib/api-server";
 
 // Server-side gate: only is_admin profiles can view this page at all.
-let isAdmin = false;
-try {
-  const res = await fetch(`${PUBLIC_API_BASE_URL}/auth/me`, {
-    headers: { cookie: Astro.request.headers.get("cookie") || "" },
-  });
-  const data = await res.json();
-  isAdmin = !!(data.success && data.data?.is_admin);
-} catch {
-  isAdmin = false;
-}
-
-if (!isAdmin) {
+const profile = await getProfile(Astro);
+if (!profile?.is_admin) {
   return Astro.redirect("/404");
 }
 ---

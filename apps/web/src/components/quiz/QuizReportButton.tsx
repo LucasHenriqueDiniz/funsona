@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { apiFetch } from "@/lib/auth-fetch";
 
 interface QuizReportButtonProps {
   quizId: string;
@@ -13,18 +13,13 @@ export default function QuizReportButton({ quizId, currentUserId }: QuizReportBu
 
   async function handleReport() {
     if (reported) return;
-    try {
-      const res = await fetch(`${PUBLIC_API_BASE_URL}/quizzes/${quizId}/report`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
-      const json = await res.json();
-      if (json.success) setReported(true);
-    } catch {
-      // silent — reporting isn't critical-path
-    }
+    // Silent on failure — reporting isn't critical-path.
+    const res = await apiFetch(`/quizzes/${quizId}/report`, {
+      method: "POST",
+      auth: "required",
+      body: JSON.stringify({}),
+    });
+    if (!res.error) setReported(true);
   }
 
   return (

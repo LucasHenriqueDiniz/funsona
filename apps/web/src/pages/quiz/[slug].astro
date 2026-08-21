@@ -8,6 +8,7 @@ import AdSlot from "@/components/ads/AdSlot";
 import { apiFetch } from "@/lib/api";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
 import { BRAND_DISCLAIMER } from "@/lib/legal";
+import { getProfile } from "@/lib/api-server";
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/");
@@ -64,17 +65,9 @@ const outcomes = (Array.isArray(quiz.content?.outcomes) ? quiz.content.outcomes 
   }))
   .filter((outcome: { title: string }) => outcome.title.length > 0);
 
-// Fetch current user for comment section
-let currentUserId: string | null = null;
-try {
-  const res = await fetch(`${PUBLIC_API_BASE_URL}/auth/me`, {
-    headers: { cookie: Astro.request.headers.get("cookie") || "" },
-  });
-  const data = await res.json();
-  if (data.success) currentUserId = data.data.id;
-} catch {
-  // ignore
-}
+// Current user for the comment section — null for anonymous visitors, who
+// still get the full page.
+const currentUserId = (await getProfile(Astro))?.id ?? null;
 ---
 
 <Layout title={title} description={description} image={image} canonical={`/quiz/${slug}`} lang={quiz.language || "pt"}>

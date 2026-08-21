@@ -1,33 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { SignOutButton } from "@clerk/astro/react";
-import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { useProfile } from "@/lib/use-profile";
 
-interface User {
-  id: string;
-  handle: string;
-  display_name: string;
-  avatar_url?: string;
-  xp?: number;
-  level?: number;
-}
-
+// Signed-in state comes from Clerk (useProfile -> useAuth), so the right nav
+// renders on the first paint with no request. The profile fetch only fills in
+// the name/avatar/XP; when it fails the user still sees themselves as signed
+// in and can still sign out, instead of being shown a "Criar conta" button.
 export default function AuthNav() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { isLoaded, isSignedIn, profile, profileError } = useProfile();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    fetch(`${PUBLIC_API_BASE_URL}/auth/me`, {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setUser(data.data);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -39,11 +21,20 @@ export default function AuthNav() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (loading) {
+  if (!isLoaded || (isSignedIn && !profile && !profileError)) {
     return <div className="h-10 w-10 animate-pulse rounded-2xl bg-[var(--color-surface-muted)]" />;
   }
 
-  if (user) {
+  if (isSignedIn) {
+    // Falls back to a placeholder identity rather than the signed-out UI: the
+    // session is real even when the profile lookup isn't answering.
+    const user = profile ?? {
+      handle: "",
+      display_name: profileError === "not_found" ? "Concluindo cadastro" : "Perfil indisponível",
+      avatar_url: undefined as string | undefined,
+      xp: 0,
+      level: 1,
+    };
     return (
       <div className="relative" ref={dropdownRef}>
         <button
@@ -68,7 +59,15 @@ export default function AuthNav() {
             style={{ backgroundColor: 'var(--color-surface-elevated)' }}>
             <div className="border-b border-[var(--color-border)] px-4 py-4">
               <p className="font-black text-[var(--color-text-primary)]">{user.display_name}</p>
-              <p className="text-xs font-semibold text-[var(--color-text-muted)]">@{user.handle}</p>
+              {user.handle ? (
+                <p className="text-xs font-semibold text-[var(--color-text-muted)]">@{user.handle}</p>
+              ) : (
+                <p className="text-xs font-semibold text-amber-500">
+                  {profileError === "not_found"
+                    ? "Estamos finalizando sua conta — recarregue em instantes."
+                    : "Não foi possível carregar seu perfil agora."}
+                </p>
+              )}
               <div className="flex items-center gap-2 mt-2">
                 <span className="rounded-full bg-brand-500/10 px-2.5 py-1 text-xs font-black text-brand-600 dark:text-brand-400">
                   Nv. {user.level || 1}

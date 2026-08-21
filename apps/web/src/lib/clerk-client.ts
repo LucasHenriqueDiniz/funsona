@@ -7,12 +7,25 @@
 type ClerkInstance = NonNullable<(Window & typeof globalThis)["Clerk"]>;
 
 export async function getClerk(): Promise<ClerkInstance> {
-  for (let i = 0; i < 200; i++) {
+  const clerk = await getClerkIfLoaded(10_000);
+  if (!clerk) throw new Error("Clerk não carregou");
+  return clerk;
+}
+
+/**
+ * Same wait, but resolves null instead of throwing and gives up much sooner.
+ * The 10s of getClerk() is fine while a user stares at a login button; it is
+ * not fine on a data path, where a signed-out visitor would otherwise stall
+ * every request behind a Clerk instance that is never going to appear.
+ */
+export async function getClerkIfLoaded(timeoutMs = 3000): Promise<ClerkInstance | null> {
+  const deadline = Date.now() + timeoutMs;
+  do {
     const clerk = window.Clerk;
     if (clerk?.loaded) return clerk;
     await new Promise((resolve) => setTimeout(resolve, 50));
-  }
-  throw new Error("Clerk não carregou");
+  } while (Date.now() < deadline);
+  return null;
 }
 
 /** Maps Clerk API errors to short pt-BR messages; falls back to Clerk's own text. */
@@ -44,7 +57,10 @@ export function clerkErrorMessage(err: unknown, fallback: string): string {
   }
 }
 
-export type OAuthProvider = "oauth_discord" | "oauth_google" | "oauth_x";
+// X/Twitter was dropped: its OAuth needs a paid developer plan, and the
+// audience does not justify it. Discord stays listed because the strategy is
+// wired up and only waits on credentials in the Clerk dashboard.
+export type OAuthProvider = "oauth_discord" | "oauth_google";
 
 export async function beginOAuth(strategy: OAuthProvider): Promise<void> {
   const clerk = await getClerk();

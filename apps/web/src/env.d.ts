@@ -1,4 +1,7 @@
 /// <reference types="astro/client" />
+// Declares locals.auth(), locals.authToken and locals.currentUser, which
+// clerkMiddleware() populates in src/middleware.ts.
+/// <reference types="@clerk/astro/env" />
 
 interface ImportMetaEnv {
   readonly PUBLIC_API_URL: string;
@@ -36,6 +39,7 @@ interface UserProfile {
 
 declare namespace App {
   interface Locals {
+    /** The local profile for the signed-in Clerk user; filled lazily by lib/api-server.ts. */
     user?: UserProfile;
   }
 }

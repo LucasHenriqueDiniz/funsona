@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { apiFetch } from "@/lib/auth-fetch";
 import { getAchievementText } from "@/lib/achievements";
 import { getLocaleFromPath, type Locale } from "@/lib/i18n";
 
@@ -25,26 +25,18 @@ export default function AchievementBadges({ userId, isOwnProfile = false }: Achi
   const [error, setError] = useState("");
   const locale: Locale = typeof window === "undefined" ? "pt" : getLocaleFromPath(window.location.pathname);
 
-  const API_URL = PUBLIC_API_BASE_URL;
-
   const fetchAchievements = useCallback(async () => {
     setLoading(true);
     setError("");
-    try {
-      const endpoint = isOwnProfile ? `${API_URL}/users/me/achievements` : `${API_URL}/users/${userId}/achievements`;
-      const res = await fetch(endpoint, { credentials: "include" });
-      const json = await res.json();
-      if (json.success) {
-        setAchievements(json.data || []);
-      } else {
-        setError(json.error || "Erro ao carregar conquistas");
-      }
-    } catch {
-      setError("Erro ao carregar conquistas");
-    } finally {
-      setLoading(false);
+    const endpoint = isOwnProfile ? "/users/me/achievements" : `/users/${userId}/achievements`;
+    const res = await apiFetch<Achievement[]>(endpoint);
+    if (res.data) {
+      setAchievements(res.data);
+    } else {
+      setError(res.error || "Erro ao carregar conquistas");
     }
-  }, [userId, isOwnProfile, API_URL]);
+    setLoading(false);
+  }, [userId, isOwnProfile]);
 
   useEffect(() => {
     fetchAchievements();

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, type ComponentProps } from "react";
-import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { apiFetch } from "@/lib/auth-fetch";
 
 type FormSubmitEvent = Parameters<NonNullable<ComponentProps<"form">["onSubmit"]>>[0];
 
@@ -33,26 +33,18 @@ export default function CommentSection({ quizSlug, currentUserId }: CommentSecti
   const [total, setTotal] = useState(0);
   const [reportedIds, setReportedIds] = useState<Set<string>>(new Set());
 
-  const API_URL = PUBLIC_API_BASE_URL;
-
   const fetchComments = useCallback(async () => {
     setLoading(true);
     setError("");
-    try {
-      const res = await fetch(`${API_URL}/quizzes/${quizSlug}/comments`, { credentials: "include" });
-      const json = await res.json();
-      if (json.success) {
-        setComments(json.data || []);
-        setTotal(json.meta?.total || 0);
-      } else {
-        setError(json.error || "Erro ao carregar comentários");
-      }
-    } catch {
-      setError("Erro ao carregar comentários");
-    } finally {
-      setLoading(false);
+    const res = await apiFetch<Comment[]>(`/quizzes/${quizSlug}/comments`);
+    if (res.data) {
+      setComments(res.data);
+      setTotal((res.meta as { total?: number } | null)?.total || 0);
+    } else {
+      setError(res.error || "Erro ao carregar comentários");
     }
-  }, [quizSlug, API_URL]);
+    setLoading(false);
+  }, [quizSlug]);
 
   useEffect(() => {
     fetchComments();
@@ -62,66 +54,46 @@ export default function CommentSection({ quizSlug, currentUserId }: CommentSecti
     e.preventDefault();
     if (!content.trim() || submitting) return;
     setSubmitting(true);
-    try {
-      const res = await fetch(`${API_URL}/quizzes/${quizSlug}/comments`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: content.trim() }),
-      });
-      const json = await res.json();
-      if (json.success) {
-        setContent("");
-        setComments((prev) => [json.data, ...prev]);
-        setTotal((t) => t + 1);
-      } else {
-        setError(json.error || "Erro ao enviar comentário");
-      }
-    } catch {
-      setError("Erro ao enviar comentário");
-    } finally {
-      setSubmitting(false);
+    const res = await apiFetch<Comment>(`/quizzes/${quizSlug}/comments`, {
+      method: "POST",
+      auth: "required",
+      body: JSON.stringify({ content: content.trim() }),
+    });
+    if (res.data) {
+      setContent("");
+      setComments((prev) => [res.data as Comment, ...prev]);
+      setTotal((t) => t + 1);
+    } else {
+      setError(res.unauthenticated ? "Entre para comentar" : res.error || "Erro ao enviar comentário");
     }
+    setSubmitting(false);
   }
 
   async function handleDelete(commentId: string) {
     if (deletingId) return;
     setDeletingId(commentId);
-    try {
-      const res = await fetch(`${API_URL}/quizzes/${quizSlug}/comments/${commentId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      const json = await res.json();
-      if (json.success) {
-        setComments((prev) => prev.filter((c) => c.id !== commentId));
-        setTotal((t) => Math.max(0, t - 1));
-      } else {
-        setError(json.error || "Erro ao excluir comentário");
-      }
-    } catch {
-      setError("Erro ao excluir comentário");
-    } finally {
-      setDeletingId(null);
+    const res = await apiFetch(`/quizzes/${quizSlug}/comments/${commentId}`, {
+      method: "DELETE",
+      auth: "required",
+    });
+    if (!res.error) {
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+      setTotal((t) => Math.max(0, t - 1));
+    } else {
+      setError(res.error || "Erro ao excluir comentário");
     }
+    setDeletingId(null);
   }
 
   async function handleReport(commentId: string) {
     if (reportedIds.has(commentId)) return;
-    try {
-      const res = await fetch(`${API_URL}/quizzes/${quizSlug}/comments/${commentId}/report`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
-      const json = await res.json();
-      if (json.success) {
-        setReportedIds((prev) => new Set(prev).add(commentId));
-      }
-    } catch {
-      // silent — reporting isn't critical-path, don't block the user on failure
-    }
+    // Silent on failure — reporting isn't critical-path.
+    const res = await apiFetch(`/quizzes/${quizSlug}/comments/${commentId}/report`, {
+      method: "POST",
+      auth: "required",
+      body: JSON.stringify({}),
+    });
+    if (!res.error) setReportedIds((prev) => new Set(prev).add(commentId));
   }
 
   function formatDate(dateStr: string) {

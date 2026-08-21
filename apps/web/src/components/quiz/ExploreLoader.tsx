@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { apiFetch } from "@/lib/auth-fetch";
 
 interface Quiz {
   id: string;
@@ -126,28 +127,18 @@ export default function ExploreLoader({
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(`${apiBaseUrl}/auth/me`, {
-      credentials: "include",
-      signal: controller.signal,
-      headers: { Accept: "application/json" },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const logged = !!data?.success;
+    apiFetch("/auth/me", { auth: "required", signal: controller.signal })
+      .then((me) => {
+        const logged = !!me.data;
         setIsLoggedIn(logged);
         if (!logged) return;
 
-        return fetch(`${apiBaseUrl}/quizzes/recommended/for-me`, {
-          credentials: "include",
+        return apiFetch<Quiz[]>("/quizzes/recommended/for-me", {
+          auth: "required",
           signal: controller.signal,
-          headers: { Accept: "application/json" },
-        })
-          .then((res) => res.json())
-          .then((recData) => {
-            if (recData?.success) {
-              setRecommended(recData.data || []);
-            }
-          });
+        }).then((rec) => {
+          if (rec.data) setRecommended(rec.data);
+        });
       })
       .catch(() => {
         setIsLoggedIn(false);
@@ -155,7 +146,7 @@ export default function ExploreLoader({
       });
 
     return () => controller.abort();
-  }, [apiBaseUrl]);
+  }, []);
 
   useEffect(() => {
     const normalize = (value: string) =>

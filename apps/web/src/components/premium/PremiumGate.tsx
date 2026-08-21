@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { useProfile } from "@/lib/use-profile";
 
 interface PremiumGateProps {
   children: React.ReactNode;
@@ -7,29 +6,23 @@ interface PremiumGateProps {
 }
 
 export default function PremiumGate({ children, fallback }: PremiumGateProps) {
-  const [isPremium, setIsPremium] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { isLoaded, isSignedIn, profile, profileError } = useProfile();
 
-  useEffect(() => {
-    fetch(`${PUBLIC_API_BASE_URL}/auth/me`, { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setIsPremium(data.data.is_premium || false);
-        }
-      })
-      .catch(() => setIsPremium(false))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
+  if (!isLoaded || (isSignedIn && !profile && !profileError)) {
     return (
       <div className="animate-pulse bg-gray-100 rounded-lg h-32" />
     );
   }
 
-  if (isPremium) {
+  if (profile?.is_premium) {
     return <>{children}</>;
+  }
+
+  // A signed-in user whose profile we couldn't load is not a prospect: pitching
+  // an upgrade to someone who may already be paying reads as broken. Show the
+  // caller's fallback (or nothing) until we actually know.
+  if (isSignedIn && profileError) {
+    return <>{fallback ?? null}</>;
   }
 
   if (fallback) {
