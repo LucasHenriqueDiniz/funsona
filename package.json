@@ -6,7 +6,7 @@
     "dev": "pnpm -r --parallel dev",
     "lint": "pnpm -r --if-present lint",
     "release:ready": "node scripts/release/check-readiness.mjs",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "pnpm --filter @FunSona/shared build && pnpm -r typecheck",
     "db:generate": "supabase db diff -f",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset",
