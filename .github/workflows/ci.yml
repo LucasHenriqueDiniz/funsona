@@ -27,6 +27,11 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      # O typecheck constroi packages/shared antes, porque apps/api importa o
+      # dist dele e nao o source — sem isso um clone limpo falha com TS2307.
+      - name: Typecheck
+        run: pnpm typecheck
+
       - name: Build
         run: pnpm build
 
