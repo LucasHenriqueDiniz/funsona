@@ -2,6 +2,11 @@
 // Declares locals.auth(), locals.authToken and locals.currentUser, which
 // clerkMiddleware() populates in src/middleware.ts.
 /// <reference types="@clerk/astro/env" />
+// And this one declares window.Clerk, which lib/clerk-client.ts reads directly.
+// It lives in the package root types, not in /env — referencing only /env leaves
+// window.Clerk untyped under tsc, even though astro check resolves it via the
+// .astro components that import the package.
+/// <reference types="@clerk/astro" />
 
 interface ImportMetaEnv {
   readonly PUBLIC_API_URL: string;

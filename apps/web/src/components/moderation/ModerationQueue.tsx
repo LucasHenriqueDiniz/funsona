@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/auth-fetch";
 
-interface Report {
+// target_type and target arrive as separate columns, so neither narrows the other
+// on its own. Pairing them in a discriminated union is what lets report.target
+// resolve to the right shape once target_type has been checked.
+type Report = {
   id: string;
-  target_type: "comment" | "quiz";
   target_id: string;
   reason: string | null;
   created_at: string;
   reporter: { handle: string; display_name: string } | null;
-  target:
-    | { content: string; quiz_id: string; hidden: boolean; deleted_at: string | null } // comment
-    | { title: string; slug: string; status: string } // quiz
-    | null;
-}
+} & (
+  | {
+      target_type: "comment";
+      target: { content: string; quiz_id: string; hidden: boolean; deleted_at: string | null } | null;
+    }
+  | { target_type: "quiz"; target: { title: string; slug: string; status: string } | null }
+);
 
 export default function ModerationQueue() {
   const [reports, setReports] = useState<Report[]>([]);
@@ -69,8 +73,8 @@ export default function ModerationQueue() {
           </div>
           <p className="mb-2 font-medium text-[var(--color-text-primary)]">
             {report.target_type === "comment"
-              ? (report.target as any)?.content || "(conteúdo não encontrado)"
-              : (report.target as any)?.title || "(quiz não encontrado)"}
+              ? report.target?.content || "(conteúdo não encontrado)"
+              : report.target?.title || "(quiz não encontrado)"}
           </p>
           {report.reason && (
             <p className="mb-3 text-sm text-[var(--color-text-secondary)]">Motivo: {report.reason}</p>
