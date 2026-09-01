@@ -12,13 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Sem 'version': a action lê o campo packageManager do package.json, que é
+      # o que mantém o CI e as máquinas locais na mesma versão de pnpm.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.0
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: pnpm
 
       - name: Install dependencies
@@ -26,6 +26,11 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+
+      # O typecheck constroi packages/shared antes, porque apps/api importa o
+      # dist dele e nao o source — sem isso um clone limpo falha com TS2307.
+      - name: Typecheck
+        run: pnpm typecheck
 
       - name: Build
         run: pnpm build
@@ -42,13 +47,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Sem 'version': a action lê o campo packageManager do package.json, que é
+      # o que mantém o CI e as máquinas locais na mesma versão de pnpm.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.0
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: pnpm
 
       - name: Install dependencies
