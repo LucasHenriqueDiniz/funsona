@@ -43,7 +43,6 @@ npm-debug.log*
 *.temp
 /~/
 claude-share/
-replit/
 backups/
 scripts/quiz-review/chrome-profile/
 scripts/quiz-review/batches/
