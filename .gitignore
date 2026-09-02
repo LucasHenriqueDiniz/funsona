@@ -62,3 +62,6 @@ scripts/migration/output/
 
 # Typescript
 *.tsbuildinfo
+
+# derived board — regenerate with /hexagram:board, never track it
+.kanban.json

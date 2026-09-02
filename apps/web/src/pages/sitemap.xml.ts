@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { getCollection, type CollectionEntry } from "astro:content";
 import { apiFetch } from "@/lib/api";
-import { exploreCategories, getExploreCategoryUrl } from "@/lib/exploreCategories";
+import { exploreCategories, getExploreCategoryUrl } from "@/lib/explore-categories";
 
 type QuizSitemapEntry = {
   slug: string;
