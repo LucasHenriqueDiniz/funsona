@@ -10,7 +10,8 @@
     "db:generate": "supabase db diff -f",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset",
-    "db:status": "supabase status"
+    "db:status": "supabase status",
+    "prepare": "git config --get core.hooksPath >/dev/null 2>&1 || git config core.hooksPath .githooks 2>/dev/null || true"
   },
   "devDependencies": {
     "typescript": "^5.7.0"

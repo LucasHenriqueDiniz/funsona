@@ -106,3 +106,16 @@ ENVIRONMENT=development
 | `docs/product.md` | Para saber se uma feature está no escopo, requisitos funcionais, ou métricas de sucesso |
 | `docs/roadmap.md` | Para saber o que implementar agora vs depois. Não implemente features de versões futuras sem aprovação. |
 | `docs/research.md` | Para contexto de decisões já tomadas (benchmarks, alternativas avaliadas) |
+
+## Commit hook
+
+`.githooks/commit-msg` strips AI attribution trailers from commit messages. Git does not version
+`.git/hooks`, so what makes the hook run is one line of local config — and a fresh clone does not
+have it. The root `prepare` script sets it on `pnpm install`, and only when nothing else claims it:
+
+```
+git config --get core.hooksPath >/dev/null 2>&1 || git config core.hooksPath .githooks
+```
+
+If you already point `core.hooksPath` somewhere else, the script leaves your value alone and this
+repo's hook stays inert — wire it by hand, or move the file into whatever directory you do use.
