@@ -5,8 +5,8 @@ import { apiFetch } from "@/lib/auth-fetch";
 // Who is signed in is answered by Clerk's own client state, never by a network
 // call. That distinction is the whole point: the navbar used to decide it from
 // GET /auth/me, so any API problem — an expired token, a mismatched key, a
-// blip — rendered as "you are logged out", complete with a Criar conta button
-// in front of a signed-in user.
+// blip — rendered as "you are logged out", complete with a "Criar conta"
+// ("Create account") button in front of a signed-in user.
 //
 // The profile (handle, avatar, XP) still comes from the API, but it is
 // enrichment layered on top of a known-signed-in state, and its failure is

@@ -5,7 +5,8 @@ import { useProfile } from "@/lib/use-profile";
 // Signed-in state comes from Clerk (useProfile -> useAuth), so the right nav
 // renders on the first paint with no request. The profile fetch only fills in
 // the name/avatar/XP; when it fails the user still sees themselves as signed
-// in and can still sign out, instead of being shown a "Criar conta" button.
+// in and can still sign out, instead of being shown a "Criar conta"
+// ("Create account") button.
 export default function AuthNav() {
   const { isLoaded, isSignedIn, profile, profileError } = useProfile();
   const [dropdownOpen, setDropdownOpen] = useState(false);

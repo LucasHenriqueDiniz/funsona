@@ -14,11 +14,11 @@ const db_queue = getImageQueueDb();
 
 const REFACTORED_DIR = path.join(process.cwd(), "refactored-quizzes");
 
-// anything-v5 é treinado quase exclusivamente em anime — usá-lo para estilos
-// "sem pessoas" (comida, objetos, infográficos) faz o modelo ignorar o prompt
-// e desenhar uma personagem anime de qualquer jeito, especialmente em cfg alto.
-// Mapeia cada visual_style para um checkpoint adequado; só anime_safe usa o
-// checkpoint de anime — todo o resto usa SD1.5 vanilla (sem viés de estilo).
+// anything-v5 is trained almost entirely on anime, so using it for "no people"
+// styles (food, objects, infographics) makes the model ignore the prompt
+// and draw an anime character anyway, especially at a high cfg.
+// Maps each visual_style to a suitable checkpoint; only anime_safe uses the
+// anime checkpoint, and everything else uses vanilla SD1.5 (no style bias).
 const CHECKPOINT_BY_STYLE: Record<string, string> = {
   anime_safe: "anything-v5.safetensors",
   editorial_flat_vector: "v1-5-pruned-emaonly-fp16.safetensors",
@@ -36,14 +36,14 @@ async function ensureCheckpoint(visualStyle: string | null): Promise<void> {
   const desired = (visualStyle && CHECKPOINT_BY_STYLE[visualStyle]) || DEFAULT_CHECKPOINT;
   if (desired === currentCheckpoint) return;
 
-  console.log(`  🔄 Trocando checkpoint: ${currentCheckpoint ?? "?"} → ${desired}`);
+  console.log(`  🔄 Switching checkpoint: ${currentCheckpoint ?? "?"} → ${desired}`);
   const res = await fetch(`${SD_URL}/sdapi/v1/options`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sd_model_checkpoint: desired }),
     signal: AbortSignal.timeout(60_000),
   });
-  if (!res.ok) throw new Error(`Falha ao trocar checkpoint: HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`Failed to switch checkpoint: HTTP ${res.status}`);
   currentCheckpoint = desired;
   await new Promise((r) => setTimeout(r, 2000)); // tempo para o modelo carregar na VRAM
 }
@@ -53,11 +53,11 @@ async function ensureDir(dir: string): Promise<void> {
 }
 
 async function generateAndSaveImage(item: ImageQueueItem): Promise<{ localPath: string }> {
-  console.log(`  🎨 Gerando "${item.item_type}/${item.item_id}" (${item.visual_style ?? "default"})...`);
+  console.log(`  🎨 Generating "${item.item_type}/${item.item_id}" (${item.visual_style ?? "default"})...`);
 
   await ensureCheckpoint(item.visual_style);
 
-  // Otimização de qualidade: usar sampler melhor + aumentar steps se necessário
+  // Quality tuning: use a better sampler, and raise the step count when needed
   const samplerName = item.sampler || "DPM++ 2M Karras";
   const optimizedSteps = Math.min(item.steps + 5, 40); // +5 steps, max 40
   const optimizedCfg = Math.min(item.cfg_scale + 0.5, 10.5); // +0.5 cfg, max 10.5
@@ -85,7 +85,7 @@ async function generateAndSaveImage(item: ImageQueueItem): Promise<{ localPath: 
 
   const data = (await res.json()) as any;
   const b64 = data.images?.[0];
-  if (!b64) throw new Error("SD não retornou imagem");
+  if (!b64) throw new Error("SD returned no image");
 
   const buffer = Buffer.from(b64.replace(/^data:image\/\w+;base64,/, ""), "base64");
 
@@ -108,7 +108,7 @@ async function generateAndSaveImage(item: ImageQueueItem): Promise<{ localPath: 
   }
 
   await fs.writeFile(localPath, buffer);
-  console.log(`    ✅ Salvo em ${path.relative(process.cwd(), localPath)}`);
+  console.log(`    ✅ Saved to ${path.relative(process.cwd(), localPath)}`);
 
   return { localPath };
 }
@@ -119,18 +119,18 @@ async function processQueue(): Promise<void> {
   let totalFailed = 0;
 
   console.log(`\n🖼️  Image Queue Consumer (Stable Diffusion local: ${SD_URL})`);
-  console.log(`   Prazo: ${deadline.toLocaleTimeString()}`);
-  console.log(`   Rodando até ${MAX_HOURS}h...\n`);
+  console.log(`   Deadline: ${deadline.toLocaleTimeString()}`);
+  console.log(`   Running for up to ${MAX_HOURS}h...\n`);
 
   while (new Date() < deadline) {
     const pending = getPendingImages(db_queue, BATCH_SIZE);
     if (!pending.length) {
-      console.log(`[${new Date().toLocaleTimeString()}] ✅ Fila vazia — aguardando 30s...`);
+      console.log(`[${new Date().toLocaleTimeString()}] ✅ Queue empty — waiting 30s...`);
       await new Promise((r) => setTimeout(r, 30_000));
       continue;
     }
 
-    console.log(`[${new Date().toLocaleTimeString()}] 📊 Processando ${pending.length} imagem(ns)`);
+    console.log(`[${new Date().toLocaleTimeString()}] 📊 Processing ${pending.length} image(s)`);
 
     for (const item of pending) {
       try {
@@ -138,14 +138,14 @@ async function processQueue(): Promise<void> {
         const { localPath } = await generateAndSaveImage(item);
         updateImageStatus(db_queue, item.id, "done", { local_path: localPath });
         totalGenerated++;
-        console.log(`   ✅ Concluído`);
+        console.log(`   ✅ Done`);
       } catch (e: any) {
-        console.log(`   ❌ Erro: ${e.message}`);
+        console.log(`   ❌ Error: ${e.message}`);
         updateImageStatus(db_queue, item.id, "failed", { error: e.message });
         totalFailed++;
 
         if (e.message?.includes("ECONNREFUSED")) {
-          console.log("   ⏳ Forge não respondendo — aguardando 30s...");
+          console.log("   ⏳ Forge not answering — waiting 30s...");
           await new Promise((r) => setTimeout(r, 30_000));
         }
       }
@@ -162,8 +162,8 @@ async function processQueue(): Promise<void> {
   }
 
   console.log(`\n${"═".repeat(60)}`);
-  console.log(`✅ ${totalGenerated} geradas | ❌ ${totalFailed} falhas`);
-  console.log(`Prazo atingido — encerrando.`);
+  console.log(`✅ ${totalGenerated} generated | ❌ ${totalFailed} failed`);
+  console.log(`Deadline reached — shutting down.`);
 }
 
 processQueue().catch(console.error);

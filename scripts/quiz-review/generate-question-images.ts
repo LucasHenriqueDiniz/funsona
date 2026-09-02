@@ -3,10 +3,10 @@ import { config } from "dotenv";
 config();
 
 // ─── CLI args ─────────────────────────────────────────────────────────────────
-// tsx generate-question-images.ts --dry-run        → só conta/lista perguntas "nuas"
-// tsx generate-question-images.ts --check          → testa conexão com o SD WebUI
-// tsx generate-question-images.ts --limit 5        → gera no máximo N imagens
-// tsx generate-question-images.ts --id <quizId>    → só um quiz
+// tsx generate-question-images.ts --dry-run        → only counts/lists "bare" questions
+// tsx generate-question-images.ts --check          → tests the connection to the SD WebUI
+// tsx generate-question-images.ts --limit 5        → generates at most N images
+// tsx generate-question-images.ts --id <quizId>    → a single quiz
 
 const args      = process.argv.slice(2);
 const DRY_RUN   = args.includes("--dry-run");
@@ -57,7 +57,7 @@ function buildPrompt(quizTitle: string, questionText: string): string {
 
 // ─── SD WebUI client ────────────────────────────────────────────────────────────
 
-const SD_TIMEOUT_MS = parseInt(process.env.SD_TIMEOUT_MS ?? "180000"); // 3min por imagem
+const SD_TIMEOUT_MS = parseInt(process.env.SD_TIMEOUT_MS ?? "180000"); // 3min per image
 
 async function sdTxt2Img(prompt: string): Promise<Buffer> {
   const res = await fetch(`${SD_API_URL}/sdapi/v1/txt2img`, {
@@ -80,7 +80,7 @@ async function sdTxt2Img(prompt: string): Promise<Buffer> {
 
   const data = await res.json();
   const b64 = data.images?.[0];
-  if (!b64) throw new Error("SD WebUI não retornou imagem");
+  if (!b64) throw new Error("The SD WebUI returned no image");
 
   return Buffer.from(b64.replace(/^data:image\/\w+;base64,/, ""), "base64");
 }
@@ -115,7 +115,7 @@ async function uploadToStorage(
 
 async function main() {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    console.error("❌ Missing SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY no .env");
+    console.error("❌ Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env");
     process.exit(1);
   }
 
@@ -124,10 +124,10 @@ async function main() {
       const res = await fetch(`${SD_API_URL}/sdapi/v1/sd-models`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const models = await res.json();
-      console.log(`✅ SD WebUI respondeu em ${SD_API_URL} — ${models.length} modelo(s) carregado(s).`);
+      console.log(`✅ The SD WebUI answered at ${SD_API_URL} — ${models.length} model(s) loaded.`);
     } catch (e: any) {
-      console.error(`❌ Não foi possível conectar em ${SD_API_URL}: ${e.message}`);
-      console.error(`   Confirme que o WebUI Forge está rodando com a flag --api.`);
+      console.error(`❌ Could not connect to ${SD_API_URL}: ${e.message}`);
+      console.error(`   Check that WebUI Forge is running with the --api flag.`);
       process.exit(1);
     }
     return;
@@ -137,17 +137,17 @@ async function main() {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  // ── Coletar quizzes ─────────────────────────────────────────────────────────
+  // ── Collect the quizzes ─────────────────────────────────────────────────────
   let query = db.from("quizzes").select("id, title, type, language, content");
   if (ONLY_ID) query = query.eq("id", ONLY_ID);
 
   const { data: quizzes, error } = await query.range(0, 999);
-  if (error) { console.error("❌ Erro ao buscar quizzes:", error.message); process.exit(1); }
+  if (error) { console.error("❌ Failed to fetch quizzes:", error.message); process.exit(1); }
 
   console.log(`\n🎨 Funsona Question Image Generator`);
-  console.log(`   ${quizzes!.length} quiz(zes) carregado(s)`);
+  console.log(`   ${quizzes!.length} quiz(zes) loaded`);
 
-  // ── Detectar perguntas "nuas" (sem imagem na pergunta E sem imagem em nenhuma opção) ──
+  // ── Find "bare" questions (no image on the question AND none on any option) ──
   const bare: BareQuestion[] = [];
 
   for (const quiz of quizzes! as unknown as Quiz[]) {
@@ -164,27 +164,27 @@ async function main() {
     });
   }
 
-  console.log(`\n📊 Perguntas 100% sem imagem: ${bare.length}`);
+  console.log(`\n📊 Questions with no image at all: ${bare.length}`);
 
   if (DRY_RUN) {
     bare.slice(0, 30).forEach((b, i) => {
       console.log(`   ${i + 1}. [${b.quizType}] "${b.quizTitle}" → P${b.questionIndex + 1}: "${b.questionText}"`);
     });
-    if (bare.length > 30) console.log(`   ... e mais ${bare.length - 30}`);
-    console.log(`\n💡 Rode sem --dry-run para gerar (use --limit N para testar com poucas).`);
+    if (bare.length > 30) console.log(`   ... and ${bare.length - 30} more`);
+    console.log(`\n💡 Run without --dry-run to generate (use --limit N to try a few first).`);
     return;
   }
 
-  // ── Checagem prévia: SD WebUI precisa estar de pé antes de começar ────────────
+  // ── Preflight: the SD WebUI has to be up before we start ─────────────────────
   if (!(await checkSdAlive())) {
-    console.error(`\n❌ SD WebUI não respondeu em ${SD_API_URL}.`);
-    console.error(`   Inicie o WebUI Forge com a flag --api e rode de novo (ou use --check pra testar).`);
+    console.error(`\n❌ The SD WebUI did not answer at ${SD_API_URL}.`);
+    console.error(`   Start WebUI Forge with the --api flag and run again (or use --check to test).`);
     process.exit(1);
   }
 
-  // ── Gerar e salvar imagens ──────────────────────────────────────────────────
+  // ── Generate and save the images ────────────────────────────────────────────
   const toProcess = bare.slice(0, LIMIT);
-  console.log(`\n🚀 Gerando ${toProcess.length} imagem(ns) via ${SD_API_URL}\n`);
+  console.log(`\n🚀 Generating ${toProcess.length} image(s) through ${SD_API_URL}\n`);
 
   let generated = 0, failed = 0;
   const MAX_RETRIES = 2;
@@ -203,18 +203,18 @@ async function main() {
         const storagePath = `questions/${b.quizId}_${b.questionId}.png`;
         const publicUrl = await uploadToStorage(db, storagePath, buffer);
 
-        // Re-fetch quiz para evitar sobrescrever mudanças concorrentes
+        // Re-fetch the quiz, so a concurrent change is not overwritten
         const { data: quiz, error: fetchErr } = await db
           .from("quizzes").select("content").eq("id", b.quizId).single();
-        if (fetchErr || !quiz) throw new Error(`Falha ao reler quiz: ${fetchErr?.message}`);
+        if (fetchErr || !quiz) throw new Error(`Failed to re-read the quiz: ${fetchErr?.message}`);
 
         const content = quiz.content as Quiz["content"];
         const q = content.questions[b.questionIndex];
-        if (q?.id !== b.questionId) throw new Error(`Pergunta ${b.questionId} não encontrada no índice esperado`);
+        if (q?.id !== b.questionId) throw new Error(`Question ${b.questionId} was not at the expected index`);
         q.imageUrl = publicUrl;
 
         const { error: updateErr } = await db.from("quizzes").update({ content }).eq("id", b.quizId);
-        if (updateErr) throw new Error(`Falha ao salvar content: ${updateErr.message}`);
+        if (updateErr) throw new Error(`Failed to save content: ${updateErr.message}`);
 
         console.log(`  ✅ ${publicUrl}`);
         generated++;
@@ -222,27 +222,27 @@ async function main() {
       } catch (e: any) {
         attempt++;
         if (attempt > MAX_RETRIES) {
-          console.log(`  ❌ ${e.message} (desistindo após ${MAX_RETRIES} tentativas)`);
+          console.log(`  ❌ ${e.message} (giving up after ${MAX_RETRIES} attempts)`);
           failed++;
 
-          // Se o SD caiu no meio do processo, para tudo em vez de falhar 1421x em sequência
+          // If SD died mid-run, stop everything instead of failing 1421 times in a row
           if (!(await checkSdAlive())) {
-            console.error(`\n❌ SD WebUI parou de responder em ${SD_API_URL}. Abortando.`);
-            console.error(`   ${generated} geradas até aqui — rode de novo para continuar de onde parou.`);
+            console.error(`\n❌ The SD WebUI stopped answering at ${SD_API_URL}. Aborting.`);
+            console.error(`   ${generated} generated so far — run it again to pick up where it stopped.`);
             console.log(`\n${"─".repeat(50)}`);
-            console.log(`✅ ${generated} geradas | ❌ ${failed} falhas | ${bare.length - i - 1} restantes`);
+            console.log(`✅ ${generated} generated | ❌ ${failed} failed | ${bare.length - i - 1} left`);
             process.exit(1);
           }
           break;
         }
-        console.log(`  ⚠️  ${e.message} — tentativa ${attempt}/${MAX_RETRIES}, retry em 5s...`);
+        console.log(`  ⚠️  ${e.message} — attempt ${attempt}/${MAX_RETRIES}, retrying in 5s...`);
         await new Promise((r) => setTimeout(r, 5000));
       }
     }
   }
 
   console.log(`\n${"─".repeat(50)}`);
-  console.log(`✅ ${generated} geradas | ❌ ${failed} falhas | ${bare.length - toProcess.length} restantes`);
+  console.log(`✅ ${generated} generated | ❌ ${failed} failed | ${bare.length - toProcess.length} left`);
 }
 
 main().catch(console.error);

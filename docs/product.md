@@ -1,74 +1,74 @@
 # Product
 
-Requisitos funcionais e escopo. Consulte este arquivo antes de implementar uma feature para confirmar se ela está no escopo atual.
+Functional requirements and scope. Read this file before implementing a feature, to confirm it is in the current scope.
 
-## Visão
+## Vision
 
-FunSona é a plataforma de quizzes mais rápida e SEO-friendly da internet. Crie, jogue e compartilhe quizzes em segundos.
+FunSona is the fastest and most SEO-friendly quiz platform on the internet. Create, play and share quizzes in seconds.
 
-## Público-alvo
+## Target Audience
 
-- Jogadores casuais: buscam entretenimento rápido, descoberta via Google.
-- Criadores de conteúdo: influencers, educadores, marcas que querem engajar audiência.
+- Casual players: after quick entertainment, arriving through Google.
+- Content creators: influencers, educators and brands who want to engage an audience.
 
-## Escopo v2.0 (MVP)
+## Scope for v2.0 (MVP)
 
-### Jogar Quiz
-- Página de quiz com SEO completo (title, description, OG, structured data Schema.org Quiz)
-- Player interativo: trivia com pontuação, personalidade com outcomes
-- Compartilhamento de resultados (OG image dinâmica — F5)
-- Likes e favoritos
+### Play a Quiz
+- Quiz page with complete SEO (title, description, OG, Schema.org Quiz structured data)
+- Interactive player: trivia with scoring, personality with outcomes
+- Result sharing (dynamic OG image — F5)
+- Likes and favourites
 
-### Criar Quiz
-- Editor de quizzes: título, descrição, capa (Supabase Storage), tags
-- Editor de perguntas e respostas
-- Preview antes de publicar
-- Estados: DRAFT / PUBLISHED / ARCHIVED
+### Create a Quiz
+- Quiz editor: title, description, cover (Supabase Storage), tags
+- Question and answer editor
+- Preview before publishing
+- States: DRAFT / PUBLISHED / ARCHIVED
 
-### Descoberta
-- Homepage com trending
-- Explore por tags/categorias
-- Busca full-text (Postgres `to_tsvector`)
-- Perfis públicos de criadores
+### Discovery
+- Homepage with trending
+- Explore by tag/category
+- Full-text search (Postgres `to_tsvector`)
+- Public creator profiles
 
-### Gamificação (simplificada)
-- XP e níveis automáticos (trigger Postgres)
-- Streak diário
-- Leaderboard semanal e geral
-- Achievements simples por uso, XP, streak, criacao e likes recebidos
+### Gamification (simplified)
+- Automatic XP and levels (Postgres trigger)
+- Daily streak
+- Weekly and all-time leaderboard
+- Simple achievements for usage, XP, streak, creation and likes received
 
-### Comunidade
-- Comentarios simples em quizzes publicados
+### Community
+- Simple comments on published quizzes
 
-### Monetização
-- AdSense ready (slots definidos, Consent Mode GDPR/LGPD)
-- Premium via Stripe (remove ads, badge, stats avançadas)
+### Monetization
+- AdSense ready (slots defined, GDPR/LGPD Consent Mode)
+- Premium through Stripe (removes ads, badge, advanced stats)
 
-## Fora do Escopo v2.0
+## Out of Scope for v2.0
 
-Não implemente sem aprovação explícita:
-- Seguir usuários
-- Sistema de recomendação avançado
-- Scraping de quizzes externos
+Do not implement without explicit approval:
+- Following users
+- Advanced recommendation system
+- Scraping external quizzes
 - Fake data / bot accounts
 
-## Métricas de Sucesso
+## Success Metrics
 
-- 1000 quizzes publicados no primeiro mês
+- 1000 quizzes published in the first month
 - Lighthouse 70+ Performance, 95+ SEO, 100 Best Practices
-- Aprovação AdSense em até 30 dias após lançamento
+- AdSense approval within 30 days of launch
 - Premium conversion rate > 2%
 
-## Fluxos de Usuário
+## User Flows
 
-1. **Descoberta orgânica**: Google → página de quiz (/quiz/[slug]) → joga → compartilha resultado
-2. **Criação**: Logado → /quiz/new → editor → preview → publica
-3. **Engajamento**: Logado → joga → ganha XP → sobe no leaderboard → repete amanhã para manter streak
-4. **Conversão premium**: Jogador vê ads → clica "Remover ads" → Stripe checkout → premium ativo
+1. **Organic discovery**: Google → quiz page (/quiz/[slug]) → plays → shares the result
+2. **Creation**: logged in → /quiz/new → editor → preview → publishes
+3. **Engagement**: logged in → plays → earns XP → climbs the leaderboard → comes back tomorrow to keep the streak
+4. **Premium conversion**: player sees ads → clicks "Remove ads" → Stripe checkout → premium active
 
-## Decisões de Produto
+## Product Decisions
 
-- **UGC first**: O foco é usuários criarem quizzes, não scraping externo.
-- **SEO é o canal #1**: Toda página pública precisa de HTML real, metadata completo, e structured data.
-- **Mobile-first design**: 70%+ do tráfego de quizzes casual é mobile.
-- **Sem dark mode no MVP**: Adiciona complexidade de CSS. Foco em ship rápido.
+- **UGC first**: the point is users creating quizzes, not external scraping.
+- **SEO is channel #1**: every public page needs real HTML, complete metadata, and structured data.
+- **Mobile-first design**: 70%+ of casual quiz traffic is mobile.
+- **No dark mode in the MVP**: it adds CSS complexity. The focus is shipping fast.

@@ -6,12 +6,12 @@ import { config } from "dotenv";
 config();
 
 // ─── CLI args ─────────────────────────────────────────────────────────────────
-// tsx generate-images.ts                     → processa todos os reviewed.json
-// tsx generate-images.ts --batch 1           → só o batch 1
-// tsx generate-images.ts --only-id <uuid>    → só um quiz
-// tsx generate-images.ts --dry-run           → mostra o que geraria, sem gerar
-// tsx generate-images.ts --covers-only       → só capas (padrão)
-// tsx generate-images.ts --all-types         → capas + outcomes
+// tsx generate-images.ts                     → processes every reviewed.json
+// tsx generate-images.ts --batch 1           → batch 1 only
+// tsx generate-images.ts --only-id <uuid>    → a single quiz
+// tsx generate-images.ts --dry-run           → shows what it would generate, generating nothing
+// tsx generate-images.ts --covers-only       → covers only (the default)
+// tsx generate-images.ts --all-types         → covers + outcomes
 
 const args        = process.argv.slice(2);
 const batchArg    = args.indexOf("--batch");
@@ -109,11 +109,11 @@ async function generateAndUpload(
   });
 
   const imageUrl = response.data[0]?.url;
-  if (!imageUrl) throw new Error("DALL-E não retornou URL de imagem");
+  if (!imageUrl) throw new Error("DALL-E returned no image URL");
 
   // Download image
   const imgResponse = await fetch(imageUrl);
-  if (!imgResponse.ok) throw new Error(`Falha ao baixar imagem: ${imgResponse.status}`);
+  if (!imgResponse.ok) throw new Error(`Failed to download the image: ${imgResponse.status}`);
   const buffer = Buffer.from(await imgResponse.arrayBuffer());
 
   // Upload to Supabase Storage
@@ -124,13 +124,13 @@ async function generateAndUpload(
 
 async function main() {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    console.error("❌ Missing SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY no .env");
+    console.error("❌ Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env");
     process.exit(1);
   }
 
   if (!OPENAI_API_KEY && !DRY_RUN) {
-    console.error("❌ Missing OPENAI_API_KEY no .env (necessário para gerar imagens com DALL-E 3)");
-    console.error("   Adicione: OPENAI_API_KEY=sk-...");
+    console.error("❌ Missing OPENAI_API_KEY in .env (required to generate images with DALL-E 3)");
+    console.error("   Add: OPENAI_API_KEY=sk-...");
     process.exit(1);
   }
 
@@ -140,7 +140,7 @@ async function main() {
 
   const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
-  // ── Coletar todos reviewed.json ─────────────────────────────────────────────
+  // ── Collect every reviewed.json ─────────────────────────────────────────────
   const batchesDir = path.join(process.cwd(), "batches");
   const files = await fs.readdir(batchesDir).catch(() => [] as string[]);
 
@@ -152,15 +152,15 @@ async function main() {
   }
 
   if (!reviewedFiles.length) {
-    console.log("⚠️  Nenhum *reviewed.json encontrado em batches/");
+    console.log("⚠️  No *reviewed.json found in batches/");
     return;
   }
 
   console.log(`\n🎨 Funsona Image Generator`);
-  console.log(`   ${reviewedFiles.length} arquivo(s) reviewed.json`);
-  if (DRY_RUN) console.log("   🔍 DRY RUN — nenhuma imagem será gerada");
+  console.log(`   ${reviewedFiles.length} reviewed.json file(s)`);
+  if (DRY_RUN) console.log("   🔍 DRY RUN — no image will be generated");
 
-  // ── Coletar quizzes que precisam de imagem ──────────────────────────────────
+  // ── Collect the quizzes that need an image ──────────────────────────────────
   const needsCover: Array<{ id: string; title: string; description: string }> = [];
 
   for (const file of reviewedFiles.sort()) {
@@ -182,29 +182,29 @@ async function main() {
     }
   }
 
-  console.log(`\n📊 Precisam de capa: ${needsCover.length} quizzes`);
+  console.log(`\n📊 Need a cover: ${needsCover.length} quizzes`);
   if (DRY_RUN) {
     needsCover.slice(0, 10).forEach(({ id, title }) => console.log(`   - "${title}" (${id})`));
-    if (needsCover.length > 10) console.log(`   ... e mais ${needsCover.length - 10}`);
+    if (needsCover.length > 10) console.log(`   ... and ${needsCover.length - 10} more`);
     const costEstimate = (needsCover.length * 0.04).toFixed(2);
-    console.log(`\n💰 Custo estimado (DALL-E 3 standard): ~$${costEstimate}`);
-    console.log(`\n💡 Rode sem --dry-run para gerar as imagens.`);
+    console.log(`\n💰 Estimated cost (DALL-E 3 standard): ~$${costEstimate}`);
+    console.log(`\n💡 Run without --dry-run to generate the images.`);
     return;
   }
 
-  // ── Verificar bucket de storage ─────────────────────────────────────────────
+  // ── Check the storage bucket ────────────────────────────────────────────────
   const BUCKET = "quiz-images";
   const { data: buckets } = await db.storage.listBuckets();
   const bucketExists = buckets?.some((b) => b.name === BUCKET);
 
   if (!bucketExists) {
-    console.log(`\n⚠️  Bucket "${BUCKET}" não encontrado no Supabase Storage.`);
-    console.log(`   Crie o bucket em: Supabase Dashboard → Storage → New bucket → "${BUCKET}"`);
-    console.log(`   (público, 5MB max, image/*)`);
+    console.log(`\n⚠️  Bucket "${BUCKET}" not found in Supabase Storage.`);
+    console.log(`   Create the bucket at: Supabase Dashboard → Storage → New bucket → "${BUCKET}"`);
+    console.log(`   (public, 5MB max, image/*)`);
     process.exit(1);
   }
 
-  // ── Gerar e salvar imagens ──────────────────────────────────────────────────
+  // ── Generate and save the images ────────────────────────────────────────────
   let generated = 0, failed = 0;
   const COST_PER_IMAGE = 0.04; // DALL-E 3 standard
 
@@ -226,7 +226,7 @@ async function main() {
         .eq("id", id);
 
       if (updateErr) {
-        console.log(`  ❌ Erro ao salvar URL: ${updateErr.message}`);
+        console.log(`  ❌ Failed to save the URL: ${updateErr.message}`);
         failed++;
       } else {
         console.log(`  ✅ ${publicUrl}`);
@@ -238,7 +238,7 @@ async function main() {
 
       // If rate limited, wait before continuing
       if (e.message?.includes("rate") || e.status === 429) {
-        console.log("  ⏳ Rate limit — aguardando 60s...");
+        console.log("  ⏳ Rate limit — waiting 60s...");
         await new Promise((r) => setTimeout(r, 60_000));
       }
     }
@@ -248,8 +248,8 @@ async function main() {
   }
 
   console.log(`\n${"─".repeat(50)}`);
-  console.log(`✅ ${generated} geradas | ❌ ${failed} falhas`);
-  console.log(`💰 Custo real: ~$${(generated * COST_PER_IMAGE).toFixed(2)}`);
+  console.log(`✅ ${generated} generated | ❌ ${failed} failed`);
+  console.log(`💰 Actual cost: ~$${(generated * COST_PER_IMAGE).toFixed(2)}`);
 }
 
 main().catch(console.error);

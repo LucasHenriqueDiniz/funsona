@@ -1,65 +1,65 @@
 # Research
 
-Investigações e benchmarks já realizados. Não repita pesquisas listadas aqui a menos que dados estejam desatualizados.
+Investigations and benchmarks already done. Do not repeat research listed here unless the data has gone stale.
 
 ## SEO Benchmarks (2025-01)
 
-| Competidor | Lighthouse Perf | Lighthouse SEO | Notas |
+| Competitor | Lighthouse Perf | Lighthouse SEO | Notes |
 |---|---|---|---|
 | QuizPanda | 45 | 85 | Heavy JS, slow LCP |
-| Quizur | 55 | 80 | Decente mas UX antigo |
-| Sporcle | 60 | 90 | Bom SEO, muitos ads |
-| Kahoot | 70 | 95 | Excelente, mas não é UGC |
+| Quizur | 55 | 80 | Decent, but dated UX |
+| Sporcle | 60 | 90 | Good SEO, lots of ads |
+| Kahoot | 70 | 95 | Excellent, but not UGC |
 
-**Meta do FunSona**: 80+ Performance, 95+ SEO, 100 Best Practices.
+**FunSona's target**: 80+ Performance, 95+ SEO, 100 Best Practices.
 
-## Astro vs Next.js para SEO
+## Astro vs Next.js for SEO
 
-- Astro gera menos JS por padrão (0kb se sem islands).
-- `output: "server"` com Cloudflare adapter dá SSR no edge.
-- `client:*` directives controlam hidratação com precisão.
-- **Decisão**: Astro é melhor para apps content-heavy, SEO-first. Não revisite a menos que precisemos de features exclusivas do Next.js.
+- Astro emits less JS by default (0kb with no islands).
+- `output: "server"` with the Cloudflare adapter gives SSR on the edge.
+- `client:*` directives control hydration precisely.
+- **Decision**: Astro is better for content-heavy, SEO-first apps. Do not revisit unless we need something exclusive to Next.js.
 
-## Supabase Auth em Workers
+## Supabase Auth on Workers
 
-- `supabase-js` funciona em Cloudflare Workers.
-- Fluxo OAuth: callback handled by Worker → exchange code → set httpOnly cookie.
-- JWT verification no Worker com `jose` (Web Crypto API).
-- Não precisa de `next/headers` ou `cookies()`.
-- **Decisão**: Manter auth no Worker com cookies. Não revisite.
+- `supabase-js` works on Cloudflare Workers.
+- OAuth flow: callback handled by the Worker → exchange code → set httpOnly cookie.
+- JWT verification in the Worker with `jose` (Web Crypto API).
+- No need for `next/headers` or `cookies()`.
+- **Decision**: keep auth in the Worker with cookies. Do not revisit.
 
 ## Cloudflare KV Limits
 
 - Max key: 512 bytes
 - Max value: 25 MB
 - Max read: 120,000 req/min (free tier)
-- Bom para: trending quizzes, leaderboard snapshots, search suggestions
-- Ruim para: user sessions (use cookies), relational data, consistent data
-- **Decisão**: KV substitui tabelas de cache do Postgres. Não revisite.
+- Good for: trending quizzes, leaderboard snapshots, search suggestions
+- Bad for: user sessions (use cookies), relational data, consistent data
+- **Decision**: KV replaces the Postgres cache tables. Do not revisit.
 
-## Stripe em Workers
+## Stripe on Workers
 
-- Pacote `stripe` funciona com Node.js compat flag no Workers.
-- Webhook verification precisa do body raw (`c.req.raw.text()` no Hono).
-- Checkout sessions criadas no Worker, redirecionamento para Stripe hosted page.
-- **Decisão**: Manter Stripe no Worker. Não revisite.
+- The `stripe` package works with the Node.js compat flag on Workers.
+- Webhook verification needs the raw body (`c.req.raw.text()` in Hono).
+- Checkout sessions are created in the Worker, redirecting to the Stripe hosted page.
+- **Decision**: keep Stripe in the Worker. Do not revisit.
 
-## Alternativas Avaliadas e Rejeitadas
+## Alternatives Evaluated and Rejected
 
-### D1 (Cloudflare) em vez de Supabase Postgres
-- Rejeitado: SQLite não tem full-text search nativo, JSONB limitado, sem triggers complexos, single-writer.
-- **Status**: Não revisite a menos que Supabase fique indisívelmente caro.
+### D1 (Cloudflare) instead of Supabase Postgres
+- Rejected: SQLite has no native full-text search, limited JSONB, no complex triggers, single-writer.
+- **Status**: do not revisit unless Supabase becomes indisputably expensive.
 
-### Remix em vez de Astro
-- Rejeitado: Remix hidrata página inteira. Astro é mais enxuto para conteúdo.
-- **Status**: Não revisite a menos que precisemos de features exclusivas do Remix.
+### Remix instead of Astro
+- Rejected: Remix hydrates the whole page. Astro is leaner for content.
+- **Status**: do not revisit unless we need something exclusive to Remix.
 
-### Clerk em vez de Supabase Auth
-- Rejeitado: Clerk é pago e adiciona vendor extra. Supabase Auth é gratuito e integrado.
-- **Status**: Não revisite.
+### Clerk instead of Supabase Auth
+- Rejected: Clerk is paid and adds another vendor. Supabase Auth is free and integrated.
+- **Status**: do not revisit.
 
-## Notas de Pesquisa Ativas
+## Open Research Notes
 
-- **OG Image Generation**: Avaliar `@vercel/og` equivalente para Cloudflare (provavelmente `@cloudflare/pages-plugin-vercel-og` ou gerar SVG → PNG com resvg-wasm).
-- **AdSense Approval**: Necessário ter conteúdo real, política de privacidade, termos de uso, e CLS < 0.1.
-- **i18n SEO**: Hreflang tags, sitemap por locale, conteúdo traduzido (não apenas UI).
+- **OG Image Generation**: evaluate the `@vercel/og` equivalent for Cloudflare (likely `@cloudflare/pages-plugin-vercel-og`, or generating SVG → PNG with resvg-wasm).
+- **AdSense Approval**: requires real content, a privacy policy, terms of use, and CLS < 0.1.
+- **i18n SEO**: hreflang tags, one sitemap per locale, translated content (not just the UI).

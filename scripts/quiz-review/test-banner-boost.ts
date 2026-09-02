@@ -8,8 +8,8 @@ const SD_URL = "http://127.0.0.1:7860";
 const QUIZ_ID = "3918ecda-7185-4a14-9d25-548a54858a5f";
 const BASE_DIR = path.join(process.cwd(), "refactored-quizzes", QUIZ_ID);
 
-// Mesmo prompt de tema (macarrão), mas com qualificadores de "destaque" que o
-// prompt mestre agora pede explicitamente para a capa.
+// The same subject prompt (pasta), but with the "standout" qualifiers the master
+// prompt now asks for explicitly on the cover.
 const BOOSTED_PROMPT =
   "editorial flat vector illustration, no people, single hero composition: one elegant bowl of swirled " +
   "tagliatelle pasta as the clear focal point, surrounded by soft blurred accents of tomato, basil and cheese, " +
@@ -22,7 +22,7 @@ const NEGATIVE_PROMPT =
   "nsfw, nude, anime girl, sexy character, human model, cluttered, busy composition, too many objects";
 
 async function generate(width: number, height: number, steps: number, cfg: number, outFile: string) {
-  console.log(`\n🎨 Gerando ${outFile} (${width}x${height}, steps=${steps}, cfg=${cfg})...`);
+  console.log(`\n🎨 Generating ${outFile} (${width}x${height}, steps=${steps}, cfg=${cfg})...`);
   const res = await fetch(`${SD_URL}/sdapi/v1/txt2img`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -42,11 +42,11 @@ async function generate(width: number, height: number, steps: number, cfg: numbe
   const data = (await res.json()) as any;
   const buffer = Buffer.from(data.images[0], "base64");
   await fs.writeFile(path.join(BASE_DIR, outFile), buffer);
-  console.log(`✅ Salvo: ${outFile}`);
+  console.log(`✅ Saved: ${outFile}`);
 }
 
 async function main() {
-  // Mesmo prompt, mas agora com checkpoint vanilla SD1.5 (sem viés de anime).
+  // The same prompt, now on the vanilla SD1.5 checkpoint (no anime bias).
   await generate(1024, 1024, 28, 7.5, "banner-boosted-v2-sd15.png");
 }
 

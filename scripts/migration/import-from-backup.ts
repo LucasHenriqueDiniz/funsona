@@ -83,7 +83,7 @@ async function importQuizLikes() {
 
 async function importQuizResults() {
   const rows = readJson<any>("quiz_results");
-  // Schema antigo pode ter campos diferentes — precisamos mapear
+  // The old schema may carry different fields — we have to map them
   const mapped = rows.map((r) => ({
     id: r.id,
     quiz_id: r.quiz_id,

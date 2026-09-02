@@ -10,16 +10,16 @@ import { config } from "dotenv";
 config();
 
 // ─── CLI args ─────────────────────────────────────────────────────────────────
-// tsx orchestrate.ts                        → todos os batches pendentes (size 3)
-// tsx orchestrate.ts --batch 5             → só batch 5
+// tsx orchestrate.ts                        → every pending batch (size 3)
+// tsx orchestrate.ts --batch 5             → batch 5 only
 // tsx orchestrate.ts --start 3 --end 20   → batches 3..20
-// tsx orchestrate.ts --size 5             → batch de 5 quizzes
-// tsx orchestrate.ts --dry-run            → exporta .md, não envia ao ChatGPT
-// tsx orchestrate.ts --skip-import        → envia ao ChatGPT, salva JSON, não aplica no Supabase
-// tsx orchestrate.ts --force              → reprocessa mesmo se já está no DB
-// tsx orchestrate.ts --refactor           → só processa quizzes com needs_refactor=1
-// tsx orchestrate.ts --status             → mostra estatísticas do DB e sai
-// tsx orchestrate.ts --verbose            → mostra resposta bruta do ChatGPT
+// tsx orchestrate.ts --size 5             → batches of 5 quizzes
+// tsx orchestrate.ts --dry-run            → writes the .md, sends nothing to ChatGPT
+// tsx orchestrate.ts --skip-import        → sends to ChatGPT, saves the JSON, does not apply it to Supabase
+// tsx orchestrate.ts --force              → reprocesses even when it is already in the DB
+// tsx orchestrate.ts --refactor           → only processes quizzes with needs_refactor=1
+// tsx orchestrate.ts --status             → prints DB stats and exits
+// tsx orchestrate.ts --verbose            → prints ChatGPT's raw response
 
 const args        = process.argv.slice(2);
 const batchArg    = args.indexOf("--batch");
@@ -48,16 +48,16 @@ const ONLY_BATCH = batchArg !== -1 ? parseInt(args[batchArg + 1]) : null;
 const SUPABASE_URL              = process.env.SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-// ChatGPT URL — use a project URL to reutilizar instruções salvas no projeto
-// Ex: https://chatgpt.com/g/g-p-6a0a734ce5f48191a66e7037737eaa1b-funsona-quizzes
-// Se não configurado, usa o ChatGPT padrão
+// ChatGPT URL — use a project URL to reuse the instructions saved on the project
+// e.g. https://chatgpt.com/g/g-p-6a0a734ce5f48191a66e7037737eaa1b-funsona-quizzes
+// When unset, falls back to plain ChatGPT
 const CHATGPT_BASE_URL = (process.env.CHATGPT_PROJECT_URL ?? "https://chatgpt.com").replace(/\/$/, "");
 
-// Chrome profile permanente — loga uma vez, mantém sessão para sempre
+// Persistent Chrome profile — log in once, the session is kept forever
 const CHROME_PROFILE   = process.env.CHROME_PROFILE_DIR ?? path.join(process.cwd(), "chrome-profile");
 const CDP_URL          = "http://localhost:9222";
 
-// Quizzes com score <= este valor entram na fila de refactor
+// Quizzes scoring <= this value go into the refactor queue
 const REFACTOR_THRESHOLD = parseInt(process.env.REFACTOR_THRESHOLD ?? "4");
 
 const BATCHES_DIR = path.join(process.cwd(), "batches");
@@ -125,11 +125,11 @@ interface FixQuestionsEntry {
 
 // ─── Human-like helpers ───────────────────────────────────────────────────────
 
-/** Delay aleatório para comportamento humano */
+/** Random delay, so the pacing looks human */
 const sleep = (minMs: number, maxMs: number) =>
   new Promise<void>((r) => setTimeout(r, minMs + Math.floor(Math.random() * (maxMs - minMs))));
 
-/** Simula tempo de leitura proporcional ao tamanho do texto */
+/** Simulates reading time, proportional to the length of the text */
 const readDelay = (text: string) =>
   sleep(300 + text.length * 0.3, 600 + text.length * 0.6);
 
@@ -210,8 +210,8 @@ function quizToMarkdown(quiz: Quiz, index: number, total: number): string {
   return lines.join("\n");
 }
 
-// Regras de plano de imagens — compartilhadas entre o prompt de revisão/refactor
-// completo e o prompt de backfill (só image_plan, para quizzes já revisados).
+// Image-plan rules — shared between the full review/refactor prompt and the
+// backfill prompt (image_plan only, for quizzes already reviewed).
 function imagePlanInstructions(): string {
   return `## Plano de imagens (image_plan) — gere para CADA quiz
 
@@ -254,9 +254,9 @@ Todo prompt deve terminar com qualificadores tipo "no text, no logos" e, se for 
 Para a **cover**, inclua opcionalmente em \`image_settings.alternate_cover_size\` algo como "1536x864" (formato banner 16:9) — o pipeline aplica automaticamente mais steps e cfg_scale na geração da capa por ser o item mais importante, e também limita a resolução final ao que a GPU local suporta, então foque o esforço no PROMPT em vez de tentar ajustar steps/resolução manualmente.`;
 }
 
-// Prompt enxuto para quizzes que JÁ foram revisados/refeitos mas nunca tiveram
-// image_plan gerado (lote processado antes dessa funcionalidade existir). Não
-// pede reescrita de texto — só o plano de imagens, a partir do conteúdo atual.
+// Lean prompt for quizzes that HAVE already been reviewed/rewritten but never
+// got an image_plan (a batch processed before that feature existed). It asks for
+// no text rewrite — only the image plan, built from the current content.
 function buildImagePlanMessage(quizzes: Quiz[], batchNum: number, totalBatches: number): string {
   const quizMd = quizzes.map((q, i) => quizToMarkdown(q, i, quizzes.length)).join("\n");
 
@@ -289,9 +289,9 @@ ${imagePlanInstructions()}
 ${quizMd}`;
 }
 
-// Sempre manda o prompt completo — garante consistência mesmo que o projeto
-// ainda não tenha as instruções configuradas. O projeto adiciona contexto extra
-// mas cada conversa precisa ser auto-suficiente.
+// Always sends the full prompt — that keeps the output consistent even when the
+// project has no instructions configured yet. The project adds extra context,
+// but each conversation has to stand on its own.
 function buildMessage(
   quizzes: Quiz[],
   batchNum: number,
@@ -379,7 +379,7 @@ ${quizMd}`;
 
 async function applyReview(db_sq: ReturnType<typeof getDb>, db: SupabaseClient, entry: ReviewEntry): Promise<"applied" | "failed" | "skipped"> {
   if (!entry.id || !entry.new_title) {
-    console.log(`     ⏭️  entrada inválida`);
+    console.log(`     ⏭️  invalid entry`);
     return "skipped";
   }
 
@@ -387,8 +387,8 @@ async function applyReview(db_sq: ReturnType<typeof getDb>, db: SupabaseClient, 
     .from("quizzes").select("title, description, content").eq("id", entry.id).single();
 
   if (fetchErr || !current) {
-    console.log(`     ❌ ${entry.id} não encontrado no Supabase`);
-    upsertQuiz(db_sq, entry.id, { status: "error", error: "Quiz não encontrado no Supabase" });
+    console.log(`     ❌ ${entry.id} not found in Supabase`);
+    upsertQuiz(db_sq, entry.id, { status: "error", error: "Quiz not found in Supabase" });
     return "failed";
   }
 
@@ -449,18 +449,18 @@ async function applyReview(db_sq: ReturnType<typeof getDb>, db: SupabaseClient, 
 
 // ─── Image plan → image queue ─────────────────────────────────────────────────
 
-// GTX 1660 Super local tem 6GB de VRAM — 1536x864 a 30 steps já travou o Forge
-// (VRAM estourada, servidor parou de responder até a request inteira). Limita a
-// área total da capa para caber com folga, mesmo se o ChatGPT sugerir um
-// alternate_cover_size maior.
+// The local GTX 1660 Super has 6GB of VRAM — 1536x864 at 30 steps has already
+// hung Forge (VRAM exhausted, the server stopped answering for the whole
+// request). This caps the cover's total area so it fits with room to spare, even
+// when ChatGPT suggests a larger alternate_cover_size.
 const COVER_MAX_PIXELS = 1024 * 1024;
 
 /**
- * A capa é o item clicável que decide se a pessoa entra no quiz — vale a pena
- * gastar mais orçamento de geração nela do que nos demais itens. Aplica isso
- * automaticamente independente do que o ChatGPT tenha (ou não) preenchido em
- * image_settings, em vez de depender só do texto do prompt. Mantém a área
- * total dentro de COVER_MAX_PIXELS para não estourar VRAM da GPU local.
+ * The cover is the clickable item that decides whether someone enters the quiz,
+ * so it is worth spending more of the generation budget on it than on the rest.
+ * This applies that automatically, regardless of what ChatGPT did (or did not)
+ * fill into image_settings, rather than relying on the prompt text alone. It
+ * keeps the total area within COVER_MAX_PIXELS so the local GPU's VRAM holds.
  */
 function boostCoverSettings(base: ImagePlanSettings | undefined): ImagePlanSettings {
   const baseSteps = base?.steps ?? 20;
@@ -477,7 +477,7 @@ function boostCoverSettings(base: ImagePlanSettings | undefined): ImagePlanSetti
   const pixels = width * height;
   if (pixels > COVER_MAX_PIXELS) {
     const scale = Math.sqrt(COVER_MAX_PIXELS / pixels);
-    width = Math.round((width * scale) / 8) * 8;   // múltiplo de 8 (requisito do modelo)
+    width = Math.round((width * scale) / 8) * 8;   // multiple of 8 (the model requires it)
     height = Math.round((height * scale) / 8) * 8;
   }
 
@@ -492,10 +492,10 @@ function boostCoverSettings(base: ImagePlanSettings | undefined): ImagePlanSetti
 }
 
 /**
- * Enfileira as imagens descritas no image_plan retornado pelo ChatGPT.
- * Cada item carrega seu próprio prompt, negative_prompt, estilo e settings —
- * evita prompts genéricos demais que o modelo de imagem tende a desviar para
- * personagens anime sexualizados independente do tema real do quiz.
+ * Enqueues the images described by the image_plan ChatGPT returned.
+ * Each item carries its own prompt, negative_prompt, style and settings — that
+ * avoids prompts so generic that the image model drifts into sexualized anime
+ * characters regardless of the quiz's actual subject.
  */
 function enqueueImagesFromPlan(quizId: string, plan: ImagePlan | undefined, recommendedUnpublish: boolean): void {
   if (!plan || recommendedUnpublish) return;
@@ -541,14 +541,14 @@ function askUser(prompt: string): Promise<string> {
 }
 
 async function connectChrome(): Promise<{ browser: Browser; page: Page }> {
-  console.log(`🔌 Conectando ao Chrome (${CDP_URL})...`);
+  console.log(`🔌 Connecting to Chrome (${CDP_URL})...`);
   let browser: Browser;
 
   try {
     browser = await chromium.connectOverCDP(CDP_URL);
   } catch {
-    console.error(`\n❌ Chrome não está rodando com CDP.`);
-    console.error(`   Iniciando Chrome com perfil persistente em: ${CHROME_PROFILE}`);
+    console.error(`\n❌ Chrome is not running with CDP.`);
+    console.error(`   Starting Chrome with the persistent profile at: ${CHROME_PROFILE}`);
 
     // Try to launch Chrome automatically
     const { execSync } = await import("child_process");
@@ -567,10 +567,10 @@ async function connectChrome(): Promise<{ browser: Browser; page: Page }> {
       );
     }
 
-    // Perfil persistente já tem a sessão logada — não bloqueia esperando ENTER
-    // (precisa funcionar sem interação para rodar desacompanhado por horas).
-    // Tenta reconectar por até ~30s enquanto o Chrome inicializa.
-    console.error(`   Aguardando Chrome inicializar...`);
+    // The persistent profile is already logged in, so this does not block on
+    // ENTER (it has to run unattended for hours with no interaction).
+    // Retries the connection for ~30s while Chrome starts up.
+    console.error(`   Waiting for Chrome to start...`);
     let connected = false;
     for (let i = 0; i < 15; i++) {
       await sleep(2000, 2000);
@@ -581,7 +581,7 @@ async function connectChrome(): Promise<{ browser: Browser; page: Page }> {
       } catch { /* segue tentando */ }
     }
     if (!connected) {
-      throw new Error("Não foi possível conectar ao Chrome via CDP após relançar (porta 9222)");
+      throw new Error("Could not connect to Chrome over CDP after relaunching (port 9222)");
     }
   }
 
@@ -591,12 +591,12 @@ async function connectChrome(): Promise<{ browser: Browser; page: Page }> {
   let page = pages.find((p) => p.url().includes("chatgpt.com")) ?? pages[0];
   if (!page) page = await ctx.newPage();
 
-  console.log(`✅ Chrome conectado! (${pages.length} aba(s) abertas)`);
+  console.log(`✅ Chrome connected! (${pages.length} tab(s) open)`);
   return { browser, page };
 }
 
 async function ensureLoggedIn(page: Page): Promise<void> {
-  console.log("🌐 Verificando login no ChatGPT...");
+  console.log("🌐 Checking the ChatGPT login...");
   await page.goto(CHATGPT_BASE_URL, { waitUntil: "domcontentloaded", timeout: 30_000 }).catch(() => {});
   await sleep(1500, 3000);
 
@@ -604,16 +604,16 @@ async function ensureLoggedIn(page: Page): Promise<void> {
   for (const text of loginTexts) {
     const visible = await page.getByRole("button", { name: text }).isVisible({ timeout: 2000 }).catch(() => false);
     if (visible) {
-      console.log("\n🔐 ChatGPT não está logado.");
-      console.log(`   Perfil salvo em: ${CHROME_PROFILE}`);
-      console.log("   Faça login na janela do Chrome e pressione ENTER aqui...");
+      console.log("\n🔐 ChatGPT is not logged in.");
+      console.log(`   Profile saved at: ${CHROME_PROFILE}`);
+      console.log("   Log in through the Chrome window, then press ENTER here...");
       await askUser("");
       await sleep(2000, 4000);
       break;
     }
   }
 
-  console.log("✅ ChatGPT pronto!");
+  console.log("✅ ChatGPT ready!");
 }
 
 // ─── ChatGPT interaction ──────────────────────────────────────────────────────
@@ -643,7 +643,7 @@ async function fillTextarea(page: Page, content: string): Promise<void> {
         setter?.call(el, text);
         el.dispatchEvent(new InputEvent("input", { bubbles: true }));
       } else {
-        // contenteditable — use execCommand para manter undo stack e não travar React
+        // contenteditable — use execCommand to keep the undo stack and not wedge React
         el.focus();
         document.execCommand("selectAll", false, undefined);
         document.execCommand("insertText", false, text);
@@ -657,7 +657,7 @@ async function fillTextarea(page: Page, content: string): Promise<void> {
     }
   }
 
-  throw new Error("Não encontrou o textarea do ChatGPT (UI pode ter mudado)");
+  throw new Error("Could not find ChatGPT's textarea (the UI may have changed)");
 }
 
 async function clickSend(page: Page): Promise<void> {
@@ -681,7 +681,8 @@ async function clickSend(page: Page): Promise<void> {
   await page.keyboard.press("Enter");
 }
 
-// Frases que indicam rate limit ou erro do ChatGPT (pt + en)
+// Phrases that mark a ChatGPT rate limit or error. Kept in ChatGPT's own
+// wording, pt + en, because they are matched against its UI text.
 const RATE_LIMIT_PHRASES = [
   "you've reached your limit",
   "reached the usage limit",
@@ -695,9 +696,10 @@ const RATE_LIMIT_PHRASES = [
   "volte mais tarde",
 ];
 
-// Frases/seletores do modal "conversation history rate limit" (acesso ao histórico
-// de conversas temporariamente limitado) — esse é RECUPERÁVEL com espera + reload,
-// diferente do rate limit de mensagens (que é mais duradouro).
+// Phrases/selectors for the "conversation history rate limit" modal (access to
+// the conversation history temporarily limited). This one is RECOVERABLE with a
+// wait + reload, unlike the message rate limit, which lasts longer. The phrases
+// stay in ChatGPT's own wording because they are matched against its UI text.
 const HISTORY_RATE_LIMIT_SELECTOR =
   "#modal-conversation-history-rate-limit, [data-testid='modal-conversation-history-rate-limit']";
 const HISTORY_RATE_LIMIT_PHRASES = [
@@ -714,9 +716,10 @@ class RateLimitError extends Error {
   constructor(msg: string) { super(msg); this.name = "RateLimitError"; }
 }
 
-// Erro genérico do ChatGPT (ex: "Something went wrong... contact help center"), geralmente
-// causado por uma mensagem grande demais ou instabilidade momentânea. É RECUPERÁVEL via
-// reenvio do batch inteiro — NÃO é resposta truncada, então não deve disparar "continue".
+// A generic ChatGPT error (e.g. "Something went wrong... contact help center"),
+// usually caused by an oversized message or a momentary wobble. RECOVERABLE by
+// resending the whole batch — this is NOT a truncated response, so it must not
+// trigger "continue". Phrases stay in ChatGPT's own wording, pt + en.
 const CHATGPT_ERROR_PHRASES = [
   "something went wrong",
   "algo deu errado",
@@ -728,10 +731,11 @@ class ChatGPTErrorResponse extends Error {
 }
 
 /**
- * Detecta o modal de rate limit do HISTÓRICO de conversas (diferente do rate limit
- * de mensagens). Esse modal bloqueia cliques na página inteira (overlay), então
- * precisa ser tratado ANTES de tentar interagir com o textarea/botão de enviar.
- * Espera com backoff e recarrega a página até o modal sumir (até maxTotalMs).
+ * Detects the conversation-HISTORY rate limit modal (a different thing from the
+ * message rate limit). This modal is an overlay that blocks clicks on the whole
+ * page, so it has to be cleared BEFORE trying to touch the textarea or the send
+ * button. Waits with backoff and reloads the page until the modal is gone (up to
+ * maxTotalMs).
  */
 async function waitForHistoryRateLimit(page: Page, maxTotalMs = 20 * 60_000): Promise<void> {
   const deadline = Date.now() + maxTotalMs;
@@ -748,19 +752,19 @@ async function waitForHistoryRateLimit(page: Page, maxTotalMs = 20 * 60_000): Pr
 
     attempt++;
     const waitMin = Math.min(3 * attempt, 15); // 3, 6, 9, 12, 15, 15, 15...
-    console.log(`\n  ⏸️  Modal de limite do histórico de conversas detectado (tentativa ${attempt}).`);
-    console.log(`     Aguardando ${waitMin}min e recarregando a página...`);
+    console.log(`\n  ⏸️  Conversation-history rate limit modal detected (attempt ${attempt}).`);
+    console.log(`     Waiting ${waitMin}min, then reloading the page...`);
     await sleep(waitMin * 60_000, waitMin * 60_000 + 15_000);
 
     await page.reload({ waitUntil: "domcontentloaded", timeout: 30_000 }).catch(() => {});
     await sleep(2000, 4000);
   }
 
-  throw new RateLimitError("Modal de limite do histórico de conversas não desapareceu após o tempo máximo de espera");
+  throw new RateLimitError("The conversation-history rate limit modal did not clear within the maximum wait");
 }
 
 async function waitForResponse(page: Page, timeoutMs = 15 * 60_000): Promise<string> {
-  // Antes de esperar resposta, checar se há aviso de rate limit já visível
+  // Before waiting on a response, check for a rate-limit notice already on screen
   await waitForHistoryRateLimit(page);
   await checkRateLimit(page);
 
@@ -777,35 +781,35 @@ async function waitForResponse(page: Page, timeoutMs = 15 * 60_000): Promise<str
     await sleep(1200, 2000);
   }
 
-  await sleep(1000, 2000); // buffer extra para render final
+  await sleep(1000, 2000); // extra buffer for the final render
 
   // Extract last assistant message
   const msgs = page.locator("[data-message-author-role='assistant']");
   const count = await msgs.count();
-  if (count === 0) throw new Error("Nenhuma resposta do assistente encontrada");
+  if (count === 0) throw new Error("No assistant response found");
 
   const text = await msgs.nth(count - 1).innerText();
 
-  // Checar se a resposta em si é um aviso de rate limit
+  // Check whether the response itself is a rate-limit notice
   const lower = text.toLowerCase();
   if (RATE_LIMIT_PHRASES.some((p) => lower.includes(p))) {
-    throw new RateLimitError(`ChatGPT retornou aviso de limite: "${text.slice(0, 120)}"`);
+    throw new RateLimitError(`ChatGPT returned a limit notice: "${text.slice(0, 120)}"`);
   }
 
-  // Checar erro genérico do ChatGPT (resposta curta tipo "Something went wrong... Repetir")
-  // Isso NÃO é uma resposta truncada — não deve disparar ensureCompleteJSON("continue")
+  // Check for a generic ChatGPT error (a short response like "Something went wrong... Retry").
+  // This is NOT a truncated response, so it must not trigger ensureCompleteJSON("continue")
   if (text.length < 500 && CHATGPT_ERROR_PHRASES.some((p) => lower.includes(p))) {
-    throw new ChatGPTErrorResponse(`ChatGPT retornou erro genérico: "${text.slice(0, 150)}"`);
+    throw new ChatGPTErrorResponse(`ChatGPT returned a generic error: "${text.slice(0, 150)}"`);
   }
 
   return text;
 }
 
 async function checkRateLimit(page: Page): Promise<void> {
-  // Procura por indicadores de rate limit na página (fora das mensagens)
+  // Look for rate-limit markers on the page, outside the messages
   const pageText = await page.evaluate(() => document.body.innerText.toLowerCase());
   if (RATE_LIMIT_PHRASES.some((p) => pageText.includes(p))) {
-    throw new RateLimitError("Página indica limite de uso atingido");
+    throw new RateLimitError("The page reports the usage limit was reached");
   }
 }
 
@@ -814,11 +818,11 @@ async function ensureCompleteJSON(page: Page, text: string, attempts = 0): Promi
   if (clean.endsWith("]")) return clean;
 
   if (attempts >= 3) {
-    console.log("     ⚠️  Resposta incompleta após 3 tentativas — usando como está");
+    console.log("     ⚠️  Response still incomplete after 3 attempts — using it as is");
     return clean;
   }
 
-  console.log(`     ⏩ Resposta incompleta (attempt ${attempts + 1}/3) — pedindo continuação...`);
+  console.log(`     ⏩ Incomplete response (attempt ${attempts + 1}/3) — asking it to continue...`);
   await sleep(1000, 2000);
   await fillTextarea(page, "continue");
   await sleep(300, 600);
@@ -835,16 +839,16 @@ async function sendToChatGPT(
   content: string,
   batchLabel: string
 ): Promise<ReviewEntry[]> {
-  // Navega sempre para a URL base do projeto (não uma conversa anterior)
-  // O projeto redireciona para .../project que tem o textarea pronto
-  // Isso garante uma nova conversa dentro do contexto do projeto
+  // Always navigates to the project base URL, never to an earlier conversation.
+  // The project redirects to .../project, which has the textarea ready, and that
+  // guarantees a fresh conversation inside the project context.
   const targetUrl = process.env.CHATGPT_PROJECT_URL
-    ? process.env.CHATGPT_PROJECT_URL.replace(/\/$/, "") // URL do projeto
+    ? process.env.CHATGPT_PROJECT_URL.replace(/\/$/, "") // the project URL
     : "https://chatgpt.com";
 
   await page.goto(targetUrl, { waitUntil: "domcontentloaded", timeout: 30_000 });
 
-  // Aguarda a página do projeto carregar (pode redirecionar para .../project)
+  // Waits for the project page to load (it may redirect to .../project)
   await page.waitForFunction(
     () => !window.location.href.includes("/auth") && document.readyState === "complete",
     { timeout: 15_000 }
@@ -852,8 +856,8 @@ async function sendToChatGPT(
 
   await sleep(1500, 3000);
 
-  // Verifica e espera o modal de rate limit do histórico ANTES de tentar interagir
-  // (esse modal cobre a página inteira e bloqueia cliques no textarea)
+  // Checks and waits out the history rate-limit modal BEFORE trying to interact
+  // (that modal covers the whole page and blocks clicks on the textarea)
   await waitForHistoryRateLimit(page);
 
   // Human behavior: scroll down a tiny bit, then focus
@@ -863,19 +867,19 @@ async function sendToChatGPT(
   );
   await sleep(300, 700);
 
-  console.log(`     📤 Colando ${Math.round(content.length / 1024)}kb...`);
+  console.log(`     📤 Pasting ${Math.round(content.length / 1024)}kb...`);
   await fillTextarea(page, content);
   await sleep(600, 1200);
 
   await clickSend(page);
 
   const start = Date.now();
-  console.log(`     ↗ Enviado! Aguardando resposta...`);
+  console.log(`     ↗ Sent! Waiting for the response...`);
   const rawText = await waitForResponse(page);
   console.log(`     ⏱  ${Math.round((Date.now() - start) / 1000)}s | ${rawText.length} chars`);
 
   if (VERBOSE) {
-    console.log(`\n${"·".repeat(40)} RESPOSTA BRUTA (primeiros 1500 chars) ${"·".repeat(10)}`);
+    console.log(`\n${"·".repeat(40)} RAW RESPONSE (first 1500 chars) ${"·".repeat(10)}`);
     console.log(rawText.slice(0, 1500) + (rawText.length > 1500 ? "\n  ..." : ""));
     console.log("·".repeat(90));
   }
@@ -889,21 +893,21 @@ async function sendToChatGPT(
   try {
     entries = JSON.parse(jsonText);
   } catch (e: any) {
-    // Tenta corrigir JSON malformado (ex: aspas internas não escapadas, vírgulas
-    // sobrando) antes de desistir — comum quando o ChatGPT escreve apelidos
-    // entre aspas dentro de um campo de texto, ex: "Miles "Tails" Prower".
+    // Try to repair malformed JSON (e.g. unescaped inner quotes, trailing
+    // commas) before giving up — common when ChatGPT writes a nickname in
+    // quotes inside a text field, e.g. "Miles "Tails" Prower".
     try {
       entries = JSON.parse(jsonrepair(jsonText));
-      console.log(`     🔧 JSON corrigido automaticamente (jsonrepair)`);
+      console.log(`     🔧 JSON repaired automatically (jsonrepair)`);
     } catch {
       const rawPath = path.join(BATCHES_DIR, `${batchLabel}-raw.txt`);
       await fs.writeFile(rawPath, rawText, "utf-8");
-      throw new Error(`JSON parse falhou (salvo em ${path.basename(rawPath)}): ${e.message}`);
+      throw new Error(`JSON parse failed (saved to ${path.basename(rawPath)}): ${e.message}`);
     }
   }
 
   if (!Array.isArray(entries) || entries.length === 0) {
-    throw new Error("ChatGPT retornou formato inesperado (não é array)");
+    throw new Error("ChatGPT returned an unexpected shape (not an array)");
   }
 
   return entries;
@@ -1006,7 +1010,7 @@ Responda SOMENTE com JSON no formato:
 
 async function applyFixWeights(db: SupabaseClient, entry: FixWeightsEntry): Promise<void> {
   const { data: quiz, error } = await db.from("quizzes").select("content").eq("id", entry.id).single();
-  if (error || !quiz) throw new Error(`Quiz ${entry.id} não encontrado`);
+  if (error || !quiz) throw new Error(`Quiz ${entry.id} not found`);
 
   const content = structuredClone(quiz.content) as Quiz["content"];
   const qMap = new Map(entry.fixed_questions.map((q) => [q.id, q]));
@@ -1025,12 +1029,12 @@ async function applyFixWeights(db: SupabaseClient, entry: FixWeightsEntry): Prom
   });
 
   const { error: updateErr } = await db.from("quizzes").update({ content }).eq("id", entry.id);
-  if (updateErr) throw new Error(`Falha ao salvar: ${updateErr.message}`);
+  if (updateErr) throw new Error(`Failed to save: ${updateErr.message}`);
 }
 
 async function applyFixQuestions(db: SupabaseClient, entry: FixQuestionsEntry): Promise<void> {
   const { data: quiz, error } = await db.from("quizzes").select("content").eq("id", entry.id).single();
-  if (error || !quiz) throw new Error(`Quiz ${entry.id} não encontrado`);
+  if (error || !quiz) throw new Error(`Quiz ${entry.id} not found`);
 
   const content = structuredClone(quiz.content) as Quiz["content"];
   const now = Date.now();
@@ -1054,7 +1058,7 @@ async function applyFixQuestions(db: SupabaseClient, entry: FixQuestionsEntry): 
   content.questions = [...(content.questions ?? []), ...newQs];
 
   const { error: updateErr } = await db.from("quizzes").update({ content }).eq("id", entry.id);
-  if (updateErr) throw new Error(`Falha ao salvar: ${updateErr.message}`);
+  if (updateErr) throw new Error(`Failed to save: ${updateErr.message}`);
 }
 
 function detectBadWeightQuizzes(quizzes: Quiz[]): Quiz[] {
@@ -1085,19 +1089,19 @@ function detectFewQuestionQuizzes(quizzes: Quiz[]): Quiz[] {
 
 function showStats(db_sq: ReturnType<typeof getDb>) {
   const stats = getStats(db_sq);
-  console.log(`\n📊 Estatísticas do banco (quiz-review.db)`);
+  console.log(`\n📊 Database stats (quiz-review.db)`);
   console.log(`${"─".repeat(50)}`);
-  console.log(`   Total rastreados : ${stats.total}`);
-  console.log(`   Aplicados        : ${stats.applied}`);
-  console.log(`   Score médio      : ${stats.avgScore}/10`);
-  console.log(`   Precisam refactor: ${stats.refactor}`);
-  console.log(`   Para despublicar : ${stats.unpublish}`);
-  console.log(`\n   Por status:`);
+  console.log(`   Total tracked    : ${stats.total}`);
+  console.log(`   Applied          : ${stats.applied}`);
+  console.log(`   Average score    : ${stats.avgScore}/10`);
+  console.log(`   Need a refactor  : ${stats.refactor}`);
+  console.log(`   To unpublish     : ${stats.unpublish}`);
+  console.log(`\n   By status:`);
   stats.byStatus.forEach(({ status, c }) =>
     console.log(`   ${String(c).padStart(5)}  ${status}`)
   );
   if (stats.lowScore.length) {
-    console.log(`\n   🔴 Piores quizzes (score ≤ ${REFACTOR_THRESHOLD}):`);
+    console.log(`\n   🔴 Worst quizzes (score ≤ ${REFACTOR_THRESHOLD}):`);
     stats.lowScore.forEach(({ score, original_title }) =>
       console.log(`   [${score}] ${original_title?.slice(0, 60)}`)
     );
@@ -1109,7 +1113,7 @@ function showStats(db_sq: ReturnType<typeof getDb>) {
 
 async function main() {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    console.error("❌ Missing SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY no .env");
+    console.error("❌ Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env");
     process.exit(1);
   }
 
@@ -1120,17 +1124,17 @@ async function main() {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  // ── --status: mostra stats e sai ─────────────────────────────────────────────
+  // ── --status: prints the stats and exits ─────────────────────────────────────
   if (SHOW_STATUS) {
     showStats(db_sq);
     return;
   }
 
-  // ── --next: imprime o próximo batch não aplicado (1..TOTAL_BATCHES) e sai ─────
+  // ── --next: prints the next unapplied batch (1..TOTAL_BATCHES) and exits ──────
   if (NEXT_BATCH) {
     const { count: totalQuizzes } = await db.from("quizzes").select("*", { count: "exact", head: true });
     const TOTAL_BATCHES = Math.ceil((totalQuizzes ?? 769) / BATCH_SZ);
-    let next = TOTAL_BATCHES + 1; // sentinel: tudo aplicado
+    let next = TOTAL_BATCHES + 1; // sentinel: everything applied
     for (let n = 1; n <= TOTAL_BATCHES; n++) {
       if (getBatch(db_sq, n)?.status !== "applied") { next = n; break; }
     }
@@ -1138,27 +1142,27 @@ async function main() {
     return;
   }
 
-  // ── --refactor-pending: imprime quantos itens restam na fila de refactor ──────
+  // ── --refactor-pending: prints how many items are left in the refactor queue ──
   if (REFACTOR_PENDING) {
     console.log(getRefactorQueue(db_sq).length);
     return;
   }
 
-  // ── --refactor: processa quizzes com score baixo ──────────────────────────────
+  // ── --refactor: processes the low-scoring quizzes ─────────────────────────────
   if (REFACTOR) {
     const queue = getRefactorQueue(db_sq);
     if (!queue.length) {
-      console.log(`✅ Nenhum quiz na fila de refactor (threshold: score ≤ ${REFACTOR_THRESHOLD})`);
+      console.log(`✅ No quizzes in the refactor queue (threshold: score ≤ ${REFACTOR_THRESHOLD})`);
       return;
     }
 
-    console.log(`\n🔁 Funsona Quiz Orchestrator — MODO REFACTOR`);
-    console.log(`   ${queue.length} quizzes com score ≤ ${REFACTOR_THRESHOLD} para reprocessar`);
+    console.log(`\n🔁 Funsona Quiz Orchestrator — REFACTOR MODE`);
+    console.log(`   ${queue.length} quizzes scoring ≤ ${REFACTOR_THRESHOLD} to reprocess`);
 
     const { browser, page } = await connectChrome();
     await ensureLoggedIn(page);
 
-    // Agrupa em batches de BATCH_SZ
+    // Groups them into batches of BATCH_SZ
     const batches: QuizRow[][] = [];
     for (let i = 0; i < queue.length; i += BATCH_SZ) batches.push(queue.slice(i, i + BATCH_SZ));
 
@@ -1180,14 +1184,14 @@ async function main() {
         .select("id,slug,title,description,cover_url,type,status,language,tags,content")
         .in("id", ids);
 
-      if (!quizzes?.length) { console.log("  ⚠️  Quizzes não encontrados no Supabase"); continue; }
+      if (!quizzes?.length) { console.log("  ⚠️  Quizzes not found in Supabase"); continue; }
 
       const message = buildMessage(quizzes as Quiz[], bi + 1, batches.length, "refactor");
 
-      if (DRY_RUN) { console.log("  🔍 [DRY RUN] Pulando envio"); continue; }
+      if (DRY_RUN) { console.log("  🔍 [DRY RUN] skipping the send"); continue; }
 
-      // Retry com backoff para rate limit e timeout — mesmo mecanismo do modo normal,
-      // pra rodar desacompanhado por horas sem desistir no primeiro rate limit.
+      // Retry with backoff on rate limit and timeout — the same mechanism as normal mode,
+      // so it runs unattended for hours instead of giving up on the first rate limit.
       const MAX_RETRIES = 10; // backoff 2,4,6,8,10,12,14,16,18,20 min
       let attemptNum = 0;
       let entries: ReviewEntry[] | null = null;
@@ -1201,20 +1205,20 @@ async function main() {
           if (isRetryable) {
             attemptNum++;
             if (attemptNum > MAX_RETRIES) {
-              console.log(`\n⏸️  TIMEOUT/RATE LIMIT no refactor group ${bi + 1} (${MAX_RETRIES} tentativas esgotadas)`);
-              console.log(`   Progresso salvo no DB.`);
-              console.log(`   Retome com: npx tsx orchestrate.ts --refactor`);
+              console.log(`\n⏸️  TIMEOUT/RATE LIMIT on refactor group ${bi + 1} (${MAX_RETRIES} attempts exhausted)`);
+              console.log(`   Progress saved to the DB.`);
+              console.log(`   Resume with: npx tsx orchestrate.ts --refactor`);
               showStats(db_sq);
               await browser.close().catch(() => {});
               process.exit(0);
             }
             const waitMin = Math.min(2 * attemptNum, 20);
-            console.log(`\n  ⏸️  ${e.name} no refactor group ${bi + 1} (tentativa ${attemptNum}/${MAX_RETRIES}): ${e.message.slice(0, 60)}`);
-            console.log(`     Aguardando ${waitMin}min antes de tentar de novo...`);
+            console.log(`\n  ⏸️  ${e.name} on refactor group ${bi + 1} (attempt ${attemptNum}/${MAX_RETRIES}): ${e.message.slice(0, 60)}`);
+            console.log(`     Waiting ${waitMin}min before trying again...`);
             await sleep(waitMin * 60_000, waitMin * 60_000 + 10_000);
             continue;
           }
-          console.error(`  ❌ Erro: ${e.message}`);
+          console.error(`  ❌ Error: ${e.message}`);
           entries = null;
           break;
         }
@@ -1228,18 +1232,18 @@ async function main() {
           const result = await applyReview(db_sq, db, entry);
           if (result === "applied") {
             upsertQuiz(db_sq, entry.id, { status: "refactored" });
-            console.log(`  ✅ Refatorado e salvo`);
+            console.log(`  ✅ Refactored and saved`);
           } else {
-            console.log(`  ❌ Falhou`);
+            console.log(`  ❌ Failed`);
           }
         }
       }
 
       if (bi < batches.length - 1) {
         const delay = 3000 + Math.floor(Math.random() * 4000); // 3–7s entre grupos
-        process.stdout.write(`  ⏳ Aguardando ${Math.round(delay / 1000)}s...`);
+        process.stdout.write(`  ⏳ Waiting ${Math.round(delay / 1000)}s...`);
         await sleep(delay, delay);
-        console.log(" pronto");
+        console.log(" done");
       }
     }
 
@@ -1248,8 +1252,8 @@ async function main() {
     return;
   }
 
-  // ── --backfill-images: gera image_plan para quizzes já revisados que nunca ────
-  //    tiveram plano de imagem (lote processado antes dessa feature existir)
+  // ── --backfill-images: builds an image_plan for already-reviewed quizzes that ─
+  //    never got one (a batch processed before that feature existed)
   if (BACKFILL_IMAGES) {
     const allReviewed = db_sq
       .prepare("SELECT * FROM quiz_reviews WHERE status IN ('applied','refactored') AND review_json IS NOT NULL")
@@ -1261,8 +1265,8 @@ async function main() {
     if (LIMIT) targets = targets.slice(0, LIMIT);
 
     console.log(`\n🖼️  Funsona Quiz Orchestrator — BACKFILL IMAGE_PLAN`);
-    console.log(`   ${targets.length} quizzes revisados sem image_plan (de ${allReviewed.length} total)`);
-    if (!targets.length) { console.log("   Nada a fazer."); return; }
+    console.log(`   ${targets.length} reviewed quizzes with no image_plan (out of ${allReviewed.length} total)`);
+    if (!targets.length) { console.log("   Nothing to do."); return; }
 
     if (DRY_RUN) {
       targets.forEach((r) => console.log(`  - [${r.status}] ${r.new_title}`));
@@ -1272,7 +1276,7 @@ async function main() {
     const { browser, page } = await connectChrome();
     await ensureLoggedIn(page);
 
-    const IMG_BATCH_SZ = 5; // prompt bem mais leve que o review completo, dá pra agrupar mais
+    const IMG_BATCH_SZ = 5; // a much lighter prompt than the full review, so it can group more
     const batches: QuizRow[][] = [];
     for (let i = 0; i < targets.length; i += IMG_BATCH_SZ) batches.push(targets.slice(i, i + IMG_BATCH_SZ));
 
@@ -1291,11 +1295,11 @@ async function main() {
         .select("id,slug,title,description,cover_url,type,status,language,tags,content")
         .in("id", ids);
 
-      if (!quizzes?.length) { console.log("  ⚠️  Quizzes não encontrados no Supabase"); continue; }
+      if (!quizzes?.length) { console.log("  ⚠️  Quizzes not found in Supabase"); continue; }
 
       const message = buildImagePlanMessage(quizzes as Quiz[], bi + 1, batches.length);
 
-      if (DRY_RUN) { console.log("  🔍 [DRY RUN] Pulando envio"); continue; }
+      if (DRY_RUN) { console.log("  🔍 [DRY RUN] skipping the send"); continue; }
 
       const MAX_RETRIES = 10;
       let attemptNum = 0;
@@ -1310,18 +1314,18 @@ async function main() {
           if (isRetryable) {
             attemptNum++;
             if (attemptNum > MAX_RETRIES) {
-              console.log(`\n⏸️  TIMEOUT/RATE LIMIT no backfill group ${bi + 1} (${MAX_RETRIES} tentativas esgotadas)`);
-              console.log(`   Retome com: npx tsx orchestrate.ts --backfill-images`);
+              console.log(`\n⏸️  TIMEOUT/RATE LIMIT on backfill group ${bi + 1} (${MAX_RETRIES} attempts exhausted)`);
+              console.log(`   Resume with: npx tsx orchestrate.ts --backfill-images`);
               await browser.close().catch(() => {});
               process.exit(0);
             }
             const waitMin = Math.min(2 * attemptNum, 20);
-            console.log(`\n  ⏸️  ${e.name} no backfill group ${bi + 1} (tentativa ${attemptNum}/${MAX_RETRIES}): ${e.message.slice(0, 60)}`);
-            console.log(`     Aguardando ${waitMin}min antes de tentar de novo...`);
+            console.log(`\n  ⏸️  ${e.name} on backfill group ${bi + 1} (attempt ${attemptNum}/${MAX_RETRIES}): ${e.message.slice(0, 60)}`);
+            console.log(`     Waiting ${waitMin}min before trying again...`);
             await sleep(waitMin * 60_000, waitMin * 60_000 + 10_000);
             continue;
           }
-          console.error(`  ❌ Erro: ${e.message}`);
+          console.error(`  ❌ Error: ${e.message}`);
           entries = null;
           break;
         }
@@ -1331,7 +1335,7 @@ async function main() {
         for (const entry of entries) {
           const row = group.find((r) => r.id === entry.id);
           if (!row || !entry.image_plan) {
-            console.log(`  ⚠️  Resposta sem correspondência para id "${entry.id}"`);
+            console.log(`  ⚠️  Response has no match for id "${entry.id}"`);
             failed++;
             continue;
           }
@@ -1340,10 +1344,10 @@ async function main() {
             parsed.image_plan = entry.image_plan;
             upsertQuiz(db_sq, row.id, { review_json: JSON.stringify(parsed) });
             enqueueImagesFromPlan(row.id, entry.image_plan, row.recommended_unpublish === 1);
-            console.log(`  ✅ "${row.new_title?.slice(0, 55)}" — image_plan salvo e imagens enfileiradas`);
+            console.log(`  ✅ "${row.new_title?.slice(0, 55)}" — image_plan saved and images enqueued`);
             done++;
           } catch (e: any) {
-            console.log(`  ❌ Falha salvando "${row.id}": ${e.message}`);
+            console.log(`  ❌ Failed saving "${row.id}": ${e.message}`);
             failed++;
           }
         }
@@ -1351,26 +1355,26 @@ async function main() {
 
       if (bi < batches.length - 1) {
         const delay = 3000 + Math.floor(Math.random() * 4000);
-        process.stdout.write(`  ⏳ Aguardando ${Math.round(delay / 1000)}s...`);
+        process.stdout.write(`  ⏳ Waiting ${Math.round(delay / 1000)}s...`);
         await sleep(delay, delay);
-        console.log(" pronto");
+        console.log(" done");
       }
     }
 
     await browser.close().catch(() => {});
-    console.log(`\n🖼️  Backfill concluído: ${done} ok, ${failed} falhas`);
+    console.log(`\n🖼️  Backfill finished: ${done} ok, ${failed} failed`);
     return;
   }
 
-  // ── --fix-weights: redistribui outcomeWeights ruins via ChatGPT ───────────────
+  // ── --fix-weights: redistributes bad outcomeWeights through ChatGPT ──────────
   if (FIX_WEIGHTS) {
     const { data: allQuizzes } = await db.from("quizzes")
       .select("id,title,description,type,content").range(0, 999);
 
     const targets = detectBadWeightQuizzes((allQuizzes ?? []) as unknown as Quiz[]);
     console.log(`\n🔧 Funsona Quiz Orchestrator — FIX WEIGHTS`);
-    console.log(`   ${targets.length} quizzes com outcomeWeights ruins detectados`);
-    if (!targets.length) { console.log("   Nada a fazer."); return; }
+    console.log(`   ${targets.length} quizzes detected with bad outcomeWeights`);
+    if (!targets.length) { console.log("   Nothing to do."); return; }
 
     if (DRY_RUN) {
       targets.forEach((q) => console.log(`  - [${(q.content?.questions ?? []).length}q, ${(q.content?.outcomes ?? []).length} outcomes] ${q.title}`));
@@ -1384,7 +1388,7 @@ async function main() {
     for (let i = 0; i < targets.length; i++) {
       const quiz = targets[i];
       console.log(`\n${"─".repeat(60)}`);
-      console.log(`[${i + 1}/${targets.length}] "${quiz.title}" (${(quiz.content?.outcomes ?? []).length} outcomes, ${(quiz.content?.questions ?? []).length} perguntas)`);
+      console.log(`[${i + 1}/${targets.length}] "${quiz.title}" (${(quiz.content?.outcomes ?? []).length} outcomes, ${(quiz.content?.questions ?? []).length} questions)`);
 
       const message = buildFixWeightsMessage(quiz);
       let attemptNum = 0;
@@ -1398,7 +1402,7 @@ async function main() {
           const isRetryable = e.name === "RateLimitError" || e.name === "TimeoutError" || e.name === "ChatGPTErrorResponse" || e.message.includes("Timeout");
           if (isRetryable && ++attemptNum <= 10) {
             const waitMin = Math.min(2 * attemptNum, 20);
-            console.log(`  ⏸️  ${e.name} (tentativa ${attemptNum}/10) — aguardando ${waitMin}min...`);
+            console.log(`  ⏸️  ${e.name} (attempt ${attemptNum}/10) — waiting ${waitMin}min...`);
             await sleep(waitMin * 60_000, waitMin * 60_000 + 5000);
             continue;
           }
@@ -1410,7 +1414,7 @@ async function main() {
 
       try {
         await applyFixWeights(db, entries[0]);
-        console.log(`  ✅ Pesos redistribuídos`);
+        console.log(`  ✅ Weights redistributed`);
         fixed++;
       } catch (e: any) {
         console.error(`  ❌ ${e.message}`);
@@ -1422,19 +1426,19 @@ async function main() {
 
     await browser.close().catch(() => {});
     console.log(`\n${"═".repeat(60)}`);
-    console.log(`✅ ${fixed} corrigidos | ❌ ${failed} falhas`);
+    console.log(`✅ ${fixed} fixed | ❌ ${failed} failed`);
     return;
   }
 
-  // ── --fix-questions: gera perguntas para quizzes com <5 perguntas ─────────────
+  // ── --fix-questions: generates questions for quizzes with <5 questions ────────
   if (FIX_QUESTIONS) {
     const { data: allQuizzes } = await db.from("quizzes")
       .select("id,title,description,type,content").range(0, 999);
 
     const targets = detectFewQuestionQuizzes((allQuizzes ?? []) as unknown as Quiz[]);
     console.log(`\n🔧 Funsona Quiz Orchestrator — FIX QUESTIONS`);
-    console.log(`   ${targets.length} quizzes PERSONALITY com <5 perguntas`);
-    if (!targets.length) { console.log("   Nada a fazer."); return; }
+    console.log(`   ${targets.length} PERSONALITY quizzes with <5 questions`);
+    if (!targets.length) { console.log("   Nothing to do."); return; }
 
     if (DRY_RUN) {
       targets.forEach((q) => {
@@ -1468,7 +1472,7 @@ async function main() {
           const isRetryable = e.name === "RateLimitError" || e.name === "TimeoutError" || e.name === "ChatGPTErrorResponse" || e.message.includes("Timeout");
           if (isRetryable && ++attemptNum <= 10) {
             const waitMin = Math.min(2 * attemptNum, 20);
-            console.log(`  ⏸️  ${e.name} (tentativa ${attemptNum}/10) — aguardando ${waitMin}min...`);
+            console.log(`  ⏸️  ${e.name} (attempt ${attemptNum}/10) — waiting ${waitMin}min...`);
             await sleep(waitMin * 60_000, waitMin * 60_000 + 5000);
             continue;
           }
@@ -1482,7 +1486,7 @@ async function main() {
         await applyFixQuestions(db, entries[0]);
         const addedQ = entries[0].new_questions?.length ?? 0;
         const addedO = entries[0].new_outcomes?.length ?? 0;
-        console.log(`  ✅ +${addedQ} perguntas${addedO ? `, +${addedO} outcomes` : ""} gerados`);
+        console.log(`  ✅ +${addedQ} questions${addedO ? `, +${addedO} outcomes` : ""} generated`);
         fixed++;
       } catch (e: any) {
         console.error(`  ❌ ${e.message}`);
@@ -1494,11 +1498,11 @@ async function main() {
 
     await browser.close().catch(() => {});
     console.log(`\n${"═".repeat(60)}`);
-    console.log(`✅ ${fixed} corrigidos | ❌ ${failed} falhas`);
+    console.log(`✅ ${fixed} fixed | ❌ ${failed} failed`);
     return;
   }
 
-  // ── Modo normal: processar batches ────────────────────────────────────────────
+  // ── Normal mode: process the batches ──────────────────────────────────────────
 
   const { count: totalQuizzes } = await db.from("quizzes").select("*", { count: "exact", head: true });
   const TOTAL         = totalQuizzes ?? 769;
@@ -1509,8 +1513,8 @@ async function main() {
 
   const projectLabel = process.env.CHATGPT_PROJECT_URL ? ` → projeto: ${CHATGPT_BASE_URL.split("/").pop()}` : "";
   console.log(`\n🤖 Funsona Quiz Orchestrator${projectLabel}`);
-  console.log(`   ${TOTAL} quizzes | ${TOTAL_BATCHES} batches de ${BATCH_SZ}`);
-  console.log(`   Processando: ${startBatch}–${endBatch}`);
+  console.log(`   ${TOTAL} quizzes | ${TOTAL_BATCHES} batches of ${BATCH_SZ}`);
+  console.log(`   Processing: ${startBatch}–${endBatch}`);
   console.log(`   Refactor threshold: score ≤ ${REFACTOR_THRESHOLD}`);
   if (DRY_RUN)     console.log("   🔍 DRY RUN");
   if (SKIP_IMPORT) console.log("   ⏭️  SKIP IMPORT");
@@ -1531,14 +1535,14 @@ async function main() {
     console.log(`\n${"─".repeat(60)}`);
     console.log(`📦 Batch ${batchNum}/${TOTAL_BATCHES}  (quizzes ${offset + 1}–${Math.min(offset + BATCH_SZ, TOTAL)})`);
 
-    // Verificar se batch já está 100% aplicado no DB (pula se sim, a menos que --force)
+    // Check whether the batch is already 100% applied in the DB (skip it if so, unless --force)
     const batchRow = getBatch(db_sq, batchNum);
     if (batchRow?.status === "applied" && !FORCE) {
-      console.log(`  ✅ Já aplicado (DB) — use --force para reprocessar`);
+      console.log(`  ✅ Already applied (DB) — pass --force to reprocess`);
       continue;
     }
 
-    // Buscar quizzes no Supabase
+    // Fetch the quizzes from Supabase
     const { data: quizzes, error } = await db
       .from("quizzes")
       .select("id,slug,title,description,cover_url,type,status,language,tags,content")
@@ -1546,13 +1550,13 @@ async function main() {
       .range(offset, offset + BATCH_SZ - 1);
 
     if (error || !quizzes?.length) {
-      console.log(`  ⚠️  Sem dados nesse range`);
+      console.log(`  ⚠️  No data in that range`);
       continue;
     }
 
     upsertBatch(db_sq, batchNum, { quiz_count: quizzes.length, started_at: new Date().toISOString(), status: "exported" });
 
-    // Inicializar quizzes no DB se não existirem
+    // Seed the quizzes into the DB when they are not there yet
     for (const q of quizzes) {
       const existing = db_sq.prepare("SELECT id FROM quiz_reviews WHERE id = ?").get(q.id);
       if (!existing) {
@@ -1560,46 +1564,46 @@ async function main() {
       }
     }
 
-    // Verificar se já tem reviewed JSON salvo
+    // Check whether a reviewed JSON is already saved
     const existingFiles = await fs.readdir(BATCHES_DIR).catch(() => [] as string[]);
     const reviewedFile  = existingFiles.find((f) => f.includes(`B${bId}`) && f.endsWith("reviewed.json"));
 
     let entries: ReviewEntry[] | null = null;
 
     if (reviewedFile && !FORCE) {
-      console.log(`  ✅ Já tem reviewed.json: ${reviewedFile}`);
+      console.log(`  ✅ Already has reviewed.json: ${reviewedFile}`);
       const raw = await fs.readFile(path.join(BATCHES_DIR, reviewedFile), "utf-8");
       entries = JSON.parse(raw.replace(/^```(?:json)?\s*/im, "").replace(/\s*```\s*$/im, "").trim());
     } else {
-      // Montar mensagem
+      // Build the message
       const message  = buildMessage(quizzes as Quiz[], batchNum, TOTAL_BATCHES, "review");
       const date     = new Date().toISOString().slice(0, 10);
       const baseName = `funsona-quizzes-B${bId}de${bTotal}-${date}`;
       const mdPath   = path.join(BATCHES_DIR, `${baseName}.md`);
 
       await fs.writeFile(mdPath, message, "utf-8");
-      console.log(`  📄 Exportado: ${baseName}.md (${Math.round(message.length / 1024)}kb)`);
+      console.log(`  📄 Exported: ${baseName}.md (${Math.round(message.length / 1024)}kb)`);
       upsertBatch(db_sq, batchNum, { md_file: `${baseName}.md` });
 
       if (DRY_RUN) {
-        console.log(`  🔍 [DRY RUN] Pulando ChatGPT`);
+        console.log(`  🔍 [DRY RUN] skipping ChatGPT`);
         continue;
       }
 
-      // Retry com backoff para rate limit e timeout — roda desacompanhado por horas,
-      // então em vez de sair na primeira vez, espera e tenta de novo.
+      // Retry with backoff on rate limit and timeout — this runs unattended for
+      // hours, so instead of exiting on the first failure it waits and retries.
       const MAX_RETRIES = 10; // backoff 2,4,6,8,10,12,14,16,18,20 min
       let attemptNum = 0;
 
       while (true) {
         try {
           entries = await sendToChatGPT(page!, message, baseName);
-          console.log(`  🎯 ${entries.length} quizzes revisados pelo ChatGPT`);
+          console.log(`  🎯 ${entries.length} quizzes reviewed by ChatGPT`);
           upsertBatch(db_sq, batchNum, { status: "reviewed" });
 
           const reviewedPath = path.join(BATCHES_DIR, `${baseName}-reviewed.json`);
           await fs.writeFile(reviewedPath, JSON.stringify(entries, null, 2), "utf-8");
-          console.log(`  💾 Salvo: ${baseName}-reviewed.json`);
+          console.log(`  💾 Saved: ${baseName}-reviewed.json`);
           upsertBatch(db_sq, batchNum, { reviewed_file: `${baseName}-reviewed.json` });
           break;
         } catch (e: any) {
@@ -1607,20 +1611,20 @@ async function main() {
           if (isRetryable) {
             attemptNum++;
             if (attemptNum > MAX_RETRIES) {
-              console.log(`\n⏸️  TIMEOUT/RATE LIMIT no batch ${batchNum} (${MAX_RETRIES} tentativas esgotadas)`);
-              console.log(`   Progresso salvo no DB.`);
-              console.log(`   Retome com: npx tsx orchestrate.ts --start ${batchNum} --end ${endBatch}`);
+              console.log(`\n⏸️  TIMEOUT/RATE LIMIT on batch ${batchNum} (${MAX_RETRIES} attempts exhausted)`);
+              console.log(`   Progress saved to the DB.`);
+              console.log(`   Resume with: npx tsx orchestrate.ts --start ${batchNum} --end ${endBatch}`);
               showStats(db_sq);
               if (browser) await browser.close().catch(() => {});
               process.exit(0);
             }
             const waitMin = Math.min(2 * attemptNum, 20);
-            console.log(`\n  ⏸️  ${e.name} no batch ${batchNum} (tentativa ${attemptNum}/${MAX_RETRIES}): ${e.message.slice(0, 60)}`);
-            console.log(`     Aguardando ${waitMin}min antes de tentar de novo...`);
+            console.log(`\n  ⏸️  ${e.name} on batch ${batchNum} (attempt ${attemptNum}/${MAX_RETRIES}): ${e.message.slice(0, 60)}`);
+            console.log(`     Waiting ${waitMin}min before trying again...`);
             await sleep(waitMin * 60_000, waitMin * 60_000 + 10_000);
             continue;
           }
-          console.error(`  ❌ Erro no ChatGPT: ${e.message}`);
+          console.error(`  ❌ ChatGPT error: ${e.message}`);
           upsertBatch(db_sq, batchNum, { status: "error", error: e.message });
           entries = null;
           break;
@@ -1631,7 +1635,7 @@ async function main() {
     }
 
     if (SKIP_IMPORT || !entries) {
-      console.log(`  ⏭️  Import pulado (--skip-import)`);
+      console.log(`  ⏭️  Import skipped (--skip-import)`);
       continue;
     }
 
@@ -1649,14 +1653,14 @@ async function main() {
 
       if (entry.issues?.some((iss) => iss.includes("RECOMENDO_DESPUBLICAR"))) {
         toUnpublishList.push({ id: entry.id, title: entry.new_title });
-        console.log(`       🚨 RECOMENDADO DESPUBLICAR`);
+        console.log(`       🚨 RECOMMENDED FOR UNPUBLISHING`);
       }
       if (score <= REFACTOR_THRESHOLD) {
-        console.log(`       🔴 Score baixo → entrará na fila de refactor`);
+        console.log(`       🔴 Low score → goes into the refactor queue`);
       }
 
       const result = await applyReview(db_sq, db, entry);
-      if (result === "applied") { applied++; console.log(`       ✅ Salvo`); }
+      if (result === "applied") { applied++; console.log(`       ✅ Saved`); }
       else if (result === "failed") { failed++; }
       else skipped++;
     }
@@ -1666,23 +1670,23 @@ async function main() {
     totalSkipped += skipped;
 
     upsertBatch(db_sq, batchNum, { status: "applied", completed_at: new Date().toISOString() });
-    console.log(`  → ${applied} aplicados | ${failed} falhas | ${skipped} pulados`);
+    console.log(`  → ${applied} applied | ${failed} failed | ${skipped} skipped`);
 
-    // Delay aleatório entre batches (3–8 segundos) — comportamento humano
+    // Random delay between batches (3–8 seconds) — human-like pacing
     if (batchNum < endBatch && !DRY_RUN) {
       const delay = 3000 + Math.floor(Math.random() * 5000);
-      process.stdout.write(`  ⏳ Aguardando ${Math.round(delay / 1000)}s antes do próximo batch... `);
+      process.stdout.write(`  ⏳ Waiting ${Math.round(delay / 1000)}s before the next batch... `);
       await sleep(delay, delay);
-      console.log("pronto");
+      console.log("done");
     }
   }
 
   // ── Summary ───────────────────────────────────────────────────────────────────
   console.log(`\n${"═".repeat(60)}`);
-  console.log(`✅ Concluído! ${totalApplied} aplicados | ${totalFailed} falhas | ${totalSkipped} pulados`);
+  console.log(`✅ Finished! ${totalApplied} applied | ${totalFailed} failed | ${totalSkipped} skipped`);
 
   if (toUnpublishList.length) {
-    console.log(`\n🚨 ${toUnpublishList.length} para DESPUBLICAR manualmente:`);
+    console.log(`\n🚨 ${toUnpublishList.length} to UNPUBLISH manually:`);
     toUnpublishList.forEach(({ id, title }) => console.log(`   - "${title.slice(0, 60)}" (${id})`));
   }
 
@@ -1691,10 +1695,10 @@ async function main() {
   const nextBatch = endBatch + 1;
   if (nextBatch <= TOTAL_BATCHES) {
     const end = Math.min(nextBatch + 9, TOTAL_BATCHES);
-    console.log(`▶  Próximo: npx tsx orchestrate.ts --start ${nextBatch} --end ${end}`);
+    console.log(`▶  Next: npx tsx orchestrate.ts --start ${nextBatch} --end ${end}`);
     const refStats = getStats(db_sq);
     if (refStats.refactor > 0) {
-      console.log(`🔁 Refactor pendente: npx tsx orchestrate.ts --refactor   (${refStats.refactor} quizzes)`);
+      console.log(`🔁 Refactor pending: npx tsx orchestrate.ts --refactor   (${refStats.refactor} quizzes)`);
     }
   }
 

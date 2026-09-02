@@ -1,133 +1,133 @@
-# Report de Bugs - FunSona v2
+# Bug Report - FunSona v2
 
-## Contexto
-Este relatório consolida a análise do código-fonte do FunSona v2, identificando bugs, problemas de segurança e inconsistências encontrados durante a inspeção.
+## Context
+This report consolidates the FunSona v2 source review, listing the bugs, security problems and inconsistencies found during the inspection.
 
-## Bugs Críticos
+## Critical Bugs
 
-### 1. Desalinhamento entre `apiFetch` e Rotas da API
-**Local:** `apps/web/src/lib/api.ts` e rotas da API (`apps/api/src/routes/*`)
+### 1. Mismatch between `apiFetch` and the API Routes
+**Where:** `apps/web/src/lib/api.ts` and the API routes (`apps/api/src/routes/*`)
 
-**Descrição:** A função `apiFetch` no frontend espera que a resposta tenha propriedades `error` e `data` no topo, mas as rotas da API retornam um wrapper `{ success, data, error, meta }`. Isso causa falha em verificações como `if (res.error)`.
+**Description:** the `apiFetch` function on the frontend expects the response to carry `error` and `data` as top-level properties, but the API routes return a `{ success, data, error, meta }` wrapper. That makes checks like `if (res.error)` fail.
 
-**Impacto:** Qualquer componente que use `apiFetch` (ex: `og/[slug].ts`) terá comportamento incorreto ao processar erros.
+**Impact:** any component using `apiFetch` (e.g. `og/[slug].ts`) handles errors incorrectly.
 
-**Exemplo no arquivo `apps/web/src/pages/og/[slug].ts`:**
+**Example in `apps/web/src/pages/og/[slug].ts`:**
 ```typescript
-if (!res || res.error || !res.data) { // res.error é undefined
+if (!res || res.error || !res.data) { // res.error is undefined
   return new Response("Quiz not found", { status: 404 });
 }
 ```
 
-**Solução:** Ajustar `apiFetch` para extrair o campo `error` do wrapper, ou ajustar as rotas da API para retornar um formato diferente. A primeira opção é menos invasiva.
+**Fix:** either make `apiFetch` unwrap the `error` field from the wrapper, or change the API routes to return a different shape. The first option is less invasive.
 
-### 2. Uso Incorreto de `.single()` em Queries que Podem Não Retornar Resultados
-**Local:** `apps/api/src/routes/quizzes.ts` (linhas 263, 310, 346, 475)
+### 2. Incorrect Use of `.single()` on Queries That May Return Nothing
+**Where:** `apps/api/src/routes/quizzes.ts` (lines 263, 310, 346, 475)
 
-**Descrição:** O uso de `.single()` sem garantir que há resultado causa exceções quando o registro não existe.
+**Description:** using `.single()` without guaranteeing there is a row raises an exception when the record does not exist.
 
-**Impacto:** A aplicação pode crashar em cenários de slug inválido, quiz inexistente ou like não encontrado.
+**Impact:** the application can crash on an invalid slug, a missing quiz, or a like that is not found.
 
-**Solução:** Substituir por `.maybe().first()` ou verificar se o resultado existe antes de acessar.
+**Fix:** replace it with `.maybe().first()`, or check that the result exists before reading it.
 
-### 3. Duplicação de Incremento de `attempts_count` para Usuários Autenticados
-**Local:** `apps/api/src/routes/quizzes.ts` (linha 409) e trigger `handle_quiz_result` (migration `003_functions.sql`)
+### 3. Duplicated `attempts_count` Increment for Authenticated Users
+**Where:** `apps/api/src/routes/quizzes.ts` (line 409) and the `handle_quiz_result` trigger (migration `003_functions.sql`)
 
-**Descrição:** O trigger incrementa `attempts_count` e `completions_count` ao inserir um resultado. A rota `POST /:id/results` também chama `increment_quiz_attempts` após a inserção, causando duplicação.
+**Description:** the trigger increments `attempts_count` and `completions_count` when a result is inserted. The `POST /:id/results` route also calls `increment_quiz_attempts` after the insert, so it happens twice.
 
-**Impacto:** Contagens de jogadas ficarão infladas para usuários autenticados.
+**Impact:** play counts come out inflated for authenticated users.
 
-**Solução:** Remover a chamada `increment_quiz_attempts` da rota, pois o trigger já cuida disso. Para não autenticados (user_id NULL), o trigger não é acionado, então a chamada deve permanecer apenas nesse fluxo.
+**Fix:** drop the `increment_quiz_attempts` call from the route, since the trigger already handles it. For anonymous users (user_id NULL) the trigger does not fire, so the call should remain only on that path.
 
-### 4. Coluna `search_vector` Inexistente
-**Local:** `apps/api/src/routes/quizzes.ts` (linha 128)
+### 4. Missing `search_vector` Column
+**Where:** `apps/api/src/routes/quizzes.ts` (line 128)
 
-**Descrição:** A query `.textSearch("search_vector", ...)` pressupõe a existência de uma coluna `search_vector` do tipo `tsvector`. A migration 001_schema.sql não cria essa coluna.
+**Description:** the `.textSearch("search_vector", ...)` query assumes a `search_vector` column of type `tsvector` exists. Migration 001_schema.sql does not create it.
 
-**Impacto:** A funcionalidade de busca por texto falhará.
+**Impact:** full-text search does not work.
 
-**Solução:** Adicionar a coluna `search_vector` e um índice GIN na tabela `quizzes`, e criar uma função para atualizá-la com base nos campos relevantes (título, descrição, tags).
+**Fix:** add the `search_vector` column and a GIN index on the `quizzes` table, plus a function that keeps it up to date from the relevant fields (title, description, tags).
 
-## Problemas de Segurança e Configuração
+## Security and Configuration Problems
 
-### 5. Possível Problema de CORS no Middleware do Astro
-**Local:** `apps/web/src/middleware.ts`
+### 5. Possible CORS Problem in the Astro Middleware
+**Where:** `apps/web/src/middleware.ts`
 
-**Descrição:** O fetch para `/api/auth/me` não inclui credenciais por padrão. Em desenvolvimento (frontend e API em portas diferentes), o cookie `FunSona_session` (httpOnly) pode não ser enviado, invalidando a sessão.
+**Description:** the fetch to `/api/auth/me` does not include credentials by default. In development (frontend and API on different ports) the httpOnly `FunSona_session` cookie may not be sent, which invalidates the session.
 
-**Impacto:** Usuários podem ser redirecionados incorretamente para login mesmo estando autenticados.
+**Impact:** users can be redirected to login even while authenticated.
 
-**Solução:** Garantir que o fetch inclua `credentials: "include"` ou ajustar a configuração de CORS na API para permitir o compartilhamento de cookies.
+**Fix:** make the fetch pass `credentials: "include"`, or adjust the API's CORS configuration to allow the cookie to be shared.
 
-### 6. Falta de Verificação de Email Verificado no Login
-**Local:** `apps/api/src/routes/auth.ts` (linha 117-124)
+### 6. Login Does Not Check Whether the Email Is Verified
+**Where:** `apps/api/src/routes/auth.ts` (lines 117-124)
 
-**Descrição:** A rota `/login` permite acesso mesmo se o email não foi verificado.
+**Description:** the `/login` route grants access even when the email has not been verified.
 
-**Impacto:** Dependendo dos requisitos de segurança, isso pode permitir acesso não autorizado.
+**Impact:** depending on the security requirements, this can allow unauthorized access.
 
-**Solução:** Adicionar verificação de `email_verified` no Supabase Auth antes de emitir token.
+**Fix:** check `email_verified` in Supabase Auth before issuing a token.
 
-### 7. Inconsistência no Comprimento Máximo do `handle`
-**Local:** `apps/api/src/routes/auth.ts` (função `normalizeHandle`) e `@FunSona/shared` (schema)
+### 7. Inconsistent Maximum Length for `handle`
+**Where:** `apps/api/src/routes/auth.ts` (the `normalizeHandle` function) and `@FunSona/shared` (the schema)
 
-**Descrição:** `normalizeHandle` trunca em 24 caracteres, mas o schema permite até 30. Isso pode rejeitar handles válidos.
+**Description:** `normalizeHandle` truncates at 24 characters, but the schema allows up to 30. That can reject valid handles.
 
-**Impacto:** Usuários podem falhar ao registrar handles com 25-30 caracteres que, após normalização, ficariam dentro do limite de 30.
+**Impact:** users can fail to register handles of 25-30 characters that would fall within the 30 limit after normalization.
 
-**Solução:** Ajustar `normalizeHandle` para truncar em 30 caracteres, ou ajustar o schema para 24.
+**Fix:** either make `normalizeHandle` truncate at 30 characters, or lower the schema to 24.
 
-### 8. RLS Pode Não Estar Habilitado Corretamente
-**Local:** `supabase/migrations/002_rls.sql`
+### 8. RLS May Not Be Enabled Correctly
+**Where:** `supabase/migrations/002_rls.sql`
 
-**Descrição:** As policies são criadas, mas é necessário garantir que o Supabase ative o RLS nas tabelas. Além disso, as policies pressupõem que `auth.uid()` está disponível, o que requer configuração do Supabase.
+**Description:** the policies are created, but RLS still has to be turned on for the tables in Supabase. The policies also assume `auth.uid()` is available, which requires Supabase configuration.
 
-**Impacto:** A segurança por linha (RLS) pode não estar efetivamente ativa, expondo dados.
+**Impact:** row-level security may not actually be active, exposing data.
 
-**Solução:** Verificar se o RLS está habilitado e se as policies estão sendo aplicadas corretamente.
+**Fix:** verify that RLS is enabled and that the policies are being applied.
 
-## Outros Problemas
+## Other Problems
 
-### 9. Tratamento de Erros em `apiFetch`
-**Local:** `apps/web/src/lib/api.ts`
+### 9. Error Handling in `apiFetch`
+**Where:** `apps/web/src/lib/api.ts`
 
-**Descrição:** Se a resposta não for JSON (ex: 500 com HTML), `res.json().catch(() => null)` retorna `null`, e o erro retornado será `HTTP ${res.status}` sem detalhes.
+**Description:** when the response is not JSON (e.g. a 500 with an HTML body), `res.json().catch(() => null)` returns `null`, and the error surfaced is just `HTTP ${res.status}` with no detail.
 
-**Impacto:** Dificulta o diagnóstico de erros do servidor.
+**Impact:** server errors are harder to diagnose.
 
-**Solução:** Considerar logar o corpo da resposta não JSON ou retornar uma mensagem mais descritiva.
+**Fix:** consider logging the non-JSON body, or returning a more descriptive message.
 
-### 10. Possível Vazamento de Informação em `robots.txt`
-**Local:** `apps/web/src/pages/robots.txt.ts`
+### 10. Possible Information Leak in `robots.txt`
+**Where:** `apps/web/src/pages/robots.txt.ts`
 
-**Descrição:** O `robots.txt` permite acesso a todas as páginas públicas, mas bloqueia `/api/` e `/quiz/*/play`. No entanto, o padrão `/quiz/*/play` pode não corresponder à rota real, que é `/quiz/[slug]/play`.
+**Description:** `robots.txt` allows every public page but blocks `/api/` and `/quiz/*/play`. The `/quiz/*/play` pattern may not match the real route, which is `/quiz/[slug]/play`.
 
-**Impacto:** Página de jogo podem ser indexadas indesejadamente.
+**Impact:** play pages may be indexed unintentionally.
 
-**Solução:** Ajustar o padrão para `/quiz/*/play` (já está correto) ou usar `/quiz/*/play` (regex). Verificar a rota real.
+**Fix:** adjust the pattern to `/quiz/*/play` (already correct) or use `/quiz/*/play` (regex). Check the real route.
 
-### 11. Limite de Paginação no Sitemap
-**Local:** `apps/web/src/pages/sitemap.xml.ts`
+### 11. Sitemap Pagination Limit
+**Where:** `apps/web/src/pages/sitemap.xml.ts`
 
-**Descrição:** O sitemap busca até 200 páginas de quizzes, com 200 itens por página. Se houver mais de 40.000 quizzes, eles não serão incluídos.
+**Description:** the sitemap fetches up to 200 pages of quizzes, at 200 items per page. Anything past 40,000 quizzes is left out.
 
-**Impacto:** SEO pode ser afetado se houver muitos quizzes.
+**Impact:** SEO can suffer once there are many quizzes.
 
-**Solução:** Aumentar `maxPages` e `limit` se necessário, ou implementar paginação no sitemap (mas sitemaps grandes são problemáticos).
+**Fix:** raise `maxPages` and `limit` if needed, or paginate the sitemap itself (though large sitemaps are awkward).
 
-## Recomendações de Prioridade
+## Priority Recommendations
 
-1. **Corrigir imediatamente:** Itens 1, 2 e 3 (críticos para funcionamento).
-2. **Corrigir em curto prazo:** Item 4 (busca) e 5 (CORS).
-3. **Revisar requisitos:** Itens 6, 7, 8 (segurança e configuração).
-4. **Melhorias:** Itens 9, 10, 11 (otimizações).
+1. **Fix immediately:** items 1, 2 and 3 (critical to basic operation).
+2. **Fix soon:** item 4 (search) and 5 (CORS).
+3. **Review the requirements:** items 6, 7, 8 (security and configuration).
+4. **Improvements:** items 9, 10, 11 (optimizations).
 
-## Próximos Passos
+## Next Steps
 
-1. **Planejar implementação:** Detalhar as alterações necessárias para cada bug.
-2. **Executar testes:** Garantir que as correções não quebrem funcionalidades existentes.
-3. **Revisar migrations:** Planejar adições ao schema (coluna `search_vector`) sem perder dados.
-4. **Testar em ambiente de desenvolvimento:** Validar fluxos de autenticação, busca e contagem de jogadas.
+1. **Plan the implementation:** spell out the changes needed for each bug.
+2. **Run tests:** make sure the fixes do not break existing behaviour.
+3. **Review migrations:** plan the schema additions (the `search_vector` column) without losing data.
+4. **Test in the development environment:** validate the auth, search and play-count flows.
 
 ---
-*Report gerado em: 2026-05-23*
+*Report generated on: 2026-05-23*

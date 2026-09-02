@@ -179,7 +179,7 @@ const pageNumbers = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
 <div class="sticky top-[5.8rem] z-30 border-b border-[var(--color-border)] bg-[var(--color-surface)]/90 backdrop-blur-md">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="flex items-center gap-3 overflow-x-auto py-3" style="scrollbar-width:none;-webkit-overflow-scrolling:touch">
-      <!-- "Todos" pill -->
+      <!-- "Todos" ("All") pill -->
       <a
         href={withParams("/explore", { sort, search })}
         data-astro-prefetch="viewport"

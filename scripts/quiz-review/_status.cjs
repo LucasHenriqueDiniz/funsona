@@ -10,7 +10,7 @@ const rows = db.prepare("SELECT review_json FROM quiz_reviews WHERE review_json 
 for (const r of rows) {
   try { if (JSON.parse(r.review_json).image_plan) withImagePlan++; } catch {}
 }
-console.log('quizzes com image_plan:', withImagePlan, '/', rows.length);
+console.log('quizzes with an image_plan:', withImagePlan, '/', rows.length);
 
 const imgDb = new Database('image-queue.db', { readonly: true });
 const qstats = imgDb.prepare("SELECT status, COUNT(*) c FROM image_queue GROUP BY status").all();

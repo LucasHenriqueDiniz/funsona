@@ -20,7 +20,7 @@ async function ensureDir(dir: string) {
 }
 
 async function generateImageSD(prompt: string, type: string, itemId: string): Promise<string> {
-  console.log(`  🎨 Gerando ${type}/${itemId}...`);
+  console.log(`  🎨 Generating ${type}/${itemId}...`);
 
   const res = await fetch(`${SD_URL}/sdapi/v1/txt2img`, {
     method: "POST",
@@ -45,7 +45,7 @@ async function generateImageSD(prompt: string, type: string, itemId: string): Pr
 
   const data = (await res.json()) as any;
   const b64 = data.images?.[0];
-  if (!b64) throw new Error("SD não retornou imagem");
+  if (!b64) throw new Error("SD returned no image");
 
   const buffer = Buffer.from(b64.replace(/^data:image\/\w+;base64,/, ""), "base64");
 
@@ -63,7 +63,7 @@ async function generateImageSD(prompt: string, type: string, itemId: string): Pr
   }
 
   await fs.writeFile(localPath, buffer);
-  console.log(`    ✅ Salvo: ${path.relative(process.cwd(), localPath)}`);
+  console.log(`    ✅ Saved: ${path.relative(process.cwd(), localPath)}`);
   return localPath;
 }
 
@@ -71,11 +71,11 @@ async function main() {
   const { data: quiz } = await supa.from("quizzes").select("*").eq("id", QUIZ_ID).single();
 
   if (!quiz) {
-    console.error("❌ Quiz não encontrado");
+    console.error("❌ Quiz not found");
     process.exit(1);
   }
 
-  console.log(`\n🧪 TEST: Gerando 6 imagens via Stable Diffusion Local\n`);
+  console.log(`\n🧪 TEST: generating 6 images through the local Stable Diffusion\n`);
   console.log(`   Quiz: "${quiz.title}"`);
   console.log(`   ID: ${QUIZ_ID}`);
   console.log(`   Destino: ${BASE_DIR}\n`);
@@ -122,8 +122,8 @@ async function main() {
   }
 
   console.log(`\n${"═".repeat(60)}`);
-  console.log(`✅ ${generated} imagens geradas | ❌ ${failed} falhas`);
-  console.log(`\n📁 Pasta: ${BASE_DIR}\n`);
+  console.log(`✅ ${generated} images generated | ❌ ${failed} failed`);
+  console.log(`\n📁 Directory: ${BASE_DIR}\n`);
 }
 
 main().catch(console.error);

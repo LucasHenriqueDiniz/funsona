@@ -1,5 +1,5 @@
-# Inicia o Chrome com remote debugging na porta 9222
-# Necessário para o orchestrate.ts conectar via CDP
+# Starts Chrome with remote debugging on port 9222
+# Required for orchestrate.ts to connect over CDP
 
 $chromePaths = @(
     "C:\Program Files\Google\Chrome\Application\chrome.exe",
@@ -10,18 +10,18 @@ $chromePaths = @(
 $chrome = $chromePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
 
 if (-not $chrome) {
-    Write-Error "Chrome nao encontrado. Instale o Chrome ou ajuste o caminho neste script."
+    Write-Error "Chrome not found. Install Chrome, or fix the path in this script."
     exit 1
 }
 
-# Usa um perfil separado para nao conflitar com o Chrome normal
+# Uses a separate profile so it does not clash with the everyday Chrome
 $debugProfile = "$env:TEMP\chrome-cdp-profile"
 
-Write-Host "Iniciando Chrome com remote debugging na porta 9222..."
-Write-Host "Perfil de debug: $debugProfile"
+Write-Host "Starting Chrome with remote debugging on port 9222..."
+Write-Host "Debug profile: $debugProfile"
 Write-Host ""
-Write-Host "Faca login no ChatGPT (chatgpt.com) nessa janela do Chrome."
-Write-Host "Depois rode: npx tsx orchestrate.ts"
+Write-Host "Log in to ChatGPT (chatgpt.com) in this Chrome window."
+Write-Host "Then run: npx tsx orchestrate.ts"
 
 Start-Process $chrome -ArgumentList `
     "--remote-debugging-port=9222",

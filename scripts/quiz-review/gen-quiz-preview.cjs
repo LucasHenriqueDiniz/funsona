@@ -15,7 +15,7 @@ function esc(s) {
 
 (async () => {
   const { data: quiz, error } = await db.from("quizzes").select("*").eq("id", id).single();
-  if (error || !quiz) { console.error("Quiz não encontrado:", error?.message); process.exit(1); }
+  if (error || !quiz) { console.error("Quiz not found:", error?.message); process.exit(1); }
 
   const content = quiz.content || {};
   const questions = content.questions || [];
@@ -24,7 +24,7 @@ function esc(s) {
 
   const questionsHtml = questions.map((q, qi) => `
     <div class="q-card">
-      <div class="q-num">Pergunta ${qi + 1} de ${questions.length}</div>
+      <div class="q-num">Question ${qi + 1} of ${questions.length}</div>
       ${q.imageUrl ? `<img class="q-img" src="${esc(q.imageUrl)}" />` : ""}
       <div class="q-text">${esc(q.title)}</div>
       <div class="q-options">
@@ -40,7 +40,7 @@ function esc(s) {
 
   const outcomesHtml = outcomes.map((o) => `
     <div class="outcome-card">
-      ${o.imageUrl ? `<img class="outcome-img" src="${esc(o.imageUrl)}" />` : `<div class="outcome-img placeholder">sem imagem</div>`}
+      ${o.imageUrl ? `<img class="outcome-img" src="${esc(o.imageUrl)}" />` : `<div class="outcome-img placeholder">no image</div>`}
       <div class="outcome-body">
         <div class="outcome-title">${esc(o.title)}</div>
         <div class="outcome-desc">${esc(o.description)}</div>
@@ -82,18 +82,18 @@ function esc(s) {
 <body>
   <div class="wrap">
     <div class="badge">${esc(quiz.type)} · ${esc(quiz.language)} · status: ${esc(quiz.status)}</div>
-    ${cover ? `<img class="cover" src="${esc(cover)}" />` : `<div class="cover placeholder">sem imagem de capa</div>`}
+    ${cover ? `<img class="cover" src="${esc(cover)}" />` : `<div class="cover placeholder">no cover image</div>`}
     <h1>${esc(quiz.title)}</h1>
     <div class="desc">${esc(quiz.description)}</div>
 
-    <h2>Perguntas (${questions.length})</h2>
+    <h2>Questions (${questions.length})</h2>
     ${questionsHtml}
 
-    ${outcomes.length ? `<h2>Resultados possíveis (${outcomes.length})</h2>${outcomesHtml}` : ""}
+    ${outcomes.length ? `<h2>Possible outcomes (${outcomes.length})</h2>${outcomesHtml}` : ""}
   </div>
 </body>
 </html>`;
 
   fs.writeFileSync("quiz-preview.html", html, "utf-8");
-  console.log("Gerado: quiz-preview.html →", quiz.title);
+  console.log("Generated: quiz-preview.html →", quiz.title);
 })();

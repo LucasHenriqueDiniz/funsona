@@ -31,7 +31,7 @@ of the data. Verified against the live Supabase project:
 | | |
 |---|---|
 | `profiles.email` | absent upstream — fill with `backfill-profile-emails.mjs` |
-| `quizzes.intro_content` | absent upstream → always NULL (the "Sobre este quiz" block never renders) |
+| `quizzes.intro_content` | absent upstream → always NULL (the "Sobre este quiz" ("About this quiz") block never renders) |
 | `quizzes.favorites_count` | absent upstream → 0 |
 | `quiz_favorites` | table absent upstream |
 | `quiz_slug_redirects` | table absent upstream — its Supabase migration was never applied |

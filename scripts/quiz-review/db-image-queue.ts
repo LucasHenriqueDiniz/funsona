@@ -32,8 +32,9 @@ export interface ImageQueueItem {
   local_path: string | null; // refactored-quizzes/{quiz_id}/...
 }
 
-// Negative prompt padrão — bloqueia conteúdo sexualizado/inadequado quando o
-// image_plan do ChatGPT não fornecer um específico para o item.
+// Default negative prompt — blocks sexualized/inappropriate content whenever
+// ChatGPT's image_plan does not supply one specific to the item. The prompt text
+// itself stays as written, because it is fed to the image model.
 export const DEFAULT_NEGATIVE_PROMPT =
   "text, words, letters, logo, watermark, signature, low quality, blurry, jpeg artifacts, " +
   "deformed, bad anatomy, extra fingers, extra limbs, missing fingers, distorted face, cropped head, " +
@@ -72,7 +73,7 @@ export function getImageQueueDb(): Database.Database {
     CREATE INDEX IF NOT EXISTS idx_quiz ON image_queue(quiz_id);
   `);
 
-  // Migração leve para DBs criados antes destas colunas existirem
+  // Light migration, for DBs created before these columns existed
   const cols = db.prepare("PRAGMA table_info(image_queue)").all() as Array<{ name: string }>;
   const colNames = new Set(cols.map((c) => c.name));
   const migrations: Array<[string, string]> = [

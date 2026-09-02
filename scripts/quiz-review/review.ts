@@ -116,9 +116,10 @@ interface ReviewResult {
 
 // ─── AI clients ───────────────────────────────────────────────────────────────
 
-// Google: chamada HTTP direta (v1beta) igual ao Tampermonkey — evita problemas de SDK desatualizado
-// gemini-2.0-flash: 10 req/min, 1500 req/dia (free tier) — adequado para 769 quizzes
-// gemini-2.5-flash: 5 req/min, 20 req/dia (free tier) — inviável para volume alto
+// Google: a direct HTTP call (v1beta), same as Tampermonkey — that avoids the
+// problems of an out-of-date SDK.
+// gemini-2.0-flash: 10 req/min, 1500 req/day (free tier) — enough for 769 quizzes
+// gemini-2.5-flash: 5 req/min, 20 req/day (free tier) — unworkable at this volume
 const GOOGLE_MODEL = "gemini-2.0-flash";
 
 let openrouterClient: OpenAI | null = null;
@@ -247,7 +248,7 @@ async function callGoogleDirect(prompt: string): Promise<string> {
       const body = await res.text();
       const delayMatch = body.match(/"retryDelay":"(\d+)s"/);
       const waitSec = delayMatch ? parseInt(delayMatch[1]) + 5 : 65;
-      process.stdout.write(`⏳ rate limit, aguardando ${waitSec}s... `);
+      process.stdout.write(`⏳ rate limit, waiting ${waitSec}s... `);
       await new Promise((r) => setTimeout(r, waitSec * 1000));
       continue;
     }
@@ -259,11 +260,11 @@ async function callGoogleDirect(prompt: string): Promise<string> {
 
     const data = (await res.json()) as any;
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) throw new Error("Google AI: resposta sem texto");
+    if (!text) throw new Error("Google AI: response carried no text");
     return text;
   }
 
-  throw new Error("Google AI: máximo de retries atingido após rate limit");
+  throw new Error("Google AI: retry limit reached after a rate limit");
 }
 
 async function reviewWithAI(quiz: Quiz): Promise<Omit<ReviewResult, "quiz_id" | "quiz_slug" | "quiz_title" | "quiz_type" | "quiz_status">> {
@@ -298,10 +299,10 @@ async function reviewWithAI(quiz: Quiz): Promise<Omit<ReviewResult, "quiz_id" | 
         return JSON.parse(match[0]);
       } catch {
         // Last resort: retry once with a stricter prompt
-        throw new Error(`JSON inválido retornado pela AI: ${cleaned.slice(0, 100)}`);
+        throw new Error(`The AI returned invalid JSON: ${cleaned.slice(0, 100)}`);
       }
     }
-    throw new Error(`Sem JSON na resposta da AI: ${cleaned.slice(0, 100)}`);
+    throw new Error(`No JSON in the AI response: ${cleaned.slice(0, 100)}`);
   }
 }
 
@@ -326,7 +327,7 @@ async function main() {
       .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
 
     if (error) {
-      console.error("❌ Erro ao buscar quizzes:", error.message);
+      console.error("❌ Failed to fetch quizzes:", error.message);
       process.exit(1);
     }
 
@@ -339,7 +340,7 @@ async function main() {
   console.log(`✅ ${allQuizzes.length} quizzes encontrados\n`);
 
   const results: ReviewResult[] = [];
-  // gemini-2.0-flash free tier: 10 req/min → 1 req a cada 7s para ficar seguro
+  // gemini-2.0-flash free tier: 10 req/min → 1 req every 7s to stay inside it
   const DELAY_MS = 7000;
 
   for (let i = 0; i < allQuizzes.length; i++) {
@@ -349,18 +350,18 @@ async function main() {
 
     try {
       if (!quiz.content?.questions?.length) {
-        console.log("⏭️  sem perguntas, pulando");
+        console.log("⏭️  no questions, skipping");
         results.push({
           quiz_id: quiz.id,
           quiz_slug: quiz.slug,
           quiz_title: quiz.title,
           quiz_type: quiz.type,
           quiz_status: quiz.status,
-          issues: ["Quiz sem perguntas"],
+          issues: ["Quiz has no questions"],
           missing_images: { cover: !quiz.cover_url, questions: [], options: [], outcomes: [] },
           suggestions: { title: quiz.title, description: quiz.description ?? "", questions: [], outcomes: [] },
           score: 0,
-          summary: "Quiz sem conteúdo de perguntas.",
+          summary: "Quiz has no question content.",
         });
         continue;
       }
@@ -391,14 +392,14 @@ async function main() {
       });
       console.log(`✅ score ${review!.score}/10`);
     } catch (err: any) {
-      console.log(`❌ erro: ${err.message}`);
+      console.log(`❌ error: ${err.message}`);
       results.push({
         quiz_id: quiz.id,
         quiz_slug: quiz.slug,
         quiz_title: quiz.title,
         quiz_type: quiz.type,
         quiz_status: quiz.status,
-        issues: ["Erro ao processar com AI"],
+        issues: ["Failed to process with the AI"],
         missing_images: { cover: !quiz.cover_url, questions: [], options: [], outcomes: [] },
         suggestions: { title: quiz.title, description: quiz.description ?? "", questions: [], outcomes: [] },
         score: 0,
@@ -430,29 +431,29 @@ async function main() {
   const errors = results.filter((r) => r.error);
   const avgScore = results.filter((r) => r.score > 0).reduce((a, b) => a + b.score, 0) / results.filter((r) => r.score > 0).length;
 
-  let md = `# Relatório de Revisão de Quizzes
-Data: ${new Date().toLocaleDateString("pt-BR")}
+  let md = `# Quiz Review Report
+Date: ${new Date().toLocaleDateString("pt-BR")}
 Provider: ${AI_PROVIDER === "google" ? "Google Gemini 1.5 Flash" : `OpenRouter (${OPENROUTER_MODEL})`}
 
-## Resumo Geral
+## Overview
 
-| Métrica | Valor |
+| Metric | Value |
 |---|---|
-| Total de quizzes | ${results.length} |
-| Score médio | ${avgScore.toFixed(1)}/10 |
-| Sem imagem de capa | ${noImage.length} |
-| Score baixo (≤5) | ${lowScore.length} |
-| Erros de processamento | ${errors.length} |
+| Total quizzes | ${results.length} |
+| Average score | ${avgScore.toFixed(1)}/10 |
+| Missing a cover image | ${noImage.length} |
+| Low score (≤5) | ${lowScore.length} |
+| Processing errors | ${errors.length} |
 
 ---
 
-## Quizzes sem Imagem de Capa (${noImage.length})
+## Quizzes Missing a Cover Image (${noImage.length})
 
-${noImage.map((r) => `- **${r.quiz_title}** (\`${r.quiz_slug}\`) — score ${r.score}/10`).join("\n") || "_Nenhum_"}
+${noImage.map((r) => `- **${r.quiz_title}** (\`${r.quiz_slug}\`) — score ${r.score}/10`).join("\n") || "_None_"}
 
 ---
 
-## Quizzes com Score Baixo ≤ 5 (${lowScore.length})
+## Quizzes Scoring ≤ 5 (${lowScore.length})
 
 ${
   lowScore
@@ -460,27 +461,27 @@ ${
     .map(
       (r) => `### ${r.quiz_title} — ${r.score}/10
 - **Slug:** \`${r.quiz_slug}\`
-- **Tipo:** ${r.quiz_type} | **Status:** ${r.quiz_status}
-- **Problemas:** ${r.issues.join(", ") || "nenhum"}
-- **Resumo:** ${r.summary}
+- **Type:** ${r.quiz_type} | **Status:** ${r.quiz_status}
+- **Issues:** ${r.issues.join(", ") || "none"}
+- **Summary:** ${r.summary}
 `
     )
-    .join("\n") || "_Nenhum_"
+    .join("\n") || "_None_"
 }
 
 ---
 
-## Todos os Quizzes
+## All Quizzes
 
 ${results
   .sort((a, b) => a.score - b.score)
   .map(
     (r) => `### [${r.score}/10] ${r.quiz_title}
-- **Slug:** \`${r.quiz_slug}\` | **Tipo:** ${r.quiz_type} | **Status:** ${r.quiz_status}
-- **Sem imagem:** capa=${r.missing_images.cover ? "❌" : "✅"} | perguntas sem img: ${r.missing_images.questions.length} | opções sem img: ${r.missing_images.options.length}
-- **Problemas:** ${r.issues.join("; ") || "nenhum"}
-- **Título sugerido:** ${r.suggestions.title !== r.quiz_title ? `_"${r.suggestions.title}"_` : "_sem alteração_"}
-- **Resumo:** ${r.summary}
+- **Slug:** \`${r.quiz_slug}\` | **Type:** ${r.quiz_type} | **Status:** ${r.quiz_status}
+- **Missing images:** cover=${r.missing_images.cover ? "❌" : "✅"} | questions with no image: ${r.missing_images.questions.length} | options with no image: ${r.missing_images.options.length}
+- **Issues:** ${r.issues.join("; ") || "none"}
+- **Suggested title:** ${r.suggestions.title !== r.quiz_title ? `_"${r.suggestions.title}"_` : "_unchanged_"}
+- **Summary:** ${r.summary}
 `
   )
   .join("\n")}
@@ -488,14 +489,14 @@ ${results
 
   await fs.writeFile(mdPath, md);
 
-  console.log(`\n📊 Relatório salvo em:`);
+  console.log(`\n📊 Report saved to:`);
   console.log(`   JSON: ${jsonPath}`);
   console.log(`   MD:   ${mdPath}`);
-  console.log(`\n📈 Score médio: ${avgScore.toFixed(1)}/10`);
-  console.log(`🖼️  Sem capa: ${noImage.length} quizzes`);
-  console.log(`⚠️  Score baixo (≤5): ${lowScore.length} quizzes`);
-  if (errors.length) console.log(`❌ Erros: ${errors.length} quizzes`);
-  console.log(`\n✅ Pronto! Revise o relatório .md e depois rode: tsx apply.ts --report exports/quiz-review-${timestamp}.json --dry-run`);
+  console.log(`\n📈 Average score: ${avgScore.toFixed(1)}/10`);
+  console.log(`🖼️  No cover: ${noImage.length} quizzes`);
+  console.log(`⚠️  Low score (≤5): ${lowScore.length} quizzes`);
+  if (errors.length) console.log(`❌ Errors: ${errors.length} quizzes`);
+  console.log(`\n✅ Done. Read the .md report, then run: tsx apply.ts --report exports/quiz-review-${timestamp}.json --dry-run`);
 }
 
 main().catch((err) => {
