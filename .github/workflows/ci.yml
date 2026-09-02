@@ -29,8 +29,11 @@ jobs:
 
       # O typecheck constroi packages/shared antes, porque apps/api importa o
       # dist dele e nao o source — sem isso um clone limpo falha com TS2307.
+      # Ele cobre TODO o workspace (`pnpm -r typecheck`), e por isso nao ha
+      # passo de build aqui: `pnpm -r build` roda `tsc --noEmit` em apps/api
+      # (que este passo ja faz), `tsc` em packages/shared (idem, na primeira
+      # metade) e `astro build` em apps/web — que o Cloudflare Pages constroi e
+      # publica a cada push, reportando como check no commit.
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Build
-        run: pnpm build
