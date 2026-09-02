@@ -313,7 +313,7 @@ async function main() {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  console.log("🔍 Buscando quizzes no Supabase...");
+  console.log("🔍 Fetching quizzes from Supabase...");
 
   const allQuizzes: Quiz[] = [];
   const PAGE_SIZE = 100;
@@ -337,7 +337,7 @@ async function main() {
     page++;
   }
 
-  console.log(`✅ ${allQuizzes.length} quizzes encontrados\n`);
+  console.log(`✅ ${allQuizzes.length} quizzes found\n`);
 
   const results: ReviewResult[] = [];
   // gemini-2.0-flash free tier: 10 req/min → 1 req every 7s to stay inside it
@@ -346,7 +346,7 @@ async function main() {
   for (let i = 0; i < allQuizzes.length; i++) {
     const quiz = allQuizzes[i];
     const prefix = `[${i + 1}/${allQuizzes.length}]`;
-    process.stdout.write(`${prefix} Revisando "${quiz.title}"... `);
+    process.stdout.write(`${prefix} Reviewing "${quiz.title}"... `);
 
     try {
       if (!quiz.content?.questions?.length) {

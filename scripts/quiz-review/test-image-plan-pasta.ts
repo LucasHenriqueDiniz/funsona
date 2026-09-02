@@ -95,7 +95,7 @@ async function fillTextarea(page: any, content: string, retries = 5): Promise<vo
 
   if (retries > 0) {
     console.log(`     ⏳ Textarea not there yet — waiting for the page to load (retries left: ${retries})...`);
-    console.log(`     URL atual: ${page.url()}`);
+    console.log(`     current URL: ${page.url()}`);
     await sleep(3000);
     return fillTextarea(page, content, retries - 1);
   }
@@ -158,13 +158,13 @@ async function generateImage(prompt: string, negativePrompt: string, settings: a
 }
 
 async function main() {
-  console.log(`\n🎨 TESTE: image_plan inteligente para "${QUIZ_ID}"\n`);
+  console.log(`\n🎨 TEST: smart image_plan for "${QUIZ_ID}"\n`);
 
   const { data: quiz } = await supa.from("quizzes").select("*").eq("id", QUIZ_ID).single();
   if (!quiz) throw new Error("Quiz not found");
 
   console.log(`Quiz: "${quiz.title}"`);
-  console.log(`Conectando ao Chrome via CDP...`);
+  console.log(`Connecting to Chrome over CDP...`);
 
   const browser = await chromium.connectOverCDP(CDP_URL);
   const ctx = browser.contexts()[0] ?? (await browser.newContext());
@@ -172,11 +172,11 @@ async function main() {
   let page = pages.find((p) => p.url().includes("chatgpt.com")) ?? pages[0];
   if (!page) page = await ctx.newPage();
 
-  console.log(`Aba atual: ${page.url()}`);
+  console.log(`Current tab: ${page.url()}`);
 
   const projectSlug = CHATGPT_PROJECT_URL.split("/").pop() ?? "";
   if (!page.url().includes(projectSlug)) {
-    console.log(`Navegando para o projeto...`);
+    console.log(`Navigating to the project...`);
     await page.goto(CHATGPT_PROJECT_URL, { waitUntil: "domcontentloaded", timeout: 30_000 });
   } else {
     console.log(`Already on the project page — reusing the tab.`);
@@ -223,7 +223,7 @@ async function main() {
     enqueueImage(db_img, QUIZ_ID, "outcome", `${o.outcome_key}_v2`, o.prompt, { negativePrompt, visualStyle: plan.visual_style, settings: plan.image_settings });
   }
 
-  // Gera as imagens agora (pasta v2/ para comparar lado a lado com as antigas)
+  // Generate the images now, into v2/ so they can be compared side by side with the old ones
   const v2Dir = path.join(BASE_DIR, "v2");
   await fs.mkdir(v2Dir, { recursive: true });
   await fs.mkdir(path.join(v2Dir, "questions"), { recursive: true });
