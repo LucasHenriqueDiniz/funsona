@@ -1,7 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import ExploreCatalog from "@/components/explore/ExploreCatalog.astro";
-import { getCategoryText, getExploreCategoryFromAnySlug } from "@/lib/exploreCategories";
+import { getCategoryText, getExploreCategoryFromAnySlug } from "@/lib/explore-categories";
 
 const slug = Astro.params.category;
 const category = getExploreCategoryFromAnySlug(slug);

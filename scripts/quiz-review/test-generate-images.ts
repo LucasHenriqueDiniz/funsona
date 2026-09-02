@@ -19,7 +19,7 @@ async function ensureDir(dir: string) {
 }
 
 async function generateImage(prompt: string, type: string, itemId: string): Promise<string> {
-  console.log(`  🎨 Gerando ${type}/${itemId}...`);
+  console.log(`  🎨 Generating ${type}/${itemId}...`);
 
   const response = await openai.images.generate({
     model: "dall-e-3",
@@ -30,10 +30,10 @@ async function generateImage(prompt: string, type: string, itemId: string): Prom
   });
 
   const imageUrl = response.data[0]?.url;
-  if (!imageUrl) throw new Error("DALL-E não retornou URL");
+  if (!imageUrl) throw new Error("DALL-E returned no URL");
 
   const imgRes = await fetch(imageUrl);
-  if (!imgRes.ok) throw new Error(`Falha ao baixar: ${imgRes.status}`);
+  if (!imgRes.ok) throw new Error(`Failed to download: ${imgRes.status}`);
   const buffer = Buffer.from(await imgRes.arrayBuffer());
 
   let localPath: string;
@@ -50,7 +50,7 @@ async function generateImage(prompt: string, type: string, itemId: string): Prom
   }
 
   await fs.writeFile(localPath, buffer);
-  console.log(`    ✅ Salvo: ${path.relative(process.cwd(), localPath)}`);
+  console.log(`    ✅ Saved: ${path.relative(process.cwd(), localPath)}`);
   return localPath;
 }
 
@@ -58,11 +58,11 @@ async function main() {
   const { data: quiz } = await supa.from("quizzes").select("*").eq("id", QUIZ_ID).single();
 
   if (!quiz) {
-    console.error("❌ Quiz não encontrado");
+    console.error("❌ Quiz not found");
     process.exit(1);
   }
 
-  console.log(`\n🧪 TEST: Gerando 15 imagens para "${quiz.title}"\n`);
+  console.log(`\n🧪 TEST: generating 15 images for "${quiz.title}"\n`);
   console.log(`   ID: ${QUIZ_ID}`);
   console.log(`   Destino: ${BASE_DIR}\n`);
 
@@ -108,8 +108,8 @@ async function main() {
   }
 
   console.log(`\n${"═".repeat(60)}`);
-  console.log(`✅ ${generated} imagens geradas | ❌ ${failed} falhas`);
-  console.log(`\n📁 Pasta: ${BASE_DIR}`);
+  console.log(`✅ ${generated} images generated | ❌ ${failed} failed`);
+  console.log(`\n📁 Directory: ${BASE_DIR}`);
   console.log(`\n🌐 Abra no navegador:`);
   console.log(`   file:///${BASE_DIR}`);
 }

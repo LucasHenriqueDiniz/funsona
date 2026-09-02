@@ -24,7 +24,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   process.exit(1);
 }
 
-// ─── Types (schema real do DB, migrado do v1) ─────────────────────────────────
+// ─── Types (the real DB schema, migrated from v1) ─────────────────────────────
 
 interface Answer {
   id: string;
@@ -213,7 +213,7 @@ async function main() {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  console.log(`📦 Exportando batch ${BATCH_NUM} (quizzes ${OFFSET + 1}–${OFFSET + BATCH_SIZE})...`);
+  console.log(`📦 Exporting batch ${BATCH_NUM} (quizzes ${OFFSET + 1}–${OFFSET + BATCH_SIZE})...`);
 
   const { data: quizzes, error } = await db
     .from("quizzes")
@@ -222,12 +222,12 @@ async function main() {
     .range(OFFSET, OFFSET + BATCH_SIZE - 1);
 
   if (error) { console.error("❌", error.message); process.exit(1); }
-  if (!quizzes?.length) { console.log("⚠️ Nenhum quiz nesse range."); return; }
+  if (!quizzes?.length) { console.log("⚠️ No quizzes in that range."); return; }
 
   const total = quizzes.length;
-  console.log(`✅ ${total} quizzes carregados`);
+  console.log(`✅ ${total} quizzes loaded`);
 
-  // Contar total de quizzes no banco para calcular total de batches
+  // Count every quiz in the database, to work out the total number of batches
   const { count } = await db.from("quizzes").select("*", { count: "exact", head: true });
   const TOTAL_QUIZZES  = count ?? 769;
   const TOTAL_BATCHES  = Math.ceil(TOTAL_QUIZZES / BATCH_SIZE);
@@ -263,15 +263,15 @@ async function main() {
 
   console.log(`\n📄 ${mdPath}`);
   console.log(`📊 ${total} quizzes | ${chars.toLocaleString()} chars | ~${tokens.toLocaleString()} tokens`);
-  console.log(`🖼️  Sem capa: ${nocover} | Sem descrição: ${nodesc}`);
-  console.log(`\n📋 Fluxo:`);
-  console.log(`   1. Abra    → batches/${baseName}.md`);
-  console.log(`   2. Cole tudo no ChatGPT`);
-  console.log(`   3. Salve a resposta → batches/${reviewedFile}`);
-  console.log(`   4. Teste   → npx tsx import-review.ts --file batches/${reviewedFile} --dry-run`);
-  console.log(`   5. Aplique → npx tsx import-review.ts --file batches/${reviewedFile}`);
-  console.log(`\n   Próximo  → npx tsx export-batch.ts --batch ${BATCH_NUM + 1} --size ${BATCH_SIZE}`);
-  console.log(`   Progresso: batch ${BATCH_NUM}/${TOTAL_BATCHES} (${BATCH_SIZE} quizzes cada)`);
+  console.log(`🖼️  No cover: ${nocover} | No description: ${nodesc}`);
+  console.log(`\n📋 Flow:`);
+  console.log(`   1. Open    → batches/${baseName}.md`);
+  console.log(`   2. Paste all of it into ChatGPT`);
+  console.log(`   3. Save the response → batches/${reviewedFile}`);
+  console.log(`   4. Test    → npx tsx import-review.ts --file batches/${reviewedFile} --dry-run`);
+  console.log(`   5. Apply   → npx tsx import-review.ts --file batches/${reviewedFile}`);
+  console.log(`\n   Next     → npx tsx export-batch.ts --batch ${BATCH_NUM + 1} --size ${BATCH_SIZE}`);
+  console.log(`   Progress: batch ${BATCH_NUM}/${TOTAL_BATCHES} (${BATCH_SIZE} quizzes each)`);
 }
 
 main().catch(console.error);

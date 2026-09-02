@@ -1,18 +1,19 @@
 # Docs
 
-Documentação técnica para agentes de IA trabalhando no FunSona v2.
+Technical documentation for AI agents working on FunSona v2.
 
-Estes arquivos são referenciados pelo `AGENTS.md`. Consulte-os conforme necessário durante o desenvolvimento.
+These files are referenced from `AGENTS.md`. Read them as needed while developing.
 
-## Arquivos
+## Files
 
-- `architecture.md` — Decisões técnicas, stack, diagramas, convenções. Leia antes de mudar infraestrutura.
-- `product.md` — Requisitos funcionais, escopo, fluxos de usuário. Leia antes de implementar features.
-- `roadmap.md` — Milestones e prioridades. Leia para saber o que implementar agora vs depois.
-- `research.md` — Benchmarks e investigações já feitas. Leia para não repetir pesquisas.
+- `architecture.md` — Technical decisions, stack, diagrams, conventions. Read before changing infrastructure.
+- `product.md` — Functional requirements, scope, user flows. Read before implementing features.
+- `roadmap.md` — Milestones and priorities. Read to find out what to implement now vs later.
+- `research.md` — Benchmarks and investigations already done. Read so you do not repeat research.
+- `production-readiness.md` — Release gates, smoke tests and rollback triggers for a production deploy.
 
-## Convenção
+## Convention
 
-- Sem frontmatter, sem wiki-links, sem formatação Obsidian.
-- Markdown puro, direto, orientado a ação.
-- Um conceito por seção. Máximo 500 linhas por arquivo.
+- No frontmatter, no wiki-links, no Obsidian formatting.
+- Plain markdown, direct, action-oriented.
+- One concept per section. 500 lines per file at most.

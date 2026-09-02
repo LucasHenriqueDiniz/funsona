@@ -1,105 +1,105 @@
-# Auditoria dos 769 quizzes publicados (Fase 1) — 2026-08-20
+# Audit of the 769 published quizzes (Phase 1) — 2026-08-20
 
-Somente leitura. Nada foi escrito no banco.
+Read-only. Nothing was written to the database.
 
-## Como os dados foram lidos
+## How the data was read
 
-`wrangler d1 execute funsona-db --remote` (produção, D1) — dump de
+`wrangler d1 execute funsona-db --remote` (production, D1) — a dump of
 `id, slug, title, description, cover_url, type, content, attempts_count,
-completions_count, created_at` para os 769 quizzes `status = 'PUBLISHED'`.
+completions_count, created_at` for the 769 quizzes with `status = 'PUBLISHED'`.
 
-O `content` foi parseado com os **mesmos acessadores legados que
-`QuizPlay.tsx` usa** (`question.title || question.text`, `question.options ||
-question.answers`, `option.label || option.text`, `option.imageUrl ||
-option.image_url`, `outcome.imageUrl || outcome.image_url`). Antes de rodar
-qualquer coisa em escala, confirmei numa amostra de 3 quizzes que `title` vem
-preenchido e `text` vem `null` — exatamente a armadilha que você descreveu.
-Confirmado, não é preciso reabrir essa discussão.
+`content` was parsed with **the same legacy accessors `QuizPlay.tsx` uses**
+(`question.title || question.text`, `question.options || question.answers`,
+`option.label || option.text`, `option.imageUrl || option.image_url`,
+`outcome.imageUrl || outcome.image_url`). Before running anything at scale, a
+sample of 3 quizzes confirmed that `title` comes populated and `text` comes back
+`null` — exactly the trap you described. Confirmed; that discussion does not
+need reopening.
 
-Todas as 9.110 URLs de imagem únicas (capa + perguntas + resultados) foram
-checadas via HTTP (HEAD, com fallback GET, 2 tentativas, timeout 10-20s).
+All 9,110 distinct image URLs (cover + questions + outcomes) were checked over
+HTTP (HEAD, with a GET fallback, 2 attempts, 10-20s timeout).
 
-## O que a auditoria encontrou — e o que NÃO encontrou
+## What the audit found — and what it did NOT find
 
-A hipótese de partida era "qualidade irregular" no conteúdo. O que o script
-mecânico encontrou foi bem mais estreito do que isso:
+The starting hypothesis was "uneven quality" in the content. What the mechanical
+script found is far narrower than that:
 
-- **0** quizzes sem perguntas, com pergunta de 1 opção, ou com poucas
-  perguntas demais.
-- **0** títulos vazios, **0** descrições vazias.
-- **0** vazamento de texto de IA (`as an AI`, markdown cru, `lorem ipsum`,
-  placeholders de prompt).
-- **628 dos 769 (82%)** não têm nenhum problema estrutural, de imagem ou de
-  duplicata — o único flag que carregam é `ZERO_ATTEMPTS`.
+- **0** quizzes with no questions, with a single-option question, or with too
+  few questions.
+- **0** empty titles, **0** empty descriptions.
+- **0** cases of AI text leaking through (`as an AI`, raw markdown, `lorem
+  ipsum`, prompt placeholders).
+- **628 of 769 (82%)** have no structural, image or duplicate problem at all —
+  the only flag they carry is `ZERO_ATTEMPTS`.
 
-Ou seja: **o conteúdo em si, estruturalmente, está OK na esmagadora maioria
-dos casos.** Isso muda a leitura do problema — "769 quizzes de qualidade
-irregular" não é o que os dados mostram. O que os dados mostram é um problema
-bem mais concentrado, descrito abaixo.
+In other words: **the content itself is structurally fine in the overwhelming
+majority of cases.** That changes the reading of the problem — "769 quizzes of
+uneven quality" is not what the data shows. What the data shows is a much more
+concentrated problem, described below.
 
-## Achados por categoria
+## Findings by category
 
-### A) Imagens
+### A) Images
 
-| categoria | quizzes afetados |
+| category | quizzes affected |
 |---|---|
-| Capa ausente | 2 |
-| Capa quebrada (URL responde erro) | 0 |
-| Pelo menos 1 imagem quebrada (pergunta/resultado) ou capa quebrada | 70 |
-| Pelo menos 1 imagem com **token de placeholder nunca resolvido** (ver abaixo) | 16 |
-| **União** (algum problema de imagem) | **70** |
+| Missing cover | 2 |
+| Broken cover (the URL errors) | 0 |
+| At least 1 broken image (question/outcome) or a broken cover | 70 |
+| At least 1 image with a **placeholder token that was never resolved** (see below) | 16 |
+| **Union** (any image problem) | **70** |
 
-**Achado não esperado:** 91 campos `image_url` em 16 quizzes não são URLs —
-são strings literais do tipo `%GIPHY: Neville Longbottom`, `%GIPHY: Kanye
-West`. Um pipeline de geração antigo deixou o placeholder de busca do Giphy
-sem nunca resolver para uma URL real. Esses 16 quizzes têm entre 2 e 18
-imagens quebradas cada — são os piores casos da auditoria (ver "20 piores"
-abaixo). Isso é bug de pipeline, não "imagem de baixa qualidade" — vale
-registrar separado porque a correção é diferente (script de resolução de
-placeholder, não geração de imagem nova).
+**Unexpected finding:** 91 `image_url` fields across 16 quizzes are not URLs —
+they are literal strings like `%GIPHY: Neville Longbottom` and `%GIPHY: Kanye
+West`. An old generation pipeline left the Giphy search placeholder behind
+without ever resolving it to a real URL. Those 16 quizzes carry between 2 and 18
+broken images each — they are the worst cases in the audit (see "20 worst"
+below). This is a pipeline bug, not a "low-quality image", and it is worth
+recording separately because the fix is different (a placeholder-resolution
+script, not generating new images).
 
-A classificação visual completa (`boa` / `generica` / `errada` — se a imagem
-faz sentido para o tema) **não foi feita para as 9.110 imagens** — isso exige
-julgamento visual por imagem, não é mecanizável em escala sem custo alto de
-tempo/tokens. O que o script cobre com certeza mecânica é `ausente` e
-`quebrada`. Se você quiser a classificação `boa/generica/errada`, ela precisa
-rodar como uma segunda passada, amostral ou completa — me diga o escopo antes
-de eu rodar (769 chamadas de análise de imagem tem custo real).
+The full visual classification (`good` / `generic` / `wrong` — whether the image
+suits the subject) **was not done for the 9,110 images** — that needs
+per-image visual judgement and is not mechanizable at scale without a high cost
+in time and tokens. What the script covers with mechanical certainty is
+`missing` and `broken`. If you want the `good/generic/wrong` classification, it
+has to run as a second pass, sampled or complete — tell me the scope before I
+run it (769 image-analysis calls carry a real cost).
 
-### B) Qualidade do conteúdo
+### B) Content quality
 
-| categoria | quizzes afetados |
+| category | quizzes affected |
 |---|---|
-| Sem perguntas / poucas perguntas (<4) | 0 |
-| Pergunta com <2 opções | 0 |
-| `PERSONALITY` com <2 resultados possíveis | 0 |
-| Resultado sem descrição (`RESULT_NO_DESC`) | 2 (mas com 56 ocorrências — são quizzes com dezenas de resultados possíveis, a maioria sem descrição) |
-| Possível truncamento (heurística: texto termina em `...` ou vírgula) | 30 — **heurística fraca, tem falso positivo**; recomendo tratar como "candidato a checar", não como fato |
-| Vazamento de texto de IA / markdown cru / placeholder de prompt | 0 |
-| Título duplicado dentro das próprias perguntas | 0 |
+| No questions / too few questions (<4) | 0 |
+| Question with <2 options | 0 |
+| `PERSONALITY` with <2 possible outcomes | 0 |
+| Outcome with no description (`RESULT_NO_DESC`) | 2 (but 56 occurrences — these are quizzes with dozens of possible outcomes, most of them without a description) |
+| Possible truncation (heuristic: the text ends in `...` or a comma) | 30 — **a weak heuristic, it has false positives**; treat these as "worth checking", not as fact |
+| AI text leak / raw markdown / prompt placeholder | 0 |
+| Title duplicated inside the quiz's own questions | 0 |
 
-### C) Sinais de descarte
+### C) Signals for retiring a quiz
 
-| categoria | quizzes afetados |
+| category | quizzes affected |
 |---|---|
-| `attempts_count = 0` | **718 de 769 (93%)** |
-| Duplicatas (do `duplicate-quizzes.md`, já auditado antes) | 22 (13 `paraphrased`, 9 `distinct-ish`) — release de dedup já mapeado, não refeito aqui |
+| `attempts_count = 0` | **718 of 769 (93%)** |
+| Duplicates (from `duplicate-quizzes.md`, audited earlier) | 22 (13 `paraphrased`, 9 `distinct-ish`) — the dedup release is already mapped, not redone here |
 
-`attempts_count = 0` em 93% dos quizzes é o maior número da tabela, mas por
-si só **não é evidência de baixa qualidade** — é exatamente o sintoma que
-motivou a auditoria (indexado, ignorado). Cortar com base nisso sozinho
-removeria quase tudo e não distingue "quiz ruim" de "quiz bom que nunca foi
-visto". Ele só vira sinal de corte **combinado** com outro problema real
-(imagem quebrada, duplicata).
+`attempts_count = 0` on 93% of the quizzes is the biggest number in the table,
+but on its own it is **not evidence of low quality** — it is precisely the
+symptom that prompted the audit (indexed, ignored). Cutting on that alone would
+remove nearly everything, and it does not separate "a bad quiz" from "a good
+quiz nobody ever saw". It only becomes a retirement signal **combined** with
+another real problem (a broken image, a duplicate).
 
-## Os 20 piores casos (por severidade combinada)
+## The 20 worst cases (by combined severity)
 
-Ranking por `severity_score` (pondera: zero plays, imagens quebradas ×1,
-placeholders não-resolvidos ×2, duplicata ×4, resultado sem descrição ×2,
-etc. — fórmula completa em `quiz-audit.json`, campo `severity_score`).
+Ranked by `severity_score` (weighting zero plays, broken images ×1, unresolved
+placeholders ×2, duplicate ×4, outcome with no description ×2, and so on — the
+full formula is in `quiz-audit.json`, field `severity_score`).
 
-1. `qual-personagem-de-star-wars-voce-e-teste-divertido` — 18 imagens com placeholder `%GIPHY` não resolvido, 0 plays
-2. `que-personagem-do-harry-potter-e-teste-de-personalidade` — 10 placeholders `%GIPHY`, 0 plays
+1. `qual-personagem-de-star-wars-voce-e-teste-divertido` — 18 images with an unresolved `%GIPHY` placeholder, 0 plays
+2. `que-personagem-do-harry-potter-e-teste-de-personalidade` — 10 `%GIPHY` placeholders, 0 plays
 3. `com-qual-celebridade-eu-me-pareco-questionario-divertido-sobre-sosias-de-celebridades` — 10 placeholders, 0 plays
 4. `qual-e-a-sua-cor-de-mms-descubra-sua-personalidade-mm` — 10 placeholders, 0 plays
 5. `qual-e-a-sua-cor-do-arco-iris` — 10 placeholders, 0 plays
@@ -107,56 +107,57 @@ etc. — fórmula completa em `quiz-audit.json`, campo `severity_score`).
 7. `qual-muppet-e-voce-descubra-seu-personagem-dos-muppets` — 7 placeholders, 0 plays
 8. `quao-ma-pessoa-voce-realmente-e` — 6 placeholders, 0 plays
 9. `devo-virar-vegano-quiz-para-descobrir` — 5 placeholders, 0 plays
-10. `qual-e-o-teu-digimon-descubra-seu-digimon-ideal` — 9 imagens quebradas (URL real, 404), 0 plays
+10. `qual-e-o-teu-digimon-descubra-seu-digimon-ideal` — 9 broken images (real URL, 404), 0 plays
 11. `qual-e-o-meu-superpoder` — 3 placeholders
-12. `quantas-pessoas-querem-que-voce-morra-descubra-seu-destino` — 3 imagens quebradas, 0 plays
-13. `o-que-diz-sua-mensagem-personalizada-de-biscoito-da-sorte-5` — 28 resultados sem descrição, duplicata (distinct-ish), 0 plays
+12. `quantas-pessoas-querem-que-voce-morra-descubra-seu-destino` — 3 broken images, 0 plays
+13. `o-que-diz-sua-mensagem-personalizada-de-biscoito-da-sorte-5` — 28 outcomes with no description, duplicate (distinct-ish), 0 plays
 14. `qual-personagem-de-gravity-falls-voce-e-descubra-seu-alter-ego` — 2 placeholders, 0 plays
 15. `qual-personagem-de-owl-house-voce-e-quiz-divertido-e-magico` — 2 placeholders, 0 plays
-16. `conseguimos-adivinhar-seu-personagem-favorito-de-one-piece-quiz-divertido` — 4 imagens quebradas, 0 plays
-17. `qual-e-o-seu-alinhamento-moral-1` — duplicata (paraphrased), 0 plays
-18. `descubra-se-voce-conhece-bem-o-nosso-planeta-5` — duplicata (distinct-ish), 0 plays
-19. `qual-e-o-meu-estilo-de-apego-5` — duplicata (distinct-ish), 0 plays
-20. `voce-e-kira-ou-l-5` — duplicata (distinct-ish), 0 plays
+16. `conseguimos-adivinhar-seu-personagem-favorito-de-one-piece-quiz-divertido` — 4 broken images, 0 plays
+17. `qual-e-o-seu-alinhamento-moral-1` — duplicate (paraphrased), 0 plays
+18. `descubra-se-voce-conhece-bem-o-nosso-planeta-5` — duplicate (distinct-ish), 0 plays
+19. `qual-e-o-meu-estilo-de-apego-5` — duplicate (distinct-ish), 0 plays
+20. `voce-e-kira-ou-l-5` — duplicate (distinct-ish), 0 plays
 
-## Minha recomendação de corte
+## My retirement recommendation
 
-**Não recomendo um corte em massa por `attempts_count = 0`.** Os dados não
-sustentam "769 quizzes de qualidade irregular" — sustentam um problema bem
-mais estreito: ~70 quizzes com imagem quebrada (dos quais 16 por um bug de
-pipeline específico, não falta de esforço) e 22 duplicatas já conhecidas.
+**I do not recommend a mass cut on `attempts_count = 0`.** The data does not
+support "769 quizzes of uneven quality" — it supports a much narrower problem:
+~70 quizzes with a broken image (16 of them from one specific pipeline bug, not
+from lack of effort) and 22 already-known duplicates.
 
-Critério que eu aplicaria:
+The criteria I would apply:
 
-1. **Arquivar as 13 duplicatas `paraphrased`** do `duplicate-quizzes.md` — já
-   auditadas, critério já validado antes (mesma contagem de perguntas, alta
-   similaridade). O script `cleanup-duplicate-quizzes.mjs` existe e já
-   escreve o redirect; só precisa ser retargetado para D1.
-2. **Não arquivar por imagem quebrada.** É corrigível (Fase 2) e não é culpa
-   do conteúdo do quiz — é ausência de asset. Faz mais sentido consertar do
-   que descartar 70 quizzes só por isso.
-3. **As 9 duplicatas `distinct-ish` ficam em aberto** — o `duplicate-quizzes.md`
-   já registrou que essa é uma decisão de julgamento, não mecânica. Eu não
-   arquivaria sem você olhar pelo menos os títulos/preview de cada par.
-4. **Nada mais no dataset justifica corte** por critério de conteúdo — a
-   auditoria não achou quizzes vazios, truncados ou com vazamento de prompt.
+1. **Archive the 13 `paraphrased` duplicates** from `duplicate-quizzes.md` —
+   already audited, with criteria already validated (identical question count,
+   high similarity). The `cleanup-duplicate-quizzes.mjs` script exists and
+   already writes the redirect; it only needs retargeting at D1.
+2. **Do not archive for a broken image.** That is fixable (Phase 2) and is not
+   the quiz content's fault — it is a missing asset. Fixing it makes more sense
+   than discarding 70 quizzes over it.
+3. **The 9 `distinct-ish` duplicates stay open** — `duplicate-quizzes.md`
+   already recorded that this is a judgement call, not a mechanical one. I would
+   not archive them without you looking at least at the titles/preview of each
+   pair.
+4. **Nothing else in the dataset justifies a cut** on content grounds — the
+   audit found no empty, truncated or prompt-leaking quizzes.
 
-Isso dá um corte inicial de **13 quizzes** (1,7% dos 769), não uma fatia
-grande. Se o objetivo é reduzir o índice do Google de forma mais agressiva
-porque a suspeita é "conteúdo raso demais mesmo quando estruturalmente OK",
-isso é uma decisão editorial sua, não algo que o script consiga provar — o
-conteúdo lido é estruturalmente válido em 82% dos casos.
+That gives an initial cut of **13 quizzes** (1.7% of 769), not a large slice. If
+the goal is to shrink the Google index more aggressively because the suspicion
+is "the content is too thin even when structurally fine", that is an editorial
+decision of yours, not something the script can prove — the content it read is
+structurally valid in 82% of cases.
 
-## Arquivos entregues
+## Files delivered
 
-- `quiz-audit.csv` — uma linha por quiz, todas as classificações mecânicas.
-- `quiz-audit.json` — mesmo dataset, com a lista completa de imagens
-  checadas por quiz (`images_to_check`) e o array de `flags`.
+- `quiz-audit.csv` — one row per quiz, with every mechanical classification.
+- `quiz-audit.json` — the same dataset, with the full list of images checked per
+  quiz (`images_to_check`) and the `flags` array.
 
-## O que fica pendente antes da Fase 2
+## What is still open before Phase 2
 
-- Classificação visual `boa/generica/errada` das imagens que carregam —
-  não feita aqui, precisa de escopo definido.
-- Decisão sobre os 9 pares `distinct-ish`.
-- Confirmar se você quer arquivar os 13 `paraphrased` agora ou junto com a
-  Fase 2 completa.
+- The `good/generic/wrong` visual classification of the images that do load —
+  not done here, needs a defined scope.
+- A decision on the 9 `distinct-ish` pairs.
+- Confirming whether you want the 13 `paraphrased` archived now, or together
+  with the full Phase 2.

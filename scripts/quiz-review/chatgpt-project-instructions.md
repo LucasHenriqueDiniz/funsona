@@ -1,11 +1,17 @@
-# Instruções para o ChatGPT Project — Funsona Quiz Review
+# ChatGPT Project instructions — Funsona Quiz Review
 
-> Cole estas instruções no campo "Instructions" do seu ChatGPT Project.
-> Após configurar, adicione a URL do projeto no `.env` como CHATGPT_PROJECT_URL.
+> Paste the block below into the "Instructions" field of your ChatGPT Project.
+> Once it is set up, add the project URL to `.env` as CHATGPT_PROJECT_URL.
+
+**The payload below stays in Portuguese on purpose.** It is a prompt, not prose:
+it is what makes the model write quiz titles, questions and outcomes in
+Brazilian Portuguese for a pt-BR audience, and it has to stay word-for-word in
+step with the prompts built in `orchestrate.ts` and `export-batch.ts`.
+Translating it would change what the model produces and desynchronize the two.
 
 ---
 
-## COLE ABAIXO NO CAMPO "Instructions" DO PROJETO:
+## PASTE EVERYTHING BELOW INTO THE PROJECT'S "Instructions" FIELD:
 
 ---
 
@@ -83,16 +89,17 @@ Quando receber `CRIE QUIZ: [tema] | [tipo: TRIVIA ou PERSONALITY] | [idioma]`, c
 
 ---
 
-## Como criar o projeto no ChatGPT
+## How to create the project in ChatGPT
 
-1. Vá em **chatgpt.com** → clique em "Explorar GPTs" ou no ícone de projetos
-2. Crie um novo **Projeto** (não GPT customizado)
-3. Cole as instruções acima em **"Instruções do projeto"** ou **"Instruções personalizadas"**
-4. Salve e copie a URL do projeto
-5. Adicione no `.env`:
+1. Go to **chatgpt.com** → click "Explore GPTs", or the projects icon
+2. Create a new **Project** (not a custom GPT)
+3. Paste the instructions above into **"Project instructions"** (or "Custom
+   instructions" — the label moves around)
+4. Save, and copy the project URL
+5. Add it to `.env`:
    ```
-   CHATGPT_PROJECT_URL=https://chatgpt.com/g/g-p-SEU-HASH-aqui
+   CHATGPT_PROJECT_URL=https://chatgpt.com/g/g-p-YOUR-HASH-here
    ```
 
-Com o projeto configurado, os prompts enviados pelo script serão muito menores
-(só "REVISE — Batch 001/257: [dados]") pois o projeto já sabe o que fazer.
+With the project configured, the prompts the script sends are far smaller (just
+`REVISE — Batch 001/257: [data]`), because the project already knows what to do.

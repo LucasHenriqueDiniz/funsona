@@ -8,15 +8,15 @@ export const DB_PATH = path.join(process.cwd(), "quiz-review.db");
 //                ↘ needs_refactor → refactored → applied
 //                                              → image_queued → image_done
 export type QuizStatus =
-  | "pending"        // nunca processado
-  | "reviewed"       // ChatGPT revisou, JSON salvo localmente
-  | "applied"        // salvo no Supabase
-  | "needs_refactor" // score <= REFACTOR_THRESHOLD, na fila para ser refeito
-  | "refactored"     // revisado novamente após flag
-  | "image_queued"   // precisa de imagem de capa
-  | "image_done"     // imagem gerada e salva
-  | "skip"           // ignorado manualmente
-  | "error";         // erro durante processamento
+  | "pending"        // never processed
+  | "reviewed"       // ChatGPT reviewed it, JSON saved locally
+  | "applied"        // saved to Supabase
+  | "needs_refactor" // score <= REFACTOR_THRESHOLD, queued to be redone
+  | "refactored"     // reviewed again after being flagged
+  | "image_queued"   // needs a cover image
+  | "image_done"     // image generated and saved
+  | "skip"           // skipped by hand
+  | "error";         // errored while processing
 
 export type BatchStatus = "pending" | "exported" | "reviewed" | "applied" | "error";
 

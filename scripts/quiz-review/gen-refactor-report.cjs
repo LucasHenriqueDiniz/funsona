@@ -49,10 +49,10 @@ const cards = rows.map((r, i) => {
       <div class="arrow">→</div>
       <div class="title-new">${esc(review.new_title)}</div>
     </div>
-    <div class="desc"><strong>Nova descrição:</strong> ${esc(review.new_description)}</div>
+    <div class="desc"><strong>New description:</strong> ${esc(review.new_description)}</div>
     ${review.summary ? `<div class="summary"><strong>Resumo do ChatGPT:</strong> ${esc(review.summary)}</div>` : ""}
     ${issues ? `<div class="issues"><strong>Issues:</strong><ul>${issues}</ul></div>` : ""}
-    ${questions ? `<details><summary>Perguntas (${(review.new_questions || []).length})</summary>${questions}</details>` : ""}
+    ${questions ? `<details><summary>Questions (${(review.new_questions || []).length})</summary>${questions}</details>` : ""}
     ${outcomes ? `<details><summary>Outcomes (${(review.new_outcomes || []).length})</summary>${outcomes}</details>` : ""}
   </div>`;
 }).join("\n");
@@ -61,7 +61,7 @@ const html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>Quizzes Refatorados — Revisão</title>
+<title>Refactored Quizzes — Review</title>
 <style>
   body { font-family: -apple-system, Segoe UI, Arial, sans-serif; background:#f4f4f7; margin:0; padding:20px; color:#222; }
   h1 { font-size: 22px; }
@@ -92,10 +92,10 @@ const html = `<!DOCTYPE html>
 </head>
 <body>
   <h1>Quizzes Refatorados</h1>
-  <div class="meta">${rows.length} quizzes na 2ª passada (refactor) — ordenados do mais recente pro mais antigo</div>
+  <div class="meta">${rows.length} quizzes in the 2nd pass (refactor) — newest first</div>
   ${cards}
 </body>
 </html>`;
 
 fs.writeFileSync("refactor-report.html", html, "utf-8");
-console.log("Gerado: refactor-report.html (" + rows.length + " quizzes)");
+console.log("Generated: refactor-report.html (" + rows.length + " quizzes)");

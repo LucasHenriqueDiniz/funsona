@@ -1,6 +1,6 @@
 # Dual watchdog: refactor + image generator
-# Roda ambos em paralelo com monitoramento a cada 30min, garantindo que o
-# Forge (Stable Diffusion) esteja sempre de pe antes do gerador de imagens rodar.
+# Runs both in parallel, health-checking every 30min, and makes sure
+# Forge (Stable Diffusion) is always up before the image generator runs.
 
 param(
     [int]$MaxHours = 11
@@ -59,7 +59,7 @@ function Start-Component {
 Write-Output "[$(Get-Date -Format 'HH:mm:ss')] === Dual Watchdog: Refactor + Images ==="
 Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Max duration: $MaxHours h, deadline: $($deadline.ToString('HH:mm:ss'))"
 
-# Componentes
+# Components
 $RefactorScript = "$ScriptDir\watchdog.ps1"
 $ImageScript = "$ScriptDir\image-generator-watchdog.ps1"
 $RefactorLog = "$ScriptDir\refactor-parallel.log"
@@ -67,16 +67,16 @@ $ImageLog = "$ScriptDir\image-generator-parallel.log"
 $RefactorPid = "$ScriptDir\refactor-parallel.pid"
 $ImagePid = "$ScriptDir\image-generator-parallel.pid"
 
-# Iniciar ambos
+# Start both
 Ensure-Chrome
 Ensure-Forge
 Start-Component "Refactor" $RefactorScript "-MaxHours $MaxHours" $RefactorLog $RefactorPid
 Start-Sleep -Seconds 3
 Start-Component "Image Generator" $ImageScript "-MaxHours $MaxHours" $ImageLog $ImagePid
 
-Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Ambos iniciados. Monitorando a cada 30min..."
+Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Both started. Health-checking every 30min..."
 
-# Monitoramento
+# Health checks
 $lastCheck = Get-Date
 while ((Get-Date) -lt $deadline) {
     $elapsed = (Get-Date) - $lastCheck
@@ -94,20 +94,20 @@ while ((Get-Date) -lt $deadline) {
         Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Forge API:      $(if ($forgeOk) { 'OK' } else { 'DOWN' })"
 
         if (-not $forgeOk) {
-            Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Reiniciando Forge..."
+            Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Restarting Forge..."
             Ensure-Forge
         }
         if (-not $refOk) {
-            Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Reiniciando Refactor..."
+            Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Restarting Refactor..."
             Ensure-Chrome
             Start-Component "Refactor" $RefactorScript "-MaxHours $MaxHours" $RefactorLog $RefactorPid
         }
         if (-not $imgOk) {
-            Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Reiniciando Image Generator..."
+            Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Restarting Image Generator..."
             Start-Component "Image Generator" $ImageScript "-MaxHours $MaxHours" $ImageLog $ImagePid
         }
 
-        Write-Output "[$(Get-Date -Format 'HH:mm:ss')] === FIM HEALTH CHECK ==="
+        Write-Output "[$(Get-Date -Format 'HH:mm:ss')] === END HEALTH CHECK ==="
         Write-Output ""
         $lastCheck = Get-Date
     }

@@ -74,7 +74,7 @@ async function uploadImagesForQuiz(quizId: string): Promise<{ banner?: string; q
 
     return urls;
   } catch (err) {
-    console.error(`Erro ao fazer upload de ${quizId}:`, err);
+    console.error(`Failed to upload ${quizId}:`, err);
     throw err;
   }
 }

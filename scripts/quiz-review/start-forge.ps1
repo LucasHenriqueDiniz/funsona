@@ -1,8 +1,8 @@
-# Sobe o Forge (Stable Diffusion WebUI) de forma confiável:
-# - usa SEMPRE o python do venv do Forge (nunca o Python do sistema, que não tem
-#   torch instalado e dispara reinstalação de ~2.4GB do zero)
-# - só retorna quando a API realmente responde (ou falha explicitamente)
-# - se já estiver rodando e saudável, não faz nada
+# Brings Forge (Stable Diffusion WebUI) up reliably:
+# - ALWAYS uses the python from Forge's venv, never the system Python, which has
+#   no torch installed and would kick off a ~2.4GB reinstall from scratch
+# - only returns once the API actually answers (or fails explicitly)
+# - does nothing when it is already running and healthy
 
 param(
     [int]$TimeoutSeconds = 180
@@ -21,28 +21,28 @@ function Test-ForgeHealthy {
 }
 
 if (Test-ForgeHealthy) {
-    Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Forge já está rodando e saudável."
+    Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Forge is already running and healthy."
     exit 0
 }
 
 if (-not (Test-Path $VenvPython)) {
-    Write-Output "[$(Get-Date -Format 'HH:mm:ss')] ❌ venv do Forge não encontrado em $VenvPython"
+    Write-Output "[$(Get-Date -Format 'HH:mm:ss')] ❌ Forge venv not found at $VenvPython"
     exit 1
 }
 
-# Mata qualquer processo python órfão do Forge antes de subir de novo
+# Kill any orphaned Forge python process before starting again
 Get-CimInstance Win32_Process -Filter "Name = 'python.exe'" -ErrorAction SilentlyContinue |
     Where-Object { $_.CommandLine -match "launch\.py" } |
     ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
 Start-Sleep -Seconds 2
 
-Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Subindo Forge com $VenvPython ..."
+Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Starting Forge with $VenvPython ..."
 
-# IMPORTANTE: redireciona stdout/stderr direto pra ARQUIVO (via Start-Process),
-# nao para um pipe .NET que precisa de alguem lendo em loop. Um pipe sem leitor
-# enche o buffer do SO e trava as escritas internas do processo Python, o que
-# se manifestava como erros aleatorios "OSError: [Errno 22] Invalid argument"
-# durante a geracao de imagens horas depois do Forge subir.
+# IMPORTANT: redirect stdout/stderr straight to a FILE (through Start-Process),
+# not to a .NET pipe that needs someone reading it in a loop. A pipe with no
+# reader fills the OS buffer and wedges the Python process's own writes, which
+# showed up as random "OSError: [Errno 22] Invalid argument" errors during image
+# generation, hours after Forge came up.
 if (Test-Path $LogFile) { Remove-Item $LogFile -Force }
 if (Test-Path "$LogFile.err") { Remove-Item "$LogFile.err" -Force }
 
@@ -54,21 +54,21 @@ $proc = Start-Process -FilePath $VenvPython `
     -WindowStyle Hidden `
     -PassThru
 
-Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Forge PID: $($proc.Id). Aguardando API (timeout ${TimeoutSeconds}s)..."
+Write-Output "[$(Get-Date -Format 'HH:mm:ss')] Forge PID: $($proc.Id). Waiting for the API (timeout ${TimeoutSeconds}s)..."
 
 $waited = 0
 while ($waited -lt $TimeoutSeconds) {
     Start-Sleep -Seconds 5
     $waited += 5
     if (Test-ForgeHealthy) {
-        Write-Output "[$(Get-Date -Format 'HH:mm:ss')] ✅ Forge pronto após ${waited}s."
+        Write-Output "[$(Get-Date -Format 'HH:mm:ss')] ✅ Forge ready after ${waited}s."
         exit 0
     }
     if ($proc.HasExited) {
-        Write-Output "[$(Get-Date -Format 'HH:mm:ss')] ❌ Processo do Forge morreu. Veja $LogFile"
+        Write-Output "[$(Get-Date -Format 'HH:mm:ss')] ❌ The Forge process died. See $LogFile"
         exit 1
     }
 }
 
-Write-Output "[$(Get-Date -Format 'HH:mm:ss')] ❌ Timeout esperando Forge subir (${TimeoutSeconds}s). Veja $LogFile"
+Write-Output "[$(Get-Date -Format 'HH:mm:ss')] ❌ Timed out waiting for Forge to come up (${TimeoutSeconds}s). See $LogFile"
 exit 1

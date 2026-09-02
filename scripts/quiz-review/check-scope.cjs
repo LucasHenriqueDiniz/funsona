@@ -14,14 +14,14 @@ const quizzesWithImages = fs.existsSync(refactDir)
     }).length
   : 0;
 
-console.log('=== FILA DE IMAGENS ===');
-console.log('Total de itens: ' + queueTotal);
-console.log('Quizzes únicos na fila: ' + queueQuizzes);
-console.log('Imagens geradas (done): ' + queueDone);
+console.log('=== IMAGE QUEUE ===');
+console.log('Total items: ' + queueTotal);
+console.log('Distinct quizzes in the queue: ' + queueQuizzes);
+console.log('Images generated (done): ' + queueDone);
 console.log('');
-console.log('=== QUIZZES COM IMAGENS ===');
-console.log('Quizzes com pasta: ' + quizzesWithImages);
+console.log('=== QUIZZES WITH IMAGES ===');
+console.log('Quizzes with a directory: ' + quizzesWithImages);
 console.log('');
-console.log('CONCLUSÃO:');
-console.log('Está gerando imagens para ' + queueQuizzes + ' quizzes específicos');
-console.log('(não para todos os 769 quizzes do projeto)');
+console.log('CONCLUSION:');
+console.log('It is generating images for ' + queueQuizzes + ' specific quizzes');
+console.log('(not for all 769 quizzes in the project)');

@@ -94,13 +94,13 @@ async function fillTextarea(page: any, content: string, retries = 5): Promise<vo
   }
 
   if (retries > 0) {
-    console.log(`     ⏳ Textarea não encontrado ainda — aguardando página carregar (retries left: ${retries})...`);
-    console.log(`     URL atual: ${page.url()}`);
+    console.log(`     ⏳ Textarea not there yet — waiting for the page to load (retries left: ${retries})...`);
+    console.log(`     current URL: ${page.url()}`);
     await sleep(3000);
     return fillTextarea(page, content, retries - 1);
   }
 
-  throw new Error(`Não encontrou o textarea do ChatGPT (URL: ${page.url()})`);
+  throw new Error(`Could not find ChatGPT's textarea (URL: ${page.url()})`);
 }
 
 async function clickSend(page: any): Promise<void> {
@@ -130,7 +130,7 @@ async function waitForResponse(page: any): Promise<string> {
   await sleep(1500);
   const msgs = page.locator("[data-message-author-role='assistant']");
   const count = await msgs.count();
-  if (count === 0) throw new Error("Nenhuma resposta do assistente");
+  if (count === 0) throw new Error("No assistant response");
   return await msgs.nth(count - 1).innerText();
 }
 
@@ -153,18 +153,18 @@ async function generateImage(prompt: string, negativePrompt: string, settings: a
   if (!res.ok) throw new Error(`SD HTTP ${res.status}: ${(await res.text()).slice(0, 150)}`);
   const data = (await res.json()) as any;
   const b64 = data.images?.[0];
-  if (!b64) throw new Error("SD não retornou imagem");
+  if (!b64) throw new Error("SD returned no image");
   await fs.writeFile(localPath, Buffer.from(b64, "base64"));
 }
 
 async function main() {
-  console.log(`\n🎨 TESTE: image_plan inteligente para "${QUIZ_ID}"\n`);
+  console.log(`\n🎨 TEST: smart image_plan for "${QUIZ_ID}"\n`);
 
   const { data: quiz } = await supa.from("quizzes").select("*").eq("id", QUIZ_ID).single();
-  if (!quiz) throw new Error("Quiz não encontrado");
+  if (!quiz) throw new Error("Quiz not found");
 
   console.log(`Quiz: "${quiz.title}"`);
-  console.log(`Conectando ao Chrome via CDP...`);
+  console.log(`Connecting to Chrome over CDP...`);
 
   const browser = await chromium.connectOverCDP(CDP_URL);
   const ctx = browser.contexts()[0] ?? (await browser.newContext());
@@ -172,14 +172,14 @@ async function main() {
   let page = pages.find((p) => p.url().includes("chatgpt.com")) ?? pages[0];
   if (!page) page = await ctx.newPage();
 
-  console.log(`Aba atual: ${page.url()}`);
+  console.log(`Current tab: ${page.url()}`);
 
   const projectSlug = CHATGPT_PROJECT_URL.split("/").pop() ?? "";
   if (!page.url().includes(projectSlug)) {
-    console.log(`Navegando para o projeto...`);
+    console.log(`Navigating to the project...`);
     await page.goto(CHATGPT_PROJECT_URL, { waitUntil: "domcontentloaded", timeout: 30_000 });
   } else {
-    console.log(`Já está na página do projeto — reaproveitando aba.`);
+    console.log(`Already on the project page — reusing the tab.`);
   }
   await page.bringToFront();
   await sleep(3000);
@@ -190,7 +190,7 @@ async function main() {
   await sleep(800);
   await clickSend(page);
 
-  console.log(`Aguardando resposta do ChatGPT...`);
+  console.log(`Waiting for ChatGPT's response...`);
   const rawText = await waitForResponse(page);
   console.log(`Resposta recebida (${rawText.length} chars)`);
 
@@ -204,13 +204,13 @@ async function main() {
   }
 
   await fs.writeFile(path.join(BASE_DIR, "image-plan.json"), JSON.stringify(plan, null, 2));
-  console.log(`\n✅ image_plan salvo em image-plan.json`);
+  console.log(`\n✅ image_plan saved to image-plan.json`);
   console.log(`   Estilo: ${plan.visual_style}`);
-  console.log(`   Estratégia: ${plan.image_generation_strategy}`);
+  console.log(`   Strategy: ${plan.image_generation_strategy}`);
 
   await browser.close();
 
-  // Enfileira no DB (registro, mesmo gerando direto abaixo)
+  // Enqueue it in the DB (for the record, even though we generate inline below)
   const db_img = getImageQueueDb();
   const negativePrompt = plan.negative_prompt || DEFAULT_NEGATIVE_PROMPT;
   if (plan.cover?.prompt) {
@@ -223,33 +223,33 @@ async function main() {
     enqueueImage(db_img, QUIZ_ID, "outcome", `${o.outcome_key}_v2`, o.prompt, { negativePrompt, visualStyle: plan.visual_style, settings: plan.image_settings });
   }
 
-  // Gera as imagens agora (pasta v2/ para comparar lado a lado com as antigas)
+  // Generate the images now, into v2/ so they can be compared side by side with the old ones
   const v2Dir = path.join(BASE_DIR, "v2");
   await fs.mkdir(v2Dir, { recursive: true });
   await fs.mkdir(path.join(v2Dir, "questions"), { recursive: true });
   await fs.mkdir(path.join(v2Dir, "outcomes"), { recursive: true });
 
-  console.log(`\n🖼️  Gerando imagens com prompts específicos...\n`);
+  console.log(`\n🖼️  Generating images from the item-specific prompts...\n`);
 
   if (plan.cover?.prompt) {
     console.log(`  🎨 banner (v2)...`);
     console.log(`     prompt: ${plan.cover.prompt.slice(0, 100)}...`);
     await generateImage(plan.cover.prompt, negativePrompt, plan.image_settings, path.join(v2Dir, "banner.png"));
-    console.log(`     ✅ salvo`);
+    console.log(`     ✅ saved`);
   }
 
   for (const [i, q] of (plan.questions ?? []).entries()) {
     console.log(`  🎨 question q${i + 1} (v2)...`);
     console.log(`     prompt: ${q.prompt.slice(0, 100)}...`);
     await generateImage(q.prompt, negativePrompt, plan.image_settings, path.join(v2Dir, "questions", `q${i + 1}.png`));
-    console.log(`     ✅ salvo`);
+    console.log(`     ✅ saved`);
   }
 
   for (const [i, o] of (plan.outcomes ?? []).entries()) {
     console.log(`  🎨 outcome outcome${i + 1} (v2)...`);
     console.log(`     prompt: ${o.prompt.slice(0, 100)}...`);
     await generateImage(o.prompt, negativePrompt, plan.image_settings, path.join(v2Dir, "outcomes", `outcome${i + 1}.png`));
-    console.log(`     ✅ salvo`);
+    console.log(`     ✅ saved`);
   }
 
   console.log(`\n${"═".repeat(60)}`);
@@ -257,6 +257,6 @@ async function main() {
 }
 
 main().catch((e) => {
-  console.error("❌ Erro:", e.message);
+  console.error("❌ Error:", e.message);
   process.exit(1);
 });

@@ -69,12 +69,14 @@ async function main() {
   if (onlyId) {
     results = results.filter((r) => r.quiz_id === onlyId);
     if (results.length === 0) {
-      console.error(`❌ Quiz ID "${onlyId}" não encontrado no relatório`);
+      console.error(`❌ Quiz ID "${onlyId}" not found in the report`);
       process.exit(1);
     }
   }
 
   if (skipNoImage) {
+    // "imagem" is matched as-is: review issues come back from the AI in the
+    // quiz's own language, and the prompt asks for Portuguese summaries.
     results = results.filter(
       (r) =>
         !r.missing_images.cover ||
@@ -86,9 +88,9 @@ async function main() {
   const toProcess = results.filter((r) => !r.error);
   const skipped = results.filter((r) => r.error);
 
-  console.log(`📋 ${toProcess.length} quizzes para processar${isDryRun ? " (DRY RUN — nada será salvo)" : ""}`);
-  if (skipped.length) console.log(`⏭️  ${skipped.length} pulados (erro na revisão)`);
-  if (onlyId) console.log(`🎯 Modo: apenas ID ${onlyId}`);
+  console.log(`📋 ${toProcess.length} quizzes to process${isDryRun ? " (DRY RUN — nothing will be saved)" : ""}`);
+  if (skipped.length) console.log(`⏭️  ${skipped.length} skipped (the review errored)`);
+  if (onlyId) console.log(`🎯 Mode: only ID ${onlyId}`);
   console.log("");
 
   const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -110,7 +112,7 @@ async function main() {
       .single();
 
     if (fetchError || !current) {
-      console.log(`  ❌ Erro ao buscar quiz: ${fetchError?.message}`);
+      console.log(`  ❌ Failed to fetch the quiz: ${fetchError?.message}`);
       failed++;
       continue;
     }
@@ -152,12 +154,12 @@ async function main() {
     const titleChanged = result.suggestions.title !== result.quiz_title;
     const questionsChanged = result.suggestions.questions.length > 0;
     const outcomesChanged = result.suggestions.outcomes.length > 0;
-    console.log(`  📝 Título: ${titleChanged ? `"${result.quiz_title}" → "${result.suggestions.title}"` : "sem alteração"}`);
-    console.log(`  📝 Perguntas: ${questionsChanged ? `${result.suggestions.questions.length} melhoradas` : "sem alteração"}`);
-    if (outcomesChanged) console.log(`  📝 Outcomes: ${result.suggestions.outcomes.length} melhorados`);
+    console.log(`  📝 Title: ${titleChanged ? `"${result.quiz_title}" → "${result.suggestions.title}"` : "unchanged"}`);
+    console.log(`  📝 Questions: ${questionsChanged ? `${result.suggestions.questions.length} improved` : "unchanged"}`);
+    if (outcomesChanged) console.log(`  📝 Outcomes: ${result.suggestions.outcomes.length} improved`);
 
     if (isDryRun) {
-      console.log(`  ✅ [DRY RUN] pulando gravação\n`);
+      console.log(`  ✅ [DRY RUN] skipping the write\n`);
       applied++;
       continue;
     }
@@ -168,17 +170,17 @@ async function main() {
       .eq("id", result.quiz_id);
 
     if (updateError) {
-      console.log(`  ❌ Erro ao atualizar: ${updateError.message}\n`);
+      console.log(`  ❌ Failed to update: ${updateError.message}\n`);
       failed++;
     } else {
-      console.log(`  ✅ Atualizado com sucesso\n`);
+      console.log(`  ✅ Updated successfully\n`);
       applied++;
     }
   }
 
   console.log("─".repeat(50));
-  console.log(`✅ Aplicados: ${applied} | ❌ Falhas: ${failed} | ⏭️  Pulados: ${skipped.length}`);
-  if (isDryRun) console.log("\n💡 Rode sem --dry-run para aplicar as mudanças.");
+  console.log(`✅ Applied: ${applied} | ❌ Failed: ${failed} | ⏭️  Skipped: ${skipped.length}`);
+  if (isDryRun) console.log("\n💡 Run without --dry-run to apply the changes.");
 }
 
 main().catch((err) => {

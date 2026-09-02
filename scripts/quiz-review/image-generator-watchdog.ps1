@@ -1,5 +1,5 @@
-# Image generator watchdog - processa queue de imagens em background
-# Garante que o Forge esta de pe antes de cada rodada, com retry/restart automatico
+# Image generator watchdog - works the image queue in the background
+# Makes sure Forge is up before each round, with automatic retry/restart
 
 param(
     [int]$MaxHours = 10

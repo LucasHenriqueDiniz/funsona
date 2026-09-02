@@ -1,8 +1,8 @@
 # Architecture
 
-Decisões técnicas e estrutura do sistema. Consulte este arquivo antes de mudar stack ou adicionar integrações.
+Technical decisions and system structure. Read this file before changing the stack or adding integrations.
 
-## Diagrama
+## Diagram
 
 ```
 Browser → Cloudflare CDN → Cloudflare Pages (Astro SSR)
@@ -16,49 +16,49 @@ Browser → Cloudflare CDN → Cloudflare Pages (Astro SSR)
                 (Postgres)      (Cache)           (Payments)
 ```
 
-## Decisões
+## Decisions
 
 ### Astro + Cloudflare Pages (Frontend)
 
-- **Por que Astro**: Gera HTML estático por padrão. React islands (`client:load`) só onde precisa de interatividade. Melhor para SEO que Next.js ou Remix.
-- **Adapter**: `@astrojs/cloudflare` com `output: "server"` para SSR no edge.
-- **Imagens**: Supabase Storage. Upload direto do browser via `supabase-js`, transformações básicas via query params (`?width=800`).
-- **i18n**: Astro i18n routing nativo. `pt` default, sem prefixo na URL default.
+- **Why Astro**: it emits static HTML by default. React islands (`client:load`) only where interactivity is needed. Better for SEO than Next.js or Remix.
+- **Adapter**: `@astrojs/cloudflare` with `output: "server"` for SSR on the edge.
+- **Images**: Supabase Storage. Uploaded straight from the browser through `supabase-js`, with basic transforms via query params (`?width=800`).
+- **i18n**: native Astro i18n routing. `pt` is the default, with no prefix on the default URL.
 
 ### Hono + Cloudflare Worker (API)
 
-- **Por que Hono**: Ultraleve (<20kb), roda nativo em Workers, middleware pattern familiar, type-safe.
-- **Auth**: Supabase Auth com PKCE. O Worker gerencia cookies httpOnly (`FunSona_session`). JWT verificado com `jose` (Web Crypto API).
-- **CORS**: Origins permitidas dinamicamente. Dev permite qualquer origin. Produção filtra por domínio do FunSona.
-- **Secrets**: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `JWT_SECRET` nunca tocam o browser. Vivem apenas em `wrangler.toml` / `.dev.vars`.
+- **Why Hono**: ultralight (<20kb), runs natively on Workers, familiar middleware pattern, type-safe.
+- **Auth**: Supabase Auth with PKCE. The Worker owns the httpOnly cookies (`FunSona_session`). JWTs are verified with `jose` (Web Crypto API).
+- **CORS**: allowed origins are resolved dynamically. Dev allows any origin. Production filters by FunSona domain.
+- **Secrets**: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY` and `JWT_SECRET` never reach the browser. They live only in `wrangler.toml` / `.dev.vars`.
 
-### Supabase (Banco + Auth)
+### Supabase (Database + Auth)
 
-- **Por que Supabase (e não Cloudflare D1)**: Postgres tem full-text search nativo (`to_tsvector`), JSONB avançado para quiz content, triggers PL/pgSQL para XP/streaks/leaderboard, e auth embutido. D1 é SQLite e perde todas essas features.
-- **Conexão**: Apenas via `supabase-js` (PostgREST). Nunca via connection string direta.
-- **RLS**: Definido em migrations SQL puras (`002_rls.sql`). A API valida ownership antes de escrever; RLS é a última linha de defesa.
-- **Migrations**: `supabase/migrations/001_schema.sql`, `002_rls.sql`, `003_functions.sql`, `004_indexes.sql`. Ordem importa.
+- **Why Supabase (and not Cloudflare D1)**: Postgres has native full-text search (`to_tsvector`), rich JSONB for quiz content, PL/pgSQL triggers for XP/streaks/leaderboard, and built-in auth. D1 is SQLite and loses all of those.
+- **Connection**: only through `supabase-js` (PostgREST). Never through a direct connection string.
+- **RLS**: defined in plain SQL migrations (`002_rls.sql`). The API validates ownership before writing; RLS is the last line of defence.
+- **Migrations**: `supabase/migrations/001_schema.sql`, `002_rls.sql`, `003_functions.sql`, `004_indexes.sql`. Order matters.
 
 ### Cloudflare KV (Cache)
 
-- **Uso**: Trending quizzes (TTL 1h), leaderboard snapshots (TTL 15min), search suggestions.
-- **Não use para**: Sessões de usuário (use cookies), dados relacionais (use Postgres), dados que precisam de consistência forte.
+- **Use for**: trending quizzes (TTL 1h), leaderboard snapshots (TTL 15min), search suggestions.
+- **Do not use for**: user sessions (use cookies), relational data (use Postgres), anything needing strong consistency.
 
-### Supabase Storage (Imagens)
+### Supabase Storage (Images)
 
-- **Bucket**: `quiz-images` — upload direto do browser via `supabase-js` com RLS.
-- **Transformações**: Básicas via query params (`?width=800`). Para o MVP, transformações simples são suficientes.
-- **Por que não Cloudinary**: Remove um vendor extra. Supabase Storage já está na stack, com RLS integrado.
+- **Bucket**: `quiz-images` — uploaded straight from the browser through `supabase-js` with RLS.
+- **Transforms**: basic ones via query params (`?width=800`). Simple transforms are enough for the MVP.
+- **Why not Cloudinary**: it removes one more vendor. Supabase Storage is already in the stack, with RLS built in.
 
-### Stripe (Pagamentos)
+### Stripe (Payments)
 
-- **Checkout Sessions**: Criadas no Worker. Redireciona para Stripe hosted checkout.
-- **Webhooks**: Endpoint `/api/stripe/webhook` no Worker. Verifica assinatura com `stripe.webhooks.constructEvent`.
-- **Premium gates**: Verificação de `profiles.is_premium` no Worker antes de entregar features premium.
+- **Checkout Sessions**: created in the Worker. Redirects to Stripe hosted checkout.
+- **Webhooks**: the `/api/stripe/webhook` endpoint on the Worker. Signature verified with `stripe.webhooks.constructEvent`.
+- **Premium gates**: the Worker checks `profiles.is_premium` before serving premium features.
 
 ## Conventions
 
-- **API responses**: Sempre `{ success: boolean, data?: T, error?: string, meta?: object }`.
-- **Database tables**: snake_case. TypeScript types: camelCase (convertido pelo `supabase-js`).
-- **File naming**: Components React: PascalCase. Utilities: camelCase. Constants: UPPER_SNAKE_CASE.
-- **Error handling**: Nunca exponha stack traces ou secrets ao cliente. Log no Worker, mensagem genérica ao client.
+- **API responses**: always `{ success: boolean, data?: T, error?: string, meta?: object }`.
+- **Database tables**: snake_case. TypeScript types: camelCase (converted by `supabase-js`).
+- **File naming**: React components: PascalCase. Utilities: camelCase. Constants: UPPER_SNAKE_CASE.
+- **Error handling**: never expose stack traces or secrets to the client. Log in the Worker, return a generic message to the client.
