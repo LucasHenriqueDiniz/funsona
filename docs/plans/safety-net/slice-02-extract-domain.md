@@ -47,11 +47,39 @@ the two rules that are already pure:
 ## Done when
 
 ```
-sed -i '' 's/current_streak + 1/current_streak + 2/' apps/api/src/domain/streak.ts && pnpm test; echo "exit=$?"; git checkout apps/api/src/domain/streak.ts
+cp apps/api/src/domain/streak.ts "${TMPDIR:-/tmp}/streak.orig" \
+  && grep -q 'currentStreak + 1' apps/api/src/domain/streak.ts \
+  && sed -i '' 's/currentStreak + 1/currentStreak + 2/' apps/api/src/domain/streak.ts \
+  && ! grep -q 'currentStreak + 1' apps/api/src/domain/streak.ts \
+  && { pnpm test > /dev/null 2>&1; echo "mutant-planted=yes test-exit=$?"; } \
+  || echo "mutant-planted=no"
+cp "${TMPDIR:-/tmp}/streak.orig" apps/api/src/domain/streak.ts 2>/dev/null; rm -f "${TMPDIR:-/tmp}/streak.orig"
 ```
 
-prints `exit=1` — the streak test kills the mutant. A green run here means the test asserts nothing
-and the slice is not done.
+prints exactly `mutant-planted=yes test-exit=1`.
+
+Read it as two separate claims. The earlier version of this gate collapsed them into a single
+`exit=$?` and measured neither: run on today's tree it prints `exit=1`, because `sed` fails on the
+file that does not exist yet, `&&` short-circuits `pnpm test`, and `$?` is the sed's. It was green on
+an empty tree. It was also unsatisfiable in the other direction — it grepped for `current_streak + 1`,
+the snake_case spelling of the D1 row in `client.ts:570`, which cannot appear in a module whose
+signature this slice declares as `nextStreak(lastActivityDate, currentStreak, today)`. The pattern
+never matched, no mutant was ever planted, a correct test passed, and the gate printed `exit=0` —
+failure, by its own reading, for doing the slice right.
+
+- `mutant-planted=yes` means the module exists, the increment was found under the parameter name this
+  slice declares, and the file actually changed. `mutant-planted=no` means the gate never reached a
+  test run: no `streak.ts`, or the rule is not spelled the way the grep expects. That is not a red
+  test and does not count as one.
+- `test-exit=1` means `pnpm test` ran against the mutated module and failed — the streak test killed
+  the mutant. `test-exit=0` means the suite passes whether the rule adds 1 or 2, so it asserts nothing
+  about the increment and the slice is not done.
+
+Write the rule as `currentStreak + 1`, spaces included; the gate greps for that literal, and
+`currentStreak+1` reads as `mutant-planted=no`.
+
+Today this prints `mutant-planted=no` — `apps/api/src/domain/` does not exist. It stays `no` until the
+module lands, and it cannot reach `test-exit=1` until `pnpm test` exists, which is slice 1.
 
 ## If stuck
 
