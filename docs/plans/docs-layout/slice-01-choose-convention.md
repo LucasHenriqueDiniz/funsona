@@ -1,13 +1,44 @@
 ---
-status: blocked
+status: done
 kanban: 92a26055-2df0-4036-b995-421ed86675a0
 ---
 
 # Slice 1 — Pick one shape for docs/ and make the README say it
 
-**Blocked on the owner: this is a taste call about a one-reader repo — flat `docs/*.md` or the
-hexagram vault subtree — and nothing in the code decides it. No amount of reading resolves it; someone
-has to choose.**
+**Done 2026-09-03. The owner chose: adopt the vault.** He said the hexagram plugin decides, and
+`init-project` prescribes the subtree, so the taste call was made by naming the authority rather than
+the shape.
+
+What moved — `git mv`, content untouched, nothing overwritten and nothing dropped:
+
+| was | is |
+|---|---|
+| `docs/architecture.md` | `docs/architecture/ARCHITECTURE.md` |
+| `docs/product.md` | `docs/product/README.md` |
+| `docs/roadmap.md` | `docs/roadmap/README.md` |
+| `docs/research.md` | `docs/research/README.md` |
+| `docs/production-readiness.md` | `docs/architecture/production-readiness.md` |
+
+`production-readiness.md` is the one this slice said needed a home chosen. It went under
+`architecture/`: it describes how this system is deployed, monitored and rolled back, which is the
+folder for infrastructure. It is not roadmap material — it is not about what is next — and the
+template's three root-level files (`DEVLOG.md`, `PROGRESS.md`, `IDEAS.md`) are a closed list it is not
+on.
+
+Two things the template ships were **not** copied. `docs/architecture/ARCHITECTURE.md` from the
+template is a `{{PROJECT_NAME}}` scaffold, and landing it would have meant either overwriting real
+content or parking a placeholder beside it — the exact collision the pitch exists to prevent; the
+existing document holds that path instead, unrewritten, because
+`docs/plans/supabase-leftovers/slice-01-rewrite-docs.md` owns fixing what it *says* and doing both in
+one diff makes both unreadable. And `.mcp.json` was left out because the Obsidian MCP it declares is
+not installed here; `docs/README.md` now states that `[[wiki-links]]` resolve in Obsidian and nowhere
+else, rather than asserting a server that does not exist.
+
+Also copied in, since they had no flat counterpart to collide with: the folder guides
+`architecture/README.md`, `architecture/diagrams/README.md`, `pitches/README.md`, `plans/README.md`,
+`postmortem/README.md`, and `docs/.obsidian/app.json`. `product/`, `roadmap/` and `research/` took the
+existing content as their `README.md`, so the template's two-line placeholders for those three were
+folded into the table in `docs/README.md` instead.
 
 ## Delivers
 

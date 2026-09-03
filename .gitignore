@@ -55,5 +55,12 @@ scripts/migration/output/
 # Typescript
 *.tsbuildinfo
 
+# Obsidian per-machine UI state, now that docs/ is a vault. The rest of
+# docs/.obsidian/ IS committed: it carries the vault's link format, which is
+# shared configuration rather than local state.
+**/.obsidian/workspace.json
+**/.obsidian/workspace-mobile.json
+**/.obsidian/cache
+
 # derived board — regenerate with /hexagram:board, never track it
 .kanban.json

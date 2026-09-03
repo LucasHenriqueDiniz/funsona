@@ -24,11 +24,14 @@ funsona/
 │   └── migrations/  # Plain SQL (Supabase CLI)
 ├── scripts/
 │   └── migration/   # One-off scripts
-└── docs/            # Technical documentation for agents
-    ├── architecture.md  # Technical decisions and diagrams
-    ├── product.md       # Requirements and scope
-    ├── roadmap.md       # Milestones and versions
-    └── research.md      # Investigations and benchmarks
+└── docs/            # Obsidian vault — technical documentation for agents
+    ├── architecture/    # Stack, decisions, release gates, diagrams
+    ├── product/         # Requirements and scope
+    ├── roadmap/         # Milestones and versions
+    ├── research/        # Investigations and benchmarks
+    ├── pitches/         # What a piece of work is for
+    ├── plans/           # Numbered vertical slices, one directory per feature
+    └── postmortem/      # What shipped, and what a wrong measurement cost
 ```
 
 ## Commands
@@ -64,7 +67,7 @@ pnpm db:reset      # reset local db
 4. **Shared package**: every Zod validation and shared type belongs in `packages/shared/`. Never duplicate schemas between apps.
 5. **i18n**: pt/en/es support through Astro i18n routing. `defaultLocale: "pt"`, `prefixDefaultLocale: false`.
 6. **Zero fake data**: do not implement fake data seeding in production. Seeds are for local dev only.
-7. **Agent References**: before implementing features, read `docs/product.md` (requirements) and `docs/architecture.md` (technical decisions). See `docs/roadmap.md` to know what belongs to the current version.
+7. **Agent References**: before implementing features, read `docs/product/README.md` (requirements) and `docs/architecture/ARCHITECTURE.md` (technical decisions). See `docs/roadmap/README.md` to know what belongs to the current version.
 
 ## Agent Notes
 
@@ -100,13 +103,17 @@ ENVIRONMENT=development
 
 ## Documentation for Agents
 
+`docs/` is an Obsidian vault; `docs/README.md` describes the shape and the conventions. Note that
+`[[wiki-links]]` inside it resolve in Obsidian only — there is no MCP server wired to this vault.
+
 | File | When to read it |
 |---|---|
-| `docs/architecture.md` | Before changing the stack, adding an integration, or making infrastructure decisions |
-| `docs/product.md` | To find out whether a feature is in scope, its functional requirements, or its success metrics |
-| `docs/roadmap.md` | To find out what to implement now vs later. Do not implement features from future versions without approval. |
-| `docs/research.md` | For context on decisions already made (benchmarks, alternatives evaluated) |
-| `docs/production-readiness.md` | Before a production deploy: release gates, smoke tests, rollback triggers |
+| `docs/architecture/ARCHITECTURE.md` | Before changing the stack, adding an integration, or making infrastructure decisions |
+| `docs/product/README.md` | To find out whether a feature is in scope, its functional requirements, or its success metrics |
+| `docs/roadmap/README.md` | To find out what to implement now vs later. Do not implement features from future versions without approval. |
+| `docs/research/README.md` | For context on decisions already made (benchmarks, alternatives evaluated) |
+| `docs/architecture/production-readiness.md` | Before a production deploy: release gates, smoke tests, rollback triggers |
+| `docs/pitches/`, `docs/plans/` | To find out what work is open, what it is for, and which slice is next |
 
 ## House rules come from the `hexagram` plugin
 

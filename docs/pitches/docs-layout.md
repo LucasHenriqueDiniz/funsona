@@ -5,6 +5,13 @@ epic: docs-layout
 
 # One shape for docs/
 
+> **Decided 2026-09-03: adopt the vault.** The owner's reasoning was that the hexagram plugin decides
+> and `init-project` prescribes the subtree. The five flat documents moved into their folders,
+> `docs/README.md` was rewritten to describe the directory that now exists, and `AGENTS.md`'s table
+> and layout tree were repointed. `docs/plans/docs-layout/slice-01-choose-convention.md` records what
+> moved, where `production-readiness.md` landed, and the two template files deliberately not copied.
+> The problem statement below is left as written; it describes the directory as it was.
+
 ## Problem
 
 `docs/` is flat and says so on purpose. `docs/README.md:17-19` sets the rule: "No frontmatter, no
@@ -54,9 +61,14 @@ their template directories and `AGENTS.md`'s table is rewritten to the new paths
 
 ## Open questions
 
-- Which shape? This is a taste call about a repo with one reader, and it is not mine to make.
+- ~~Which shape? This is a taste call about a repo with one reader, and it is not mine to make.~~
+  **Answered 2026-09-03: the vault.**
 
 ## Done
 
-`docs/README.md` states the convention in one place, and no file has both a flat and a nested form: a
-listing of `docs/` shows either `architecture.md` or `architecture/`, never both.
+**Met 2026-09-03.** `docs/README.md` states the convention in one place, and no file has both a flat
+and a nested form: a listing of `docs/` shows either `architecture.md` or `architecture/`, never both.
+
+```
+ls docs | sed 's/\.md$//' | sort | uniq -d      # empty
+```

@@ -165,7 +165,7 @@ remaining copy of the pre-migration data.
 - **`scripts/release/check-readiness.mjs` is stale** — it still requires
   `PUBLIC_SUPABASE_*`, expects Supabase secret names in `wrangler.toml`, and runs
   `supabase db push --dry-run`. It cannot pass against the migrated repo.
-- **`docs/research.md` still lists Clerk as rejected**, contradicting the last
+- **`docs/research/README.md` still lists Clerk as rejected**, contradicting the last
   three commits.
 - **Two `wrangler.toml` files** define the Pages project with different
   `pages_build_output_dir`, and `apps/web/wrangler.toml` reuses the API's KV

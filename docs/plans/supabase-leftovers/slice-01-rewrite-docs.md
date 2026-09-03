@@ -7,10 +7,12 @@ kanban: af9622ba-ab12-4def-943d-1978e84fa424
 
 ## Delivers
 
-An agent that reads `AGENTS.md` and the five `docs/*.md` files is told about D1, R2 and Clerk, and is
+An agent that reads `AGENTS.md` and the five documents the vault holds is told about D1, R2 and
+Clerk, and is
 no longer instructed to use `supabase-js`, the `FunSona_session` cookie or `jose`. Today it is told the
-opposite: `AGENTS.md:67` makes reading `docs/product.md` and `docs/architecture.md` mandatory before
-implementing anything, and `docs/research.md:59` says Clerk was "Rejected ... do not revisit".
+opposite: `AGENTS.md:67` makes reading `docs/product/README.md` and
+`docs/architecture/ARCHITECTURE.md` mandatory before implementing anything, and
+`docs/research/README.md:59` says Clerk was "Rejected ... do not revisit".
 
 ## Needs
 
@@ -24,21 +26,23 @@ implementing anything, and `docs/research.md:59` says Clerk was "Rejected ... do
 There is no test runner in this repo yet (see `docs/plans/safety-net/`), so the checks here are greps
 and they are the whole definition of done:
 
-- `grep -ril supabase AGENTS.md docs/*.md` prints exactly `docs/research.md` and nothing else.
-- `grep -n "Superseded" docs/research.md` prints a line — the two reversed decisions at `:49-59` are
+- `git grep -ril supabase -- AGENTS.md docs/architecture docs/product docs/roadmap docs/research`
+  prints exactly `docs/research/README.md` and nothing else.
+- `grep -n "Superseded" docs/research/README.md` prints a line — the two reversed decisions at `:49-59` are
   kept as history under that heading, not deleted.
 - `grep -c "D1" AGENTS.md` prints a number greater than 0.
-- `grep -n "FunSona_session\|jose" docs/architecture.md` prints nothing.
-- Every path named in the `docs/` table at `AGENTS.md:27-31` exists: `for f in $(sed -n '27,31p'
-  AGENTS.md | grep -oE 'docs/[a-z-]+\.md'); do test -f "$f" || echo "MISSING $f"; done` prints nothing.
+- `grep -n "FunSona_session\|jose" docs/architecture/ARCHITECTURE.md` prints nothing.
+- Every `docs/` path named anywhere in `AGENTS.md` exists:
+  `for f in $(grep -oE 'docs/[a-zA-Z0-9/_.-]+\.md' AGENTS.md | sort -u); do test -f "$f" || echo "MISSING $f"; done`
+  prints nothing.
 
 ## Done when
 
 ```
-grep -ril supabase AGENTS.md docs/*.md
+git grep -ril supabase -- AGENTS.md docs/architecture docs/product docs/roadmap docs/research
 ```
 
-prints exactly one line, `docs/research.md`, and nothing else.
+prints exactly one line, `docs/research/README.md`, and nothing else.
 
 ## If stuck
 

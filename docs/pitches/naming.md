@@ -19,7 +19,7 @@ epic: naming
 >   the repo would have rewritten the product for its users. Renaming this is a rebrand, and nobody
 >   asked for one.
 > - **The `FunSona_session` cookie.** A live session key. Renaming it signs every current session out.
->   It survives only in prose now (`AGENTS.md`, `docs/architecture.md`, `.opencode/rules/`) because
+>   It survives only in prose now (`AGENTS.md`, `docs/architecture/ARCHITECTURE.md`, `.opencode/rules/`) because
 >   auth moved to Clerk, and correcting that prose is `docs/pitches/supabase-leftovers.md`, not this.
 > - **The Cloudflare resource names** — `funsona-web`, `funsona-api`, `funsona-api-dev`, `funsona-db`,
 >   `funsona-quiz-images`, `funsona-profile-media`, and the `FUNSONA_CACHE` KV binding. Already

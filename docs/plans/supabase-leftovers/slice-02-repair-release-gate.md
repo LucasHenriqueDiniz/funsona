@@ -26,7 +26,7 @@ Three steps in `scripts/release/check-readiness.mjs` currently cannot pass:
   become `wrangler d1 migrations apply`? The migration step has to call whichever one is real.
 - `docs/plans/supabase-leftovers/slice-01-rewrite-docs.md` first, or at least alongside:
   `:129` prints "verify Supabase security advisor and production smoke matrix in
-  docs/production-readiness.md", and that document is being rewritten in slice 1.
+  docs/architecture/production-readiness.md", and that document is being rewritten in slice 1.
 
 ## Tests
 
@@ -53,5 +53,5 @@ ends with `Production readiness gates passed.` followed by `exit=0`.
 
 If the migration step cannot be pointed at a real check within the slice, delete it rather than leave
 it. A step that throws and a step that passes by accident are both worth zero, and one of them is
-honest about it. Record the deletion in `docs/production-readiness.md` so the gap is visible, and open
+honest about it. Record the deletion in `docs/architecture/production-readiness.md` so the gap is visible, and open
 a follow-up slice for a real D1 drift check.
