@@ -41,6 +41,9 @@ npm-debug.log*
 # Temp
 *.tmp
 *.temp
+# scripts/migration/gen-achievements-sql.js writes its dump to the repo
+# root; that output is regenerable and must not be tracked again.
+/temp_*.sql
 /~/
 claude-share/
 backups/
