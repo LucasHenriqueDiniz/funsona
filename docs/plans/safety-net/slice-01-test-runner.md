@@ -19,7 +19,7 @@ no seam invented for it, so it proves the runner works without pre-empting slice
 ## Needs
 
 - `vitest` as a dev dependency in `apps/api`, and a root `"test": "pnpm -r --if-present test"` matching
-  the shape of the existing `lint` script at `package.json:5`.
+  the shape of the existing `lint` script at `package.json:7`.
 - No Workers pool yet. `@cloudflare/vitest-pool-workers` is for tests that need D1 bindings; a pure
   function does not, and pulling in the pool here would make the first green run depend on
   `workerd` booting.

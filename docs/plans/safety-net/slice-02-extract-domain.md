@@ -47,39 +47,59 @@ the two rules that are already pure:
 ## Done when
 
 ```
-cp apps/api/src/domain/streak.ts "${TMPDIR:-/tmp}/streak.orig" \
-  && grep -q 'currentStreak + 1' apps/api/src/domain/streak.ts \
-  && sed -i '' 's/currentStreak + 1/currentStreak + 2/' apps/api/src/domain/streak.ts \
-  && ! grep -q 'currentStreak + 1' apps/api/src/domain/streak.ts \
-  && { pnpm test > /dev/null 2>&1; echo "mutant-planted=yes test-exit=$?"; } \
-  || echo "mutant-planted=no"
+(
+  cp apps/api/src/domain/streak.ts "${TMPDIR:-/tmp}/streak.orig" 2>/dev/null || { echo "mutant-planted=no"; exit; }
+  grep -q 'currentStreak + 1' apps/api/src/domain/streak.ts || { echo "mutant-planted=no"; exit; }
+  pnpm test >/dev/null 2>&1; clean=$?
+  sed -i '' 's/currentStreak + 1/currentStreak + 2/' apps/api/src/domain/streak.ts
+  grep -q 'currentStreak + 1' apps/api/src/domain/streak.ts && { echo "mutant-planted=no"; exit; }
+  pnpm test >/dev/null 2>&1; mutated=$?
+  echo "mutant-planted=yes suite-clean=$clean suite-mutated=$mutated"
+)
 cp "${TMPDIR:-/tmp}/streak.orig" apps/api/src/domain/streak.ts 2>/dev/null; rm -f "${TMPDIR:-/tmp}/streak.orig"
 ```
 
-prints exactly `mutant-planted=yes test-exit=1`.
+prints exactly `mutant-planted=yes suite-clean=0 suite-mutated=1`.
 
-Read it as two separate claims. The earlier version of this gate collapsed them into a single
-`exit=$?` and measured neither: run on today's tree it prints `exit=1`, because `sed` fails on the
-file that does not exist yet, `&&` short-circuits `pnpm test`, and `$?` is the sed's. It was green on
-an empty tree. It was also unsatisfiable in the other direction — it grepped for `current_streak + 1`,
-the snake_case spelling of the D1 row in `client.ts:570`, which cannot appear in a module whose
-signature this slice declares as `nextStreak(lastActivityDate, currentStreak, today)`. The pattern
-never matched, no mutant was ever planted, a correct test passed, and the gate printed `exit=0` —
-failure, by its own reading, for doing the slice right.
+Read it as three separate claims. It takes two test runs because one exit code cannot carry them.
 
 - `mutant-planted=yes` means the module exists, the increment was found under the parameter name this
   slice declares, and the file actually changed. `mutant-planted=no` means the gate never reached a
   test run: no `streak.ts`, or the rule is not spelled the way the grep expects. That is not a red
   test and does not count as one.
-- `test-exit=1` means `pnpm test` ran against the mutated module and failed — the streak test killed
-  the mutant. `test-exit=0` means the suite passes whether the rule adds 1 or 2, so it asserts nothing
-  about the increment and the slice is not done.
+- `suite-clean=0` means `pnpm test` ran against the unmutated module and passed. This is the claim
+  the gate used to skip, and the only one that establishes there is a runner at all. Anything
+  non-zero means the suite was already red before the mutant was planted, so the run after it proves
+  nothing about the increment.
+- `suite-mutated=1` means the same suite went red once the rule added 2 instead of 1 — a test killed
+  the mutant. `suite-mutated=0` means the suite passes whether the rule adds 1 or 2, so it asserts
+  nothing about the increment and the slice is not done.
 
 Write the rule as `currentStreak + 1`, spaces included; the gate greps for that literal, and
 `currentStreak+1` reads as `mutant-planted=no`.
 
-Today this prints `mutant-planted=no` — `apps/api/src/domain/` does not exist. It stays `no` until the
-module lands, and it cannot reach `test-exit=1` until `pnpm test` exists, which is slice 1.
+Today this prints `mutant-planted=no` — `apps/api/src/domain/` does not exist. It stays `no` until
+the module lands. Once it lands it reads `suite-clean=1 suite-mutated=1` until `pnpm test` is a real
+green suite, which is slice 1.
+
+### Two earlier versions of this gate, and what each one measured instead
+
+The first collapsed everything into a single `exit=$?` and measured neither claim: on today's tree it
+printed `exit=1`, because `sed` failed on the file that does not exist yet, `&&` short-circuited
+`pnpm test`, and `$?` was the sed's. It was green on an empty tree. It was also unsatisfiable in the
+other direction — it grepped for `current_streak + 1`, the snake_case spelling of the D1 row in
+`client.ts:570`, which cannot appear in a module whose signature this slice declares as
+`nextStreak(lastActivityDate, currentStreak, today)`. The pattern never matched, no mutant was ever
+planted, a correct test passed, and the gate printed `exit=0` — failure, by its own reading, for
+doing the slice right.
+
+The second fixed the grep and the short-circuit but kept one test run, and so moved the same defect
+from the `sed` onto the `pnpm`. No `package.json` in this workspace declares a `test` script yet, so
+`pnpm test` exits 1 with no output; `test-exit=1` then meant either "the streak test killed the
+mutant" or "pnpm failed for any reason, including the script not existing", and the gate could not
+tell which. `mkdir -p apps/api/src/domain` plus a three-line `streak.ts` containing
+`currentStreak + 1` — no test, no runner — printed `mutant-planted=yes test-exit=1`, byte for byte
+the approval string that a finished slice prints. The green-before run is what separates them.
 
 ## If stuck
 
