@@ -4,7 +4,7 @@
     {
       "name": "web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@FunSona/web", "dev"],
+      "runtimeArgs": ["--filter", "@funsona/web", "dev"],
       "port": 4321
     }
   ]

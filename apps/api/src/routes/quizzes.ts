@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { z } from "zod";
-import { CreateQuizSchema, UpdateQuizSchema, CreateQuizResultSchema } from "@FunSona/shared";
+import { CreateQuizSchema, UpdateQuizSchema, CreateQuizResultSchema } from "@funsona/shared";
 import type { Env } from "../index.js";
 import { authMiddleware, requireAuth, currentUserId } from "../middleware/auth.js";
 import { requireAdmin } from "../middleware/admin.js";

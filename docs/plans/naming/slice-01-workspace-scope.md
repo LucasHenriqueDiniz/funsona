@@ -1,14 +1,22 @@
 ---
-status: blocked
+status: done
 kanban: d9c7d5b7-5512-4820-b616-e97bf6aede91
 ---
 
 # Slice 1 — Rename the root package and the @FunSona scope
 
-**Blocked on the owner: `771ca18` ("Bring the scripts packages into the workspace, and give them the
-house scope", 2026-08-30) chose `@FunSona/*` deliberately and four days ago. Overruling a fresh,
-intentional decision is not a lint fix, and the naming skill is not authority enough to do it without
-being asked.**
+**Done 2026-09-03. The owner said yes, which is the only thing this was waiting for:** `771ca18`
+("Bring the scripts packages into the workspace, and give them the house scope", 2026-08-30) chose
+`@FunSona/*` deliberately, so overruling it was never a lint fix — it needed the owner, and it has him.
+
+`package.json` is now `funsona`, and the scope is `@funsona/*`. Five names, not six: the sixth,
+`@FunSona/quiz-review`, was deleted with the ChatGPT pipeline in the commit before this one.
+
+The boundary check the pitch asks for came back clean. Nothing outside this repo knew these names —
+every package is `"private": true`, none is published, and the only references were two TypeScript
+imports, two `pnpm --filter` invocations and `.claude/launch.json`. That is what made this a text edit.
+What was *not* renamed, because it does cross the boundary, is recorded in
+`docs/pitches/naming.md`.
 
 ## Delivers
 
@@ -32,7 +40,9 @@ Six names change: `package.json:2` (`FunSona-v2`), `apps/api/package.json:2` (`@
 
 ## Tests
 
-- `git grep -lE '@FunSona/|FunSona-v2'` prints nothing.
+- `git grep -lE '@FunSona/|FunSona-v2' -- ':(exclude)docs'` prints nothing. The pathspec matters:
+  this file and `docs/pitches/naming.md` quote the old literals on purpose, as the record of what
+  they used to be, and an unscoped grep would report its own documentation as a failure.
 - `pnpm install` succeeds and `pnpm typecheck` exits 0 — the second one is what proves the
   `--filter` at `package.json:8` was updated, because it fails loudly if it was not.
 - `pnpm lint` exits 0.
@@ -41,7 +51,7 @@ Six names change: `package.json:2` (`FunSona-v2`), `apps/api/package.json:2` (`@
 ## Done when
 
 ```
-git grep -lE '@FunSona/|FunSona-v2' | wc -l && pnpm install && pnpm typecheck; echo "exit=$?"
+git grep -lE '@FunSona/|FunSona-v2' -- ':(exclude)docs' | wc -l && pnpm install && pnpm typecheck; echo "exit=$?"
 ```
 
 prints `0` for the grep count, then ends with `exit=0`.

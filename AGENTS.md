@@ -14,7 +14,7 @@ SEO-first quiz platform, hosted on Cloudflare with Supabase.
 ## Layout
 
 ```
-FunSona-v2/
+funsona/
 ├── apps/
 │   ├── web/         # Astro app (Cloudflare Pages)
 │   └── api/         # Hono Worker (Cloudflare Worker)

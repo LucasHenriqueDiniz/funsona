@@ -69,7 +69,7 @@ if (!res || res.error || !res.data) { // res.error is undefined
 **Fix:** check `email_verified` in Supabase Auth before issuing a token.
 
 ### 7. Inconsistent Maximum Length for `handle`
-**Where:** `apps/api/src/routes/auth.ts` (the `normalizeHandle` function) and `@FunSona/shared` (the schema)
+**Where:** `apps/api/src/routes/auth.ts` (the `normalizeHandle` function) and `@funsona/shared` (the schema)
 
 **Description:** `normalizeHandle` truncates at 24 characters, but the schema allows up to 30. That can reject valid handles.
 

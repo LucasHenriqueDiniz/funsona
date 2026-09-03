@@ -48,5 +48,5 @@ prints a vitest summary containing `1 passed` and then `exit=0`.
 
 If `@cloudflare/vitest-pool-workers` gets pulled in and fights the Astro build or the workerd version,
 drop it — it is not needed by this slice and nothing here depends on it. If vitest cannot be made to
-see the workspace, run it from `apps/api` alone (`pnpm --filter @FunSona/api test`) and widen later. A
+see the workspace, run it from `apps/api` alone (`pnpm --filter @funsona/api test`) and widen later. A
 runner covering one package beats a runner covering none.

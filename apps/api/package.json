@@ -1,5 +1,5 @@
 {
-  "name": "@FunSona/api",
+  "name": "@funsona/api",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@FunSona/shared": "workspace:*",
+    "@funsona/shared": "workspace:*",
     "@clerk/backend": "^3.13.1",
     "hono": "^4.6.0",
     "stripe": "^17.5.0",

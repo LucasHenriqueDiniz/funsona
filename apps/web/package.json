@@ -1,5 +1,5 @@
 {
-  "name": "@FunSona/web",
+  "name": "@funsona/web",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -11,7 +11,7 @@
     "typecheck": "astro check && tsc --noEmit"
   },
   "dependencies": {
-    "@FunSona/shared": "workspace:*",
+    "@funsona/shared": "workspace:*",
     "@astrojs/cloudflare": "^12.0.0",
     "@astrojs/react": "^4.0.0",
     "@clerk/astro": "^4.0.2",
