@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "wrangler dev",
-    "build": "pnpm --filter ../../packages/shared build && tsc --noEmit",
+    "build": "tsc --noEmit",
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src"

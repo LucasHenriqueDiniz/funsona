@@ -8,6 +8,51 @@ secret in CI.
 | Web | Pages `funsona-web` | repo root | dashboard |
 | API | Worker `funsona-api` | `apps/api` | `pnpm build` — defined here |
 
+## The API deploy needs no build step, on purpose
+
+`packages/shared` exports `./src/index.ts` rather than `./dist/index.js`. Every
+consumer here is a bundler — wrangler's esbuild for the Worker, Vite for the web
+app — and a bundler compiles TypeScript itself. So there is nothing to build
+before deploying, and `wrangler deploy` resolves the import straight from source.
+
+That is not a style preference; it is what makes the deploy survive a
+configuration store we cannot trust.
+
+### What it replaced, and why
+
+The Workers Build used to run `pnpm --filter @FunSona/shared build`, a string
+stored only in the Cloudflare dashboard. Renaming the package to
+`@funsona/shared` on 2026-09-03 left the filter matching nothing:
+
+```
+Executing user build command: pnpm --filter @FunSona/shared build
+No projects matched the filters in "/opt/buildhome/repo"
+Success: Build command completed
+Executing user deploy command: npx wrangler versions upload
+✘ [ERROR] Could not resolve "@funsona/shared"
+```
+
+**`pnpm --filter` with no match exits 0.** Cloudflare logged the build step as a
+success, `dist` was never produced, and the failure surfaced two steps later as
+a bundler error pointing at `src/routes/quizzes.ts:3` rather than at the command
+that did nothing.
+
+Correcting the string in the dashboard did not fix it, twice. The settings page
+accepted and persisted `pnpm build`, and three subsequent builds — including one
+started with **Retry build** — still ran `pnpm --filter @FunSona/shared build`.
+The builder reads a record that the settings form does not write. That is the
+same failure another project on this account showed the same day, where four
+saved settings were ignored until the Git connection was removed and remade.
+
+So the fix stopped being "get the dashboard to hold the right command" and
+became "need no command at all". Verified with `dist` deleted:
+`wrangler deploy --dry-run` from `apps/api` exits 0 and uploads 1275.89 KiB.
+
+⚠️ **The stale build command is still in that record.** It is harmless now —
+it matches nothing, exits 0, and nothing depends on its output — but anyone
+reading the dashboard will see a command referencing a package that no longer
+exists under that name. Removing it needs the Git connection remade.
+
 ## Why the API's build command is one word
 
 `apps/api`'s `build` script is `pnpm --filter ../../packages/shared build && tsc --noEmit`.
