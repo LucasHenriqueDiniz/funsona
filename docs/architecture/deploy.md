@@ -3,40 +3,60 @@
 Two Cloudflare projects, both deploying on a push to `main`, neither needing a
 secret in CI.
 
-| | project | root directory | source of the build command |
+| | project | root directory | build command |
 | --- | --- | --- | --- |
 | Web | Pages `funsona-web` | repo root | dashboard |
-| API | Worker `funsona-api` | `apps/api` | dashboard |
+| API | Worker `funsona-api` | `apps/api` | `pnpm build` — defined here |
 
-## The build command is not in this repository, and it names a package
+## Why the API's build command is one word
 
-⚠️ **`funsona-api`'s Workers Build runs `pnpm --filter @funsona/shared build`,
-and that string lives in the Cloudflare dashboard.** Nothing here references it,
-`grep` will not find it, and no test covers it.
+`apps/api`'s `build` script is `pnpm --filter ../../packages/shared build && tsc --noEmit`.
+It builds its own dependency before typechecking, because `@funsona/shared`
+publishes `./dist/index.js` and `apps/api` imports from it — an unbuilt `shared`
+is an unresolvable import at bundle time.
 
-That matters because it hardcodes a package name. When `@FunSona/shared` was
-renamed to `@funsona/shared` on 2026-09-03, the filter stopped matching any
-package and the build failed — with the code compiling fine locally, because
-`wrangler deploy --dry-run` from `apps/api` never runs the dashboard's command.
+That script exists because the alternative failed. The dashboard used to hold
+`pnpm --filter @FunSona/shared build`, and when the package was renamed to
+`@funsona/shared` on 2026-09-03 the filter matched nothing. The build log is
+worth reading once:
 
-So: **renaming a workspace package is a two-place change.** The manifest is
-here; the filter is there. Check the dashboard before assuming a rename is done.
+```
+Executing user build command: pnpm --filter @FunSona/shared build
+No projects matched the filters in "/opt/buildhome/repo"
+Success: Build command completed
+Executing user deploy command: npx wrangler versions upload
+✘ [ERROR] Could not resolve "@funsona/shared"
+```
 
-This is the fourth time in one day that configuration split between a dashboard
-and a repository failed silently across this account — an orphaned build config
-on one project, a root `wrangler.toml` a sibling's Pages builder claimed as its
-own, a Worker that was never connected to Git at all, and this. The pattern is
-always the same: the repository cannot see the setting, so nothing warns when
-they diverge.
+**`pnpm --filter` with no match exits 0.** Cloudflare reported the build step as
+a success, and the failure surfaced two steps later as a bundler error about a
+module — pointing at the import rather than at the command that never ran.
 
-## What else the dashboard owns
+The dashboard command is now `pnpm build`, so the knowledge of what to build
+lives next to the manifest that declares the dependency. A future rename touches
+both in the same diff. The filter is by **path**, not by package name, so it
+survives a rename even without that.
+
+## What the dashboard still owns
 
 - **Deploy command** `npx wrangler deploy`, and `npx wrangler versions upload`
   for non-production branches.
-- **Root directory** `apps/api`. The Pages project builds from the root, so a
-  `wrangler.toml` carrying `main` must never sit there — a sibling project's
-  Pages build read one as its own configuration and broke.
-- **Build variables**: none. Runtime bindings are in `apps/api/wrangler.toml`
-  and visible here.
+- **Root directory** `apps/api`. The Pages project builds from the repo root, so
+  a `wrangler.toml` carrying `main` must never sit there — on a sibling project
+  a root config was read by the Pages builder as its own and broke the deploy.
+- **Build variables**: none.
 
-Secrets are set with `wrangler secret put` and never appear in a file.
+Runtime bindings are in `apps/api/wrangler.toml` and visible here. Secrets are
+set with `wrangler secret put` and never appear in a file.
+
+## The pattern, stated once
+
+Four times in one day, on this account, configuration split between a dashboard
+and a repository failed silently: a build config orphaned from its script tag so
+four saved settings were ignored, a root `wrangler.toml` claimed by a sibling's
+Pages builder, a Worker serving production for two months with no Git connection
+at all, and this one. The shape never changes — the repository cannot see the
+setting, so nothing warns when they drift.
+
+The defence is to keep as little in the dashboard as possible, and to write down
+what has to stay.
