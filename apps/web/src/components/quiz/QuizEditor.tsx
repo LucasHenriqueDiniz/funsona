@@ -1,5 +1,5 @@
 import { useState, type ComponentProps } from "react";
-import type { QuizType, CreateQuiz } from "@FunSona/shared";
+import type { QuizType, CreateQuiz } from "@funsona/shared";
 import ImageUpload from "@/components/ui/ImageUpload";
 import { apiFetch } from "@/lib/auth-fetch";
 

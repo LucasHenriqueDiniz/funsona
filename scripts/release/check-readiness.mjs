@@ -126,7 +126,7 @@ function main() {
 
   process.stdout.write("Production readiness gates passed.\n");
   process.stdout.write(
-    "Manual follow-up: verify Supabase security advisor and production smoke matrix in docs/production-readiness.md.\n"
+    "Manual follow-up: verify Supabase security advisor and production smoke matrix in docs/architecture/production-readiness.md.\n"
   );
 }
 

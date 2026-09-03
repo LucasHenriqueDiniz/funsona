@@ -5,6 +5,12 @@ epic: language-sweep
 
 # The last Portuguese in the repo
 
+> **Half of this closed itself on 2026-09-03.** The owner removed
+> `scripts/quiz-review/` (the ChatGPT review pipeline), which is where every file named below lived.
+> The prompt half is therefore moot — slice 2 is closed as such. The report survived the removal and
+> now lives at `docs/postmortem/quiz-refactor-pilot-2026-06-30.md`; slice 1 still applies to it.
+> The problem statement below is left as written, as the record of what the argument was.
+
 ## Problem
 
 The language rule is that everything landing in a repo is English. Most of this repo already complies:

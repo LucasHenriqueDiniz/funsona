@@ -5,6 +5,29 @@ epic: naming
 
 # Names that outlive the rename
 
+> **The npm half is done, 2026-09-03.** The owner answered the first open question below with a yes,
+> overruling `771ca18` himself. `package.json` is `funsona` and the scope is `@funsona/*` — see
+> `docs/plans/naming/slice-01-workspace-scope.md`. The Cloudflare half is untouched and still needs
+> the other two answers.
+>
+> The boundary sweep that decision required found four kinds of `FunSona` that were deliberately
+> **not** renamed, because each is data rather than a folder name:
+>
+> - **The brand, as the reader sees it.** 138 lines across 47 files in `apps/web` and `apps/api`:
+>   page titles, meta descriptions, the footer, `alt` text, the three translated guide sets,
+>   `site.webmanifest`, `og-default.svg`, and the Stripe product name `"FunSona Premium"`. A regex over
+>   the repo would have rewritten the product for its users. Renaming this is a rebrand, and nobody
+>   asked for one.
+> - **The `FunSona_session` cookie.** A live session key. Renaming it signs every current session out.
+>   It survives only in prose now (`AGENTS.md`, `docs/architecture/ARCHITECTURE.md`, `.opencode/rules/`) because
+>   auth moved to Clerk, and correcting that prose is `docs/pitches/supabase-leftovers.md`, not this.
+> - **The Cloudflare resource names** — `funsona-web`, `funsona-api`, `funsona-api-dev`, `funsona-db`,
+>   `funsona-quiz-images`, `funsona-profile-media`, and the `FUNSONA_CACHE` KV binding. Already
+>   lowercase kebab-case, so the scope rename had nothing to do to them, and the environment-suffix
+>   complaint below is the migration this pitch splits off.
+> - **The public hostname**, including inside `PUBLIC_CLERK_PUBLISHABLE_KEY`, whose value base64-encodes
+>   `clerk.funsona.com`. User-facing, and a documented exception in the naming skill.
+
 ## Problem
 
 Two naming violations sit in this repo, and they look alike but cost completely different amounts to
@@ -62,13 +85,15 @@ window, and it is worth doing only if the owner intends more than one environmen
 
 ## Open questions
 
-- Does the owner want the scope changed at all? `771ca18` says the current one was chosen on purpose.
+- ~~Does the owner want the scope changed at all? `771ca18` says the current one was chosen on
+  purpose.~~ **Answered 2026-09-03: yes.** Done.
 - Will there ever be a staging environment? If production is the only environment forever, an `-prod`
   suffix buys nothing and the R2 cutover is not worth its risk.
 - What is the owner prefix — the GitHub account (`lucashdo`) or the product?
 
 ## Done
 
-For the npm half: `git grep -l '@FunSona/'` returns nothing and `pnpm install --frozen-lockfile`
-succeeds. For the Cloudflare half: `wrangler d1 list` and `wrangler r2 bucket list` show only names
+For the npm half — **met 2026-09-03**: `git grep -l '@FunSona/' -- ':(exclude)docs'` returns nothing
+(the pathspec is required, because this file quotes the old literal on purpose) and
+`pnpm install --frozen-lockfile` succeeds. For the Cloudflare half: `wrangler d1 list` and `wrangler r2 bucket list` show only names
 matching the agreed pattern, and the site still serves quiz images.

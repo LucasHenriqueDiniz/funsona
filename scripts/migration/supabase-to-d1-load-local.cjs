@@ -4,7 +4,7 @@
 // on the large `quizzes.content` JSON blobs). Local-only — for the eventual
 // production cutover, use the Cloudflare D1 HTTP query API with the same
 // parameterized approach, not a raw SQL file dump.
-require("dotenv").config({ path: require("path").join(__dirname, "..", "quiz-review", ".env") });
+require("dotenv").config({ path: require("path").join(__dirname, ".env") });
 const path = require("path");
 const fs = require("fs");
 const Database = require("better-sqlite3");

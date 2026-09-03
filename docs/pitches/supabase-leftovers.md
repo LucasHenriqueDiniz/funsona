@@ -16,9 +16,9 @@ Two places still describe the old world, and each one hurts differently.
 
 **The written record is wrong.** `AGENTS.md:3` opens with "hosted on Cloudflare with Supabase", `:9`
 lists "Database/Auth: Supabase (Postgres + Auth via API)", `:11` lists "Images: Supabase Storage".
-`docs/architecture.md:31` describes "Supabase Auth with PKCE", the `FunSona_session` cookie and JWTs
+`docs/architecture/ARCHITECTURE.md:31` describes "Supabase Auth with PKCE", the `FunSona_session` cookie and JWTs
 verified with `jose` — none of which is how a request is authenticated today. Worse,
-`docs/research.md:49-59` records two decisions that reality reversed: "D1 (Cloudflare) instead of
+`docs/research/README.md:49-59` records two decisions that reality reversed: "D1 (Cloudflare) instead of
 Supabase Postgres — Rejected" and "Clerk instead of Supabase Auth — Rejected ... do not revisit". A
 document whose job is to stop someone re-doing research is now instructing them to undo the migration.
 `AGENTS.md:67` tells every agent to read those files before implementing anything.
@@ -48,8 +48,8 @@ whose subject no longer exists cannot be fixed by editing nouns.
 ## Surface
 
 - `AGENTS.md`
-- `docs/architecture.md`, `docs/product.md`, `docs/roadmap.md`, `docs/research.md`,
-  `docs/production-readiness.md`
+- `docs/architecture/ARCHITECTURE.md`, `docs/product/README.md`, `docs/roadmap/README.md`,
+  `docs/research/README.md`, `docs/architecture/production-readiness.md`
 - `scripts/release/check-readiness.mjs`, and the `db:*` scripts in `package.json` that call the
   Supabase CLI
 
@@ -59,7 +59,7 @@ whose subject no longer exists cannot be fixed by editing nouns.
 
 - Every factual claim in `AGENTS.md` and `docs/*.md` about database, auth, storage and secrets.
 - The three Supabase steps of the readiness script.
-- `docs/research.md`'s two reversed decisions, kept as superseded history rather than deleted — the
+- `docs/research/README.md`'s two reversed decisions, kept as superseded history rather than deleted — the
   reason a choice was reversed is worth more than the choice.
 
 **Out**
@@ -80,5 +80,6 @@ whose subject no longer exists cannot be fixed by editing nouns.
 ## Done
 
 `pnpm release:ready` exits 0 and prints `Production readiness gates passed.`, and a `grep -ril supabase`
-over `AGENTS.md` and `docs/*.md` returns only `docs/research.md`, where the name survives inside a
+over `AGENTS.md` and the vault (`git grep -ril supabase -- AGENTS.md docs/`) returns only
+`docs/research/README.md` and this pitch's own epic, where the name survives inside a
 section marked as superseded.

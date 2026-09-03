@@ -47,17 +47,6 @@ npm-debug.log*
 /~/
 claude-share/
 backups/
-scripts/quiz-review/chrome-profile/
-scripts/quiz-review/batches/
-scripts/quiz-review/*.db
-scripts/quiz-review/*.db-shm
-scripts/quiz-review/*.db-wal
-scripts/quiz-review/*.pid
-scripts/quiz-review/*-report.html
-scripts/quiz-review/quiz-preview.html
-scripts/quiz-review/refactored-dump.json
-scripts/quiz-review/refactored-quizzes/
-scripts/quiz-review/*.log.err
 scripts/migration/output/
 
 # Astro
@@ -65,6 +54,13 @@ scripts/migration/output/
 
 # Typescript
 *.tsbuildinfo
+
+# Obsidian per-machine UI state, now that docs/ is a vault. The rest of
+# docs/.obsidian/ IS committed: it carries the vault's link format, which is
+# shared configuration rather than local state.
+**/.obsidian/workspace.json
+**/.obsidian/workspace-mobile.json
+**/.obsidian/cache
 
 # derived board — regenerate with /hexagram:board, never track it
 .kanban.json
