@@ -1,6 +1,6 @@
 // Read-only audit against the live Supabase `quizzes` table.
-// Ranks quizzes by real completeness/quality problems (not the stale local quiz-review.db score).
-require("dotenv").config();
+// Ranks quizzes by real completeness/quality problems, derived from the row itself.
+require("dotenv").config({ path: require("path").join(__dirname, ".env") });
 const { createClient } = require("@supabase/supabase-js");
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);

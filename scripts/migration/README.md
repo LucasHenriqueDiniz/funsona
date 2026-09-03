@@ -48,6 +48,22 @@ of the data. Verified against the live Supabase project:
 | `migrate-images-to-r2.cjs` | Copies quiz/profile images to R2 and emits the URL rewrite as SQL. Works against local or remote. |
 | `check-remaining.cjs`, `count-supabase-image-urls.cjs`, `verify-local-counts.cjs` | Read the *local* sqlite. Verification helpers. |
 
+### Read-only audits of the source data
+
+These came from `scripts/quiz-review/` when the ChatGPT review pipeline was
+removed. They never touched that pipeline's state — they read the Supabase
+`quizzes` table and print, and they are the part of that directory that still
+has a subject once the pipeline is gone.
+
+| script | what it does |
+|---|---|
+| `audit-live.cjs` | Ranks every quiz by structural defects (missing questions/outcomes, empty options, duplicate question titles, weights pointing at unknown outcomes). `--published-only`, `--limit N`. |
+| `count-tables.cjs` | Row count per table. A census, for comparing against D1 after a load. |
+| `fetch-one.cjs <id>` | Dumps one `quizzes` row as JSON. |
+| `find-broken-questions.cjs <id...>` | Prints the malformed questions inside the given quizzes. |
+| `find-dupes.cjs <id>` | Finds repeated question titles inside one quiz. |
+| `list-missing-desc.cjs <id>` | Lists outcomes with no description. |
+
 ### Why the SQL-file approach works now
 
 The old loader was local-only because `wrangler d1 execute --file` hits
@@ -58,6 +74,12 @@ gets large. Verified: the 787 KB blob round-trips byte-for-byte with valid JSON.
 
 That means the cutover needs no Cloudflare API token beyond the wrangler auth
 you already have.
+
+## Environment
+
+Every script here reads `scripts/migration/.env` — see `.env.example`. Two of
+them used to read `scripts/quiz-review/.env` instead; that directory is gone, so
+the path now resolves inside this package.
 
 ## Runbook
 

@@ -1,13 +1,18 @@
 ---
-status: blocked
+status: done
 kanban: eeb4b0d4-9009-41f9-b962-1aa3ff09be09
 ---
 
 # Slice 2 — Decide what language the quiz pipeline speaks
 
-**Blocked on the owner: the Portuguese here is prompt text sent to ChatGPT to produce pt-BR quiz copy,
-so translating it changes what the pipeline outputs. That is a product decision about the quiz
-catalogue, not a style fix, and it is not mine to make.**
+**Closed 2026-09-03 without being done: the owner removed the pipeline instead of deciding what
+language it speaks.** `scripts/quiz-review/` is gone, so every file named below is gone with it, and
+the open question it was blocked on ("is the quiz catalogue permanently pt-first?") no longer has
+anything hanging on it. `docs/language-exceptions.md` was never created and is no longer needed —
+there are no deliberate non-English strings left outside published product copy, which was always out
+of scope. Recorded here rather than deleted so the next audit does not re-derive the argument.
+
+The original slice follows, unchanged, as the record of what was blocked and why.
 
 ## Delivers
 

@@ -1,3 +1,20 @@
+---
+tags:
+  - kind/plan
+  - area/content
+---
+
+> **Preserved record, moved here verbatim on 2026-09-03.** This was
+> `scripts/quiz-review/QUIZ_REFACTOR_COMPLETE_REPORT.md`. That directory held the
+> ChatGPT review pipeline and was removed; this file was not, because it is the
+> record of a rewrite that ran against the live quiz catalogue — and
+> `docs/plans/language-sweep/slice-01-translate-report.md` says in as many words
+> not to delete it to make a check pass.
+>
+> The pipeline it describes no longer exists. Nothing here is reproducible; it is
+> history. The quoted quiz copy is pt-BR product content, quoted as written, and
+> the quoted prompt is Portuguese for the reason the quote itself states.
+
 # 📊 Full report: the refactored pasta quiz
 
 **Quiz ID:** `3918ecda-7185-4a14-9d25-548a54858a5f`  

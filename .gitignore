@@ -47,17 +47,6 @@ npm-debug.log*
 /~/
 claude-share/
 backups/
-scripts/quiz-review/chrome-profile/
-scripts/quiz-review/batches/
-scripts/quiz-review/*.db
-scripts/quiz-review/*.db-shm
-scripts/quiz-review/*.db-wal
-scripts/quiz-review/*.pid
-scripts/quiz-review/*-report.html
-scripts/quiz-review/quiz-preview.html
-scripts/quiz-review/refactored-dump.json
-scripts/quiz-review/refactored-quizzes/
-scripts/quiz-review/*.log.err
 scripts/migration/output/
 
 # Astro
