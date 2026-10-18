@@ -1,5 +1,5 @@
 ---
-status: todo
+status: doing
 ---
 
 # Slice 2 — One flag decides index, ad code and listings
@@ -30,6 +30,49 @@ What changes on deploy is the 12 community quizzes. They gain `noindex`, lose th
 listings, search and the sitemap. **That last part is a visible product change**: community quizzes
 stop being discoverable through explore and search. It follows from the decision, and the pitch puts
 community curation out of scope.
+
+### Built and verified locally (2026-10-18), not yet deployed
+
+Beyond what is listed above, two more listings went through the same rule:
+
+- `GET /recommended/for-me` queries `quizzes` directly rather than through `listQuizzes`. Both of
+  its queries gained `ads_eligible = 1`.
+- The public profile's **played** list (`getUserPlayedQuizzes`) got the same filter as the created
+  list, since it links quizzes too.
+
+The loader prop is now opt-in. It is passed by the home, `/explore`, `/explore/<category>`, the
+guides, and quiz and play pages whose flag is `1`. The dead-end pages lost their explicit
+`ads={false}`, since off is the default now.
+
+**How it was tested.** Testing this against the production API proves nothing, because the change is
+in the API. So the stack ran locally on a copy of production:
+
+- `wrangler d1 export --remote` produced an 11.6 MB dump. `wrangler d1 execute --local --file`
+  rejected it (`SQLITE_TOOBIG`: some quiz `INSERT` exceeds the local statement limit), so the dump
+  was loaded into miniflare's sqlite file with the `sqlite3` CLI. The copy matched production: 762
+  published, 750 flagged, 117 profiles.
+- The API ran with `wrangler dev --persist-to .wrangler/prod-copy` (`api-prod-copy` in
+  `.claude/launch.json`). Its `.dev.vars` holds **placeholder** Clerk keys: the public routes this
+  slice touches only check that the variables exist.
+- The web app ran against that API (`web-local-api`).
+
+| check | result |
+|---|---|
+| `scripts/adsense/check-slice-02.py` | **22 PASS, 0 FAIL** |
+| flip of `verifique-sua-visao-de-cores` in the local copy: 1 → 0 → 1 | indexed, loader, sitemap, explore, profile, search: all six true, then all six false, then all six true |
+| sitemap = D1 | 750 = 750 |
+| `scripts/adsense/mutate-slice-02.py`: each fix reverted | **4 of 4** checks went red without their fix and green with it (listing filter, quiz noindex, opt-in loader, public profile filter) |
+| `pnpm lint`, `pnpm typecheck` | pass, 0 errors |
+
+**One check was vacuous at first.** The copy's 13 non-published quizzes are all `ARCHIVED`, and all
+older than the 6 a profile shows, so "not listed on the profile" passed with no filter. The check now
+makes one of them the newest for its duration. The mutation run proves it can fail.
+
+**Not tested:** `/recommended/for-me` needs a signed-in user, and the local API has placeholder
+Clerk keys. Its two `WHERE` clauses were read, not run.
+
+`mutate-slice-01.py` reverts `ads={false}` on the login page, which this slice removed, so that
+script only runs on the slice 1 tree.
 
 ## Needs
 
