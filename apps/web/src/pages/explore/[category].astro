@@ -26,6 +26,6 @@ const title = `Quizzes de ${text.name} | FunSona`;
 const description = `${text.description} Explore quizzes de ${text.name.toLowerCase()} no FunSona.`;
 ---
 
-<Layout title={title} description={description} canonical={`/explore/${category.slug}`}>
+<Layout title={title} description={description} canonical={`/explore/${category.slug}`} ads>
   <ExploreCatalog category={category} sort={sort} page={page} search={search} locale={locale} />
 </Layout>

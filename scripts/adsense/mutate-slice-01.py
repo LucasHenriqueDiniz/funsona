@@ -5,6 +5,9 @@ web dev server running against the production API (.claude/launch.json,
 "web-prod-api"). Edits source files and always restores them.
 
 Usage: python scripts/adsense/mutate-slice-01.py
+
+Runs on the slice 1 tree only: slice 2 made the loader opt-in and removed the
+ads={false} this script reverts on the login page.
 """
 import pathlib, re, subprocess, sys, time
 W = pathlib.Path(__file__).resolve().parents[2] / "apps/web/src"

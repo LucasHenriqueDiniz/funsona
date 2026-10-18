@@ -19,15 +19,15 @@ export interface Props {
   /** Declares the page's actual content language. Quiz pages pass the quiz's own
    *  `language` so a Spanish quiz is not labelled lang="pt". */
   lang?: string;
-  /** Whether the AdSense loader is on the page. Google's policy forbids ads on
-   *  dead-end screens (login, settings, thank-you), and AdSense only crawls
-   *  pages that send it ad requests, so a page without the loader is outside
-   *  what AdSense evaluates. Defaults to on for now; slice 2 of the AdSense
-   *  plan makes it opt-in, driven by quizzes.ads_eligible. */
+  /** Whether the AdSense loader is on the page. Opt-in: Google's policy forbids
+   *  ads on dead-end screens (login, settings, thank-you), and AdSense only
+   *  crawls pages that send it ad requests, so a page without the loader is
+   *  outside what AdSense evaluates. The home page, explore, guides and curated
+   *  quizzes (quizzes.ads_eligible) pass it; nothing else carries ad code. */
   ads?: boolean;
 }
 
-const { title, description = "FunSona - Crie e jogue quizzes incríveis", image = "/og-default.svg", canonical, transparentNav, hideNav = false, hideFooter = false, noindex = false, lang, ads = true } = Astro.props;
+const { title, description = "FunSona - Crie e jogue quizzes incríveis", image = "/og-default.svg", canonical, transparentNav, hideNav = false, hideFooter = false, noindex = false, lang, ads = false } = Astro.props;
 const siteUrl = Astro.site || new URL(Astro.url.origin);
 const toAbsoluteUrl = (value: string) => new URL(value, siteUrl).toString();
 const url = canonical ? toAbsoluteUrl(canonical) : Astro.url.href;

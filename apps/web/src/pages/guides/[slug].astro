@@ -16,7 +16,7 @@ const canonical = locale === "pt" ? `/guides/${slug}` : `/${locale}/guides/${slu
 const image = `${Astro.url.origin}/og-default.svg`;
 ---
 
-<Layout title={`${entry.data.title} | FunSona`} description={entry.data.description} canonical={canonical}>
+<Layout title={`${entry.data.title} | FunSona`} description={entry.data.description} canonical={canonical} ads>
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Article",

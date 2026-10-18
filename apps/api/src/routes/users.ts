@@ -79,8 +79,8 @@ usersApp.get("/me/activity", authMiddleware, requireAuth, async (c) => {
   const userId = currentUserId(c);
 
   const [created, played] = await Promise.all([
-    getUserCreatedQuizzes(c.env, userId, 6),
-    getUserPlayedQuizzes(c.env, userId, 30, 6),
+    getUserCreatedQuizzes(c.env, userId, 6, false),
+    getUserPlayedQuizzes(c.env, userId, 30, 6, false),
   ]);
 
   return c.json({
@@ -201,8 +201,8 @@ usersApp.get("/:id/activity", async (c) => {
   const userId = c.req.param("id");
 
   const [created, played] = await Promise.all([
-    getUserCreatedQuizzes(c.env, userId, 6),
-    getUserPlayedQuizzes(c.env, userId, 30, 6),
+    getUserCreatedQuizzes(c.env, userId, 6, true),
+    getUserPlayedQuizzes(c.env, userId, 30, 6, true),
   ]);
 
   return c.json({

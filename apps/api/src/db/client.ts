@@ -315,9 +315,17 @@ export type ListQuizzesFilters = {
   minAttempts: number;
 };
 
+/** The seed account that authored the editorial catalogue (see 0004 and 0005). */
+export const SEED_AUTHOR_ID = "00000000-0000-0000-0000-000000000000";
+
+/** Every public listing goes through here — home, explore, search, related,
+ *  the result screen and the sitemap — so this is where curation applies:
+ *  only quizzes with ads_eligible = 1 are listed. A non-curated quiz is still
+ *  served by slug, it just is not linked from anywhere a crawler or an AdSense
+ *  reviewer browses. See docs/plans/adsense-low-value-content/slice-02. */
 export async function listQuizzes(env: Env["Bindings"], filters: ListQuizzesFilters) {
   const offset = (filters.page - 1) * filters.limit;
-  const where: string[] = ["status = 'PUBLISHED'"];
+  const where: string[] = ["status = 'PUBLISHED'", "ads_eligible = 1"];
   const params: unknown[] = [];
 
   if (filters.tag) {
@@ -843,24 +851,38 @@ export async function getUserAchievements(env: Env["Bindings"], userId: string) 
 
 // ─── User activity ──────────────────────────────────────────────────────────
 
-export async function getUserCreatedQuizzes(env: Env["Bindings"], userId: string, limit: number) {
+/** On a public profile only published quizzes show, and the seed account shows
+ *  only its curated ones — its profile is linked from every seed quiz page, so
+ *  it would otherwise lead straight into the non-curated catalogue. A user's own
+ *  view (publicView = false) keeps drafts and everything else. */
+const PUBLIC_QUIZ_FILTER = `q.status = 'PUBLISHED' AND (q.ads_eligible = 1 OR q.author_id != '${SEED_AUTHOR_ID}')`;
+
+export async function getUserCreatedQuizzes(env: Env["Bindings"], userId: string, limit: number, publicView: boolean) {
+  const visibility = publicView ? `AND ${PUBLIC_QUIZ_FILTER}` : "";
   const { results } = await getDb(env)
     .prepare(
-      `SELECT id, slug, title, description, cover_url, type, likes_count, attempts_count, created_at
-       FROM quizzes WHERE author_id = ? ORDER BY created_at DESC LIMIT ?`
+      `SELECT q.id, q.slug, q.title, q.description, q.cover_url, q.type, q.likes_count, q.attempts_count, q.created_at
+       FROM quizzes q WHERE q.author_id = ? ${visibility} ORDER BY q.created_at DESC LIMIT ?`
     )
     .bind(userId, limit)
     .all();
   return results;
 }
 
-export async function getUserPlayedQuizzes(env: Env["Bindings"], userId: string, resultLimit: number, quizLimit: number) {
+export async function getUserPlayedQuizzes(
+  env: Env["Bindings"],
+  userId: string,
+  resultLimit: number,
+  quizLimit: number,
+  publicView: boolean
+) {
   const db = getDb(env);
+  const visibility = publicView ? `AND ${PUBLIC_QUIZ_FILTER}` : "";
   const { results } = await db
     .prepare(
       `SELECT qr.quiz_id, qr.created_at, q.id as q_id, q.slug, q.title, q.description, q.cover_url, q.type, q.likes_count, q.attempts_count
        FROM quiz_results qr JOIN quizzes q ON q.id = qr.quiz_id
-       WHERE qr.user_id = ? ORDER BY qr.created_at DESC LIMIT ?`
+       WHERE qr.user_id = ? ${visibility} ORDER BY qr.created_at DESC LIMIT ?`
     )
     .bind(userId, resultLimit)
     .all<{ quiz_id: string; q_id: string; slug: string; title: string; description: string | null; cover_url: string | null; type: string; likes_count: number; attempts_count: number }>();
