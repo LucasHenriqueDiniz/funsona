@@ -215,14 +215,14 @@ quizzesApp.get("/recommended/for-me", authMiddleware, requireAuth, async (c) => 
   if (preferredTags.length > 0) {
     const likeClauses = preferredTags.map(() => "tags LIKE ?").join(" OR ");
     const { results } = await db
-      .prepare(`SELECT ${baseSelect} FROM quizzes WHERE status = 'PUBLISHED' AND (${likeClauses}) ORDER BY attempts_count DESC LIMIT 48`)
+      .prepare(`SELECT ${baseSelect} FROM quizzes WHERE status = 'PUBLISHED' AND ads_eligible = 1 AND (${likeClauses}) ORDER BY attempts_count DESC LIMIT 48`)
       .bind(...preferredTags.map((t) => `%"${t}"%`))
       .all<QuizSummary & { tags: string }>();
     personalized = results.map((r) => ({ ...r, tags: JSON.parse((r as unknown as { tags: string }).tags || "[]") }));
   }
 
   const { results: popularData } = await db
-    .prepare(`SELECT ${baseSelect} FROM quizzes WHERE status = 'PUBLISHED' ORDER BY attempts_count DESC LIMIT 80`)
+    .prepare(`SELECT ${baseSelect} FROM quizzes WHERE status = 'PUBLISHED' AND ads_eligible = 1 ORDER BY attempts_count DESC LIMIT 80`)
     .all<QuizSummary & { tags: string }>();
   const popular = popularData.map((r) => ({ ...r, tags: JSON.parse((r as unknown as { tags: string }).tags || "[]") }));
 

@@ -69,9 +69,14 @@ const outcomes = (Array.isArray(quiz.content?.outcomes) ? quiz.content.outcomes 
 // Current user for the comment section — null for anonymous visitors, who
 // still get the full page.
 const currentUserId = (await getProfile(Astro))?.id ?? null;
+
+// One flag decides whether Google sees this quiz at all: a curated quiz is
+// indexed and carries ad code; any other quiz is noindex and carries none.
+// It stays playable by direct link. See docs/research/2026-10-18-adsense-noindex-review.
+const curated = Boolean(quiz.ads_eligible);
 ---
 
-<Layout title={title} description={description} image={image} canonical={`/quiz/${slug}`} lang={quiz.language || "pt"}>
+<Layout title={title} description={description} image={image} canonical={`/quiz/${slug}`} lang={quiz.language || "pt"} noindex={!curated} ads={curated}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Quiz",

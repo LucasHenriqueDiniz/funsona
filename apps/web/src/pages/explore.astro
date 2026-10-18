@@ -8,6 +8,6 @@ const page = parseInt(Astro.url.searchParams.get("page") || "1");
 const search = Astro.url.searchParams.get("search") || "";
 ---
 
-<Layout title="Explorar Quizzes | FunSona" description="Descubra quizzes incríveis por categoria, tema ou tag.">
+<Layout title="Explorar Quizzes | FunSona" description="Descubra quizzes incríveis por categoria, tema ou tag." ads>
   <ExploreCatalog tag={tag} sort={sort} page={page} search={search} locale={Astro.currentLocale || "pt"} />
 </Layout>
