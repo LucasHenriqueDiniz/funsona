@@ -1,5 +1,5 @@
 ---
-status: doing
+status: done
 ---
 
 # Slice 1 — Say only what is true, and close the cheap crawl findings
@@ -62,7 +62,17 @@ The `grep` for claims turned up more than the audit had listed:
   takes effect when someone runs `wrangler d1 migrations apply funsona-db --remote`. The root
   `db:migrate` script still points at Supabase.
 
-### Verified locally (2026-10-18), not yet on the live site
+### Done on the live site (2026-10-18)
+
+Merged as #10 (`8b54aad`) and deployed by Cloudflare Pages. Measured on funsona.com the same evening:
+
+| check | result |
+|---|---|
+| the slice's checks, re-run in the browser against funsona.com (same-origin `fetch`, since this machine's shell had lost outbound network) | **34 PASS, 0 FAIL**. The 31 local checks, plus `email_off` honoured on `/about`, `/privacy`, `/terms` and `/contact`, and the author shown as "Equipe FunSona" |
+| `www.funsona.com/quiz/…?ref=www-check` opened in the browser | landed on `funsona.com/quiz/…?ref=www-check`, path and query kept. The browser hides the status of a cross-origin redirect; the 301 was measured locally |
+| **Done when:** `check_completeness.py https://funsona.com` (run from the user's terminal) | **PASS=5, `exit=0`**. Before this slice: PASS=4, WARN=2. It now also finds the email as a contact channel, since Cloudflare no longer rewrites it |
+
+### Verified locally (2026-10-18), before the merge
 
 What ran: `astro dev --mode production`, the `web-prod-api` entry in `.claude/launch.json`, against
 the production API at `api.funsona.com`, with a real Clerk key in the gitignored `apps/web/.dev.vars`.
