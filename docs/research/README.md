@@ -62,4 +62,11 @@ Investigations and benchmarks already done. Do not repeat research listed here u
 
 - **OG Image Generation**: evaluate the `@vercel/og` equivalent for Cloudflare (likely `@cloudflare/pages-plugin-vercel-og`, or generating SVG → PNG with resvg-wasm).
 - **AdSense Approval**: requires real content, a privacy policy, terms of use, and CLS < 0.1.
+  Rejected 2026-08-16 for "low value content"; see [[adsense-low-value-content]].
+
+## AdSense: does `noindex` hide a page from the review? (2026-10-18)
+
+- No. `noindex` binds search crawlers. A page leaves AdSense's view by carrying no ad code (no slot
+  and no `adsbygoogle.js` loader) and by being unlinked. 404/410 is the fallback.
+- Full note and sources: `2026-10-18-adsense-noindex-review/research.md`.
 - **i18n SEO**: hreflang tags, one sitemap per locale, translated content (not just the UI).

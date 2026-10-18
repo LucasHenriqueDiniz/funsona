@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef, type PointerEvent } from "react";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { publicCount } from "@/lib/public-count";
 
 interface Quiz {
   id: string;
@@ -197,6 +198,7 @@ export default function HeroCarousel() {
             </a>
 
              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-white/75 sm:text-sm">
+              {publicCount(quiz.attempts_count) !== null && (
               <span className="flex items-center gap-1.5">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
@@ -204,12 +206,15 @@ export default function HeroCarousel() {
                 </svg>
                 {(quiz.attempts_count || 0).toLocaleString()} jogadas
               </span>
+              )}
+              {publicCount(quiz.likes_count) !== null && (
               <span className="flex items-center gap-1.5">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                 </svg>
                 {(quiz.likes_count || 0).toLocaleString()} curtidas
               </span>
+              )}
             </div>
           </div>
         </div>

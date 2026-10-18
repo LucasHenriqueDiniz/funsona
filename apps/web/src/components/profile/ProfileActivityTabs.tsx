@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AchievementBadges from "@/components/profile/AchievementBadges";
+import { publicCount } from "@/lib/public-count";
 
 export type ProfileQuiz = {
   id: string;
@@ -65,9 +66,11 @@ export default function ProfileActivityTabs({ userId, createdQuizzes, playedQuiz
               )}
             </div>
 
-            <div className="absolute bottom-3 right-3 rounded-full border border-white/20 bg-black/40 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-md">
-              {quiz.attempts_count.toLocaleString()} jogadas
-            </div>
+            {publicCount(quiz.attempts_count) !== null && (
+              <div className="absolute bottom-3 right-3 rounded-full border border-white/20 bg-black/40 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-md">
+                {quiz.attempts_count.toLocaleString()} jogadas
+              </div>
+            )}
           </div>
 
           <div className="p-5">
@@ -79,8 +82,8 @@ export default function ProfileActivityTabs({ userId, createdQuizzes, playedQuiz
             )}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4 text-xs font-semibold text-[var(--color-text-muted)]">
-                <span>{quiz.attempts_count} plays</span>
-                <span>{quiz.likes_count} likes</span>
+                {publicCount(quiz.attempts_count) !== null && <span>{quiz.attempts_count} plays</span>}
+                {publicCount(quiz.likes_count) !== null && <span>{quiz.likes_count} likes</span>}
               </div>
               <span className="rounded-full bg-brand-500/10 px-2.5 py-1 text-xs font-bold text-brand-500">Jogar</span>
             </div>

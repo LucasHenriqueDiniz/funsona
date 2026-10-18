@@ -2,6 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import QuizCard from "@/components/QuizCard.astro";
 import { apiFetch } from "@/lib/api";
+import { publicCount } from "@/lib/public-count";
 
 const categories = [
   { name: "Personalidade", emoji: "✨", slug: "personality", ring: "ring-amber-300/40 dark:ring-amber-500/30", bg: "bg-amber-500/10 text-amber-700 dark:text-amber-300" },
@@ -12,14 +13,6 @@ const categories = [
   { name: "Musica", emoji: "🎵", slug: "music", ring: "ring-orange-300/40 dark:ring-orange-500/30", bg: "bg-orange-500/10 text-orange-700 dark:text-orange-300" },
   { name: "TV", emoji: "📺", slug: "tv", ring: "ring-indigo-300/40 dark:ring-indigo-500/30", bg: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-300" },
   { name: "Conhecimentos", emoji: "📚", slug: "knowledge", ring: "ring-lime-300/40 dark:ring-lime-500/30", bg: "bg-lime-500/10 text-lime-700 dark:text-lime-300" },
-];
-
-const SAMPLE_QUIZZES = [
-  { slug: "qual-personagem-anime", title: "Qual personagem de anime você seria?", description: "Descubra qual herói do mundo anime combina com a sua personalidade.", cover_url: null, type: "PERSONALITY", likes_count: 312, attempts_count: 4820 },
-  { slug: "conhecimentos-gerais-brasil", title: "Conhecimentos Gerais: Brasil", description: "Teste seus conhecimentos sobre história, cultura e geografia do Brasil.", cover_url: null, type: "TRIVIA", likes_count: 198, attempts_count: 2150 },
-  { slug: "qual-era-voce-pertence", title: "Qual era você realmente pertence?", description: "Anos 80, 90, 2000 ou 2010? Descubra onde sua alma realmente vive.", cover_url: null, type: "PERSONALITY", likes_count: 87, attempts_count: 1340 },
-  { slug: "jogos-classicos-trivia", title: "Trivia: Jogos Clássicos dos Anos 90", description: "Você realmente conhece os maiores clássicos dos videogames?", cover_url: null, type: "TRIVIA", likes_count: 145, attempts_count: 980 },
-  { slug: "qual-tipo-de-amigo-voce-e", title: "Que tipo de amigo você é?", description: "O conselheiro, o animador ou o que some quando precisa? Descubra!", cover_url: null, type: "PERSONALITY", likes_count: 523, attempts_count: 7200 },
 ];
 
 // Accent colors per carousel slot — used for "Jogar" button + fallback gradient
@@ -37,23 +30,24 @@ const [{ data: topQuizzes, meta: topMeta }, { data: trendingQuizzes }, { data: r
   apiFetch("/quizzes?limit=6"),
 ]);
 
-const heroQuizzes = (topQuizzes?.length ? topQuizzes : SAMPLE_QUIZZES).slice(0, 5);
-const displayTrending = trendingQuizzes?.length ? trendingQuizzes : SAMPLE_QUIZZES.slice(0, 3);
-const displayRecent = recentQuizzes?.length ? recentQuizzes : SAMPLE_QUIZZES.slice(2, 5);
+// No invented fallback: when the API fails, a section renders empty rather than
+// showing quizzes that do not exist (AGENTS.md rule 6).
+const heroQuizzes = (topQuizzes ?? []).slice(0, 5);
+const displayTrending = trendingQuizzes ?? [];
+const displayRecent = recentQuizzes ?? [];
 
-// Round down to the nearest 100 so the stat stays true as the catalog grows
-// or shrinks slightly, instead of hardcoding a number that goes stale. Only
-// trust the total when the API actually returned quizzes — if it failed and
-// we fell back to SAMPLE_QUIZZES, topMeta.total would be null/0 and show a
-// misleading "0 Quizzes" instead of just not rendering a live number.
+// Rounded down so the stat stays true as the catalog changes, and absent when
+// the API returned nothing. Never a hardcoded number: the old "+700" fallback
+// would have fired as soon as the listing shrank below 100.
 const totalQuizzes = topQuizzes?.length ? topMeta?.total ?? 0 : 0;
-const quizzesStat = totalQuizzes >= 100 ? `+${Math.floor(totalQuizzes / 100) * 100}` : "+700";
+const statStep = totalQuizzes >= 100 ? 100 : 10;
+const quizzesStat = totalQuizzes >= 10 ? `+${Math.floor(totalQuizzes / statStep) * statStep}` : null;
 
 const faqs = [
   {
     question: "O que é o FunSona?",
     answer:
-      `FunSona é uma plataforma gratuita de quizzes onde você pode jogar testes de personalidade, trivia e curiosidades, além de criar e publicar seus próprios quizzes para compartilhar com amigos. Temos ${quizzesStat} quizzes organizados em categorias como personalidade, trivia, amor, games, filmes, música, TV e conhecimentos gerais.`,
+      `FunSona é uma plataforma gratuita de quizzes onde você pode jogar testes de personalidade, trivia e curiosidades, além de criar e publicar seus próprios quizzes para compartilhar com amigos. Os quizzes ficam organizados em categorias como personalidade, trivia, amor, games, filmes, música, TV e conhecimentos gerais.`,
   },
   {
     question: "Preciso pagar para jogar os quizzes?",
@@ -68,7 +62,7 @@ const faqs = [
   {
     question: "Quem cria os quizzes da plataforma?",
     answer:
-      "A maioria dos quizzes é criada pela própria comunidade de usuários do FunSona, usando nosso editor gratuito. Também mantemos uma seleção de quizzes editoriais criados pela nossa equipe, especialmente nas categorias de trivia e conhecimentos gerais.",
+      "Os quizzes vêm de duas fontes: o catálogo editorial mantido pela equipe do FunSona, e a comunidade, que cria e publica os próprios quizzes pelo nosso editor gratuito.",
   },
   {
     question: "Meus dados e resultados ficam salvos com segurança?",
@@ -83,7 +77,7 @@ const faqs = [
 ];
 ---
 
-<Layout title="FunSona - Crie e jogue quizzes incriveis" description="A maior plataforma de quizzes da internet. Crie seus proprios quizzes, descubra novos e compartilhe com amigos.">
+<Layout title="FunSona - Crie e jogue quizzes incriveis" description="Plataforma de quizzes de personalidade e trivia. Crie seus próprios quizzes, descubra novos e compartilhe com amigos.">
   <div class="relative isolate overflow-hidden pb-20">
 
     <!-- ══════════════════════════════ HERO ══════════════════════════════ -->
@@ -121,16 +115,15 @@ const faqs = [
             </div>
 
             <div class="mt-10 flex items-center gap-7 border-t border-slate-800 pt-8">
-              <div>
-                <div class="text-xl font-black text-white">{quizzesStat}</div>
-                <div class="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Quizzes</div>
-              </div>
-              <div class="h-6 w-px bg-slate-800"></div>
-              <div>
-                <div class="text-xl font-black text-white">+10k</div>
-                <div class="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Jogadas</div>
-              </div>
-              <div class="h-6 w-px bg-slate-800"></div>
+              {quizzesStat && (
+                <>
+                  <div>
+                    <div class="text-xl font-black text-white">{quizzesStat}</div>
+                    <div class="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Quizzes</div>
+                  </div>
+                  <div class="h-6 w-px bg-slate-800"></div>
+                </>
+              )}
               <div>
                 <div class="text-xl font-black text-white">100%</div>
                 <div class="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Grátis</div>
@@ -186,8 +179,8 @@ const faqs = [
                         )}
                         <div class="flex items-center justify-between">
                           <div class="flex items-center gap-3 text-xs font-semibold text-white/55">
-                            <span>▶ {quiz.attempts_count?.toLocaleString("pt-BR")}</span>
-                            <span>♥ {quiz.likes_count?.toLocaleString("pt-BR")}</span>
+                            {publicCount(quiz.attempts_count) !== null && <span>▶ {quiz.attempts_count.toLocaleString("pt-BR")}</span>}
+                            {publicCount(quiz.likes_count) !== null && <span>♥ {quiz.likes_count.toLocaleString("pt-BR")}</span>}
                           </div>
                           <span class={`rounded-xl px-4 py-2 text-xs font-extrabold text-white shadow-lg transition-transform duration-300 group-hover:translate-x-1 ${acc.bar}`}>
                             Jogar →

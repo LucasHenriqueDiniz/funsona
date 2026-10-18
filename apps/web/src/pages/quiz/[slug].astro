@@ -9,6 +9,7 @@ import { apiFetch } from "@/lib/api";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
 import { BRAND_DISCLAIMER } from "@/lib/legal";
 import { getProfile } from "@/lib/api-server";
+import { publicCount } from "@/lib/public-count";
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/");
@@ -142,16 +143,22 @@ const currentUserId = (await getProfile(Astro))?.id ?? null;
               <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.35),transparent_28%)]"></div>
             )}
             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-            <div class="absolute bottom-4 left-4 right-4 grid grid-cols-2 gap-2 text-white">
-              <div class="rounded-2xl border border-white/15 bg-white/15 p-3 backdrop-blur-xl">
-                <p class="text-2xl font-black">{(quiz.attempts_count || 0).toLocaleString("pt-BR")}</p>
-                <p class="text-xs font-bold uppercase tracking-wider text-white/65">jogadas</p>
+            {(publicCount(quiz.attempts_count) !== null || publicCount(quiz.likes_count) !== null) && (
+              <div class="absolute bottom-4 left-4 right-4 grid grid-cols-2 gap-2 text-white">
+                {publicCount(quiz.attempts_count) !== null && (
+                  <div class="rounded-2xl border border-white/15 bg-white/15 p-3 backdrop-blur-xl">
+                    <p class="text-2xl font-black">{quiz.attempts_count.toLocaleString("pt-BR")}</p>
+                    <p class="text-xs font-bold uppercase tracking-wider text-white/65">jogadas</p>
+                  </div>
+                )}
+                {publicCount(quiz.likes_count) !== null && (
+                  <div class="rounded-2xl border border-white/15 bg-white/15 p-3 backdrop-blur-xl">
+                    <p class="text-2xl font-black">{quiz.likes_count.toLocaleString("pt-BR")}</p>
+                    <p class="text-xs font-bold uppercase tracking-wider text-white/65">curtidas</p>
+                  </div>
+                )}
               </div>
-              <div class="rounded-2xl border border-white/15 bg-white/15 p-3 backdrop-blur-xl">
-                <p class="text-2xl font-black">{(quiz.likes_count || 0).toLocaleString("pt-BR")}</p>
-                <p class="text-xs font-bold uppercase tracking-wider text-white/65">curtidas</p>
-              </div>
-            </div>
+            )}
           </div>
 
           <div class="space-y-5 p-5">

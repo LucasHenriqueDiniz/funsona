@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
+import { publicCount } from "@/lib/public-count";
 
 interface QuizCardData {
   id: string;
@@ -68,9 +69,11 @@ function QuizCard({ quiz }: { quiz: QuizCardData }) {
               </span>
             )}
           </div>
+          {publicCount(quiz.attempts_count) !== null && (
           <div className="absolute bottom-3 right-3 rounded-full border border-white/20 bg-black/40 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-md">
             {(quiz.attempts_count || 0).toLocaleString()} jogadas
           </div>
+          )}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="flex h-14 w-14 scale-90 items-center justify-center rounded-full bg-white/95 shadow-xl transition-transform group-hover:scale-100">
               <svg className="ml-1 h-6 w-6 text-brand-600" fill="currentColor" viewBox="0 0 24 24">
@@ -86,6 +89,7 @@ function QuizCard({ quiz }: { quiz: QuizCardData }) {
           )}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 text-xs font-semibold text-[var(--color-text-muted)]">
+              {publicCount(quiz.attempts_count) !== null && (
               <span className="flex items-center gap-1">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
@@ -93,12 +97,15 @@ function QuizCard({ quiz }: { quiz: QuizCardData }) {
               </svg>
               {quiz.attempts_count || 0} plays
               </span>
+              )}
+              {publicCount(quiz.likes_count) !== null && (
               <span className="flex items-center gap-1">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
               {quiz.likes_count || 0}
               </span>
+              )}
             </div>
             <span className="rounded-full bg-brand-500/10 px-2.5 py-1 text-xs font-bold text-brand-500">Jogar</span>
           </div>

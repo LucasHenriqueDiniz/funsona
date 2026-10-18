@@ -7,7 +7,7 @@ import Layout from "@/layouts/Layout.astro";
     <h1 class="text-3xl font-bold text-gray-900 mb-8">Política de Privacidade</h1>
     
     <div class="prose prose-indigo max-w-none">
-      <p class="text-gray-600 mb-6">Última atualização: 06 de maio de 2026</p>
+      <p class="text-gray-600 mb-6">Última atualização: 18 de outubro de 2026</p>
 
       <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">1. Introdução</h2>
       <p class="text-gray-600 mb-4">
@@ -45,6 +45,27 @@ import Layout from "@/layouts/Layout.astro";
         sejam definidos. Você pode revisar e alterar sua escolha a qualquer momento através desse mesmo aviso.
       </p>
 
+      <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">Publicidade do Google</h3>
+      <ul class="list-disc pl-6 text-gray-600 mb-4 space-y-2">
+        <li>
+          Fornecedores terceiros, incluindo o Google, usam cookies para veicular anúncios com base nas visitas
+          anteriores do usuário a este site ou a outros sites.
+        </li>
+        <li>
+          O uso de cookies de publicidade pelo Google permite que ele e seus parceiros veiculem anúncios para
+          você com base nas suas visitas a este site e/ou a outros sites na Internet.
+        </li>
+        <li>
+          Você pode desativar a publicidade personalizada nas
+          <a href="https://www.google.com/settings/ads" class="text-indigo-600 hover:underline" rel="noopener noreferrer" target="_blank">Configurações de anúncios do Google</a>.
+        </li>
+        <li>
+          Outros fornecedores e redes de anúncios também podem veicular anúncios neste site. Você pode desativar
+          os cookies de publicidade personalizada desses fornecedores em
+          <a href="https://www.aboutads.info/choices/" class="text-indigo-600 hover:underline" rel="noopener noreferrer" target="_blank">www.aboutads.info/choices</a>.
+        </li>
+      </ul>
+
       <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">5. Compartilhamento de Dados</h2>
       <p class="text-gray-600 mb-4">Compartilhamos dados apenas com:</p>
       <ul class="list-disc pl-6 text-gray-600 mb-4 space-y-2">
@@ -65,13 +86,13 @@ import Layout from "@/layouts/Layout.astro";
         <li>Solicitar portabilidade dos dados.</li>
       </ul>
       <p class="text-gray-600 mb-4">
-        Para exercer seus direitos, entre em contato: <a href="mailto:support@funsona.com" class="text-indigo-600 hover:underline">support@funsona.com</a>
+        Para exercer seus direitos, entre em contato: <!--email_off--><a href="mailto:support@funsona.com" class="text-indigo-600 hover:underline">support@funsona.com</a><!--/email_off-->
       </p>
 
       <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">7. Segurança</h2>
       <p class="text-gray-600 mb-4">
         Adotamos medidas técnicas e organizacionais para proteger seus dados, incluindo criptografia em trânsito (TLS), 
-        autenticação segura (JWT em cookies httpOnly), e controle de acesso baseado em papéis (RLS no banco de dados).
+        autenticação gerenciada pelo Clerk e acesso ao banco de dados restrito ao servidor da aplicação.
       </p>
 
       <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">8. Retenção de Dados</h2>
@@ -88,7 +109,7 @@ import Layout from "@/layouts/Layout.astro";
 
       <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">10. Contato</h2>
       <p class="text-gray-600 mb-4">
-        Dúvidas sobre privacidade? Entre em contato: <a href="mailto:support@funsona.com" class="text-indigo-600 hover:underline">support@funsona.com</a>
+        Dúvidas sobre privacidade? Entre em contato: <!--email_off--><a href="mailto:support@funsona.com" class="text-indigo-600 hover:underline">support@funsona.com</a><!--/email_off-->
       </p>
     </div>
   </div>
