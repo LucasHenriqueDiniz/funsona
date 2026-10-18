@@ -6,6 +6,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@funsona/web", "dev"],
       "port": 4321
+    },
+    {
+      "name": "web-prod-api",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@funsona/web", "dev", "--mode", "production", "--port", "4322"],
+      "port": 4322
     }
   ]
 }

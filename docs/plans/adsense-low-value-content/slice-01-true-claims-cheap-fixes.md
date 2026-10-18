@@ -1,5 +1,5 @@
 ---
-status: todo
+status: doing
 ---
 
 # Slice 1 — Say only what is true, and close the cheap crawl findings
@@ -38,6 +38,54 @@ four mechanical audit findings are closed:
   - The AdSense loader no longer renders on dead-end screens: `login`, `register`, `settings`,
     `sso-callback`, `moderation`, `quiz/new`, `profile/me`.
 - **Email.** The obfuscated email no longer produces a `/cdn-cgi/l/email-protection` link that 404s.
+
+### Found while doing it (2026-10-18)
+
+The `grep` for claims turned up more than the audit had listed:
+
+- **`login.astro`** showed `+18k` daily plays, `+3k` creators and new quizzes "24/7". D1 has 117
+  profiles. These became claims nobody can refute: free to play, three interface languages, weekly and
+  all-time ranking.
+- **Home FAQ** said most quizzes come from the community and that the editorial ones are mostly
+  trivia. On 2026-10-18, 750 of 762 come from the seed account, and 749 of those are personality
+  quizzes.
+- **Footer** had three social icons (Twitter, Instagram, TikTok) pointing at `href="#"`: links to
+  nothing, on every page. Removed. Its "Contact" entry was a `mailto:` that Cloudflare turns into the
+  404ing `/cdn-cgi/l/email-protection` link. That is the one the auditor caught from the home page. It
+  now points at `/contact`.
+- **`/explore/<unknown>`** was not a 200: it was a 302 to `/explore`. The auditor followed the redirect
+  and saw 200, which is a soft 404 either way. Quiz, profile and guide pages already redirect to
+  `/404`, and this one now does the same.
+- **`.env.production`** says "Auto Ads stays off for funsona.com". That is the repo's claim, and the
+  dashboard still has to confirm it.
+- **The seed display name** is a migration (`0005_seed_display_name.sql`), not a manual `UPDATE`. It
+  takes effect when someone runs `wrangler d1 migrations apply funsona-db --remote`. The root
+  `db:migrate` script still points at Supabase.
+
+### Verified locally (2026-10-18), not yet on the live site
+
+What ran: `astro dev --mode production`, the `web-prod-api` entry in `.claude/launch.json`, against
+the production API at `api.funsona.com`, with a real Clerk key in the gitignored `apps/web/.dev.vars`.
+
+| check | result |
+|---|---|
+| `scripts/adsense/check-slice-01.sh http://localhost:4322` | **31 PASS, 0 FAIL** |
+| `scripts/adsense/mutate-slice-01.py`: each fix reverted, then restored | **5 of 5** checks went red without their fix and green with it (explore 404, counter threshold, login loader, home stat, `www` 301) |
+| claims `grep` over `apps/web/src` | 0 hits |
+| `pnpm lint`, `pnpm typecheck` | pass, 0 errors |
+| home quiz stat | `+700`, computed from the API's `meta.total` (762 published, rounded down). Replacing the total with 0 removes the stat, which is what the mutation run checks |
+| `www.localhost` with a Host header | 301 to the same path and query on the apex |
+| screenshots of `/` and a 0-play quiz | layout intact, no counters on the quiz, stats row shows quizzes and "100% free" |
+
+The first run of the check script was wrong in both directions. Dev mode adds
+`data-astro-source-*` attributes, so the counter `grep` matched nothing, and it reported a false FAIL
+on the 21-play quiz and a false PASS on the 0-play one. The pattern was fixed before any of the
+numbers above.
+
+**Not testable locally, so still open until deploy:** Cloudflare honouring `<!--email_off-->` (the
+markers are in the HTML; only Cloudflare acts on them), the real `www.funsona.com` route, and
+`check_completeness.py https://funsona.com` (the Done-when command). The seed display name also waits
+on `0005` being applied.
 
 ## Needs
 
