@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
 import { apiFetch } from "@/lib/auth-fetch";
+import { publicCount } from "@/lib/public-count";
 
 interface Quiz {
   id: string;
@@ -63,15 +64,18 @@ function QuizCard({ quiz }: { quiz: Quiz }) {
               </svg>
             </div>
           </div>
+          {publicCount(quiz.attempts_count) !== null && (
           <div className="absolute bottom-3 right-3 text-[11px] font-bold px-2.5 py-1 rounded-full bg-black/40 text-white border border-white/20 backdrop-blur-md">
             {(quiz.attempts_count || 0).toLocaleString()} jogadas
           </div>
+          )}
         </div>
         <div className="p-5">
           <h3 className="mb-1.5 line-clamp-2 min-h-[3rem] text-base font-extrabold leading-tight text-[var(--color-text-primary)] transition-colors group-hover:text-brand-500">{quiz.title}</h3>
           {quiz.description && <p className="mb-4 line-clamp-2 min-h-10 text-sm text-[var(--color-text-secondary)]">{quiz.description}</p>}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 text-xs text-[var(--color-text-muted)] font-semibold">
+              {publicCount(quiz.attempts_count) !== null && (
               <span className="flex items-center gap-1">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
@@ -79,12 +83,15 @@ function QuizCard({ quiz }: { quiz: Quiz }) {
               </svg>
               {(quiz.attempts_count || 0).toLocaleString()} plays
               </span>
+              )}
+              {publicCount(quiz.likes_count) !== null && (
               <span className="flex items-center gap-1">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
               {(quiz.likes_count || 0).toLocaleString()}
               </span>
+              )}
             </div>
             <span className="rounded-full bg-brand-500/10 px-2.5 py-1 text-xs font-bold text-brand-500">Jogar</span>
           </div>
@@ -312,7 +319,7 @@ export default function ExploreLoader({
                   </div>
 
                   <h4 className="line-clamp-2 min-h-[2.8rem] text-sm font-black leading-tight text-[var(--color-text-primary)]">{quiz.title}</h4>
-                  <p className="mt-1 line-clamp-1 text-xs text-[var(--color-text-muted)]">{quiz.type === "TRIVIA" ? "Trivia" : "Personalidade"} · {(quiz.attempts_count || 0).toLocaleString()} jogadas</p>
+                  <p className="mt-1 line-clamp-1 text-xs text-[var(--color-text-muted)]">{quiz.type === "TRIVIA" ? "Trivia" : "Personalidade"}{publicCount(quiz.attempts_count) !== null && ` · ${quiz.attempts_count.toLocaleString()} jogadas`}</p>
                   <span className="mt-3 inline-flex rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-black text-white transition group-hover:bg-brand-500">Jogar agora</span>
                 </a>
               </article>

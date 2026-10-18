@@ -6,8 +6,11 @@ import { getCategoryText, getExploreCategoryFromAnySlug } from "@/lib/explore-ca
 const slug = Astro.params.category;
 const category = getExploreCategoryFromAnySlug(slug);
 
+// An unknown category used to 302 to /explore, so every made-up URL under
+// /explore answered 200 — a soft 404 to crawlers. Send it where the quiz,
+// profile and guide pages already send theirs.
 if (!category) {
-  return Astro.redirect("/explore", 302);
+  return Astro.redirect("/404");
 }
 
 if (slug !== category.slug) {

@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { apiFetch } from "@/lib/api";
+import { publicCount } from "@/lib/public-count";
 
 function escapeXml(unsafe: string): string {
   return unsafe
@@ -32,7 +33,9 @@ export const GET: APIRoute = async ({ params }) => {
     const description = escapeXml(truncate(quiz.description || "", 140));
     const author = escapeXml(quiz.author?.display_name || quiz.author?.handle || "FunSona");
     const typeLabel = quiz.type === "TRIVIA" ? "🧠 Trivia" : "✨ Personalidade";
-    const stats = `${quiz.attempts_count || 0} jogadas · ${quiz.likes_count || 0} curtidas`;
+    const plays = publicCount(quiz.attempts_count);
+    const likes = publicCount(quiz.likes_count);
+    const stats = [plays !== null && `${plays} jogadas`, likes !== null && `${likes} curtidas`].filter(Boolean).join(" · ");
     const cover = quiz.cover_url ? escapeXml(quiz.cover_url) : null;
 
     let svg = `<?xml version="1.0" encoding="UTF-8"?>

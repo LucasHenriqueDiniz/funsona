@@ -120,6 +120,19 @@ const auth = defineMiddleware((context, next) => {
   )(context, next);
 });
 
+// www.funsona.com answered 200 with a canonical pointing at the apex, so both
+// hosts were live copies of the site. The AdSense crawler visits site.com and
+// www.site.com separately (AdSense Help 99376), and Search Console and AdSense
+// both reported traffic on www. One host: send www to the apex, path intact.
+const canonicalHost = defineMiddleware((context, next) => {
+  if (context.url.hostname.startsWith("www.")) {
+    const target = new URL(context.url);
+    target.hostname = target.hostname.slice("www.".length);
+    return context.redirect(target.toString(), 301);
+  }
+  return next();
+});
+
 // A quiz is authored in exactly one language (quizzes.language) and is never
 // translated, so it has no locale variants — yet Astro's i18n routing happily
 // served /en/quiz/x and /es/quiz/x as byte-identical copies of /quiz/x. That
@@ -142,4 +155,4 @@ const securityHeaders = defineMiddleware(async (_context, next) => {
   return response;
 });
 
-export const onRequest = sequence(auth, canonicalQuizUrl, securityHeaders);
+export const onRequest = sequence(canonicalHost, auth, canonicalQuizUrl, securityHeaders);
