@@ -84,8 +84,12 @@ numbers above.
 
 **Not testable locally, so still open until deploy:** Cloudflare honouring `<!--email_off-->` (the
 markers are in the HTML; only Cloudflare acts on them), the real `www.funsona.com` route, and
-`check_completeness.py https://funsona.com` (the Done-when command). The seed display name also waits
-on `0005` being applied.
+`check_completeness.py https://funsona.com` (the Done-when command).
+
+**`0005` applied by the owner on 2026-10-18 21:30 UTC.** D1 shows `handle = admin`,
+`display_name = Equipe FunSona`. The page rendered against the production API shows "Equipe FunSona"
+twice and "Administrador" zero times. Quiz responses are not cached (KV holds only the auth profile
+lookup), so the live site shows the new name already, ahead of the code deploy.
 
 ## Needs
 
