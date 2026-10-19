@@ -171,6 +171,8 @@ Taken by the owner on 2026-10-18, after
 | Who writes the core's outcomes | **An LLM drafts, the owner reviews and edits every outcome** before it is written to D1 | Unreviewed machine text; a hand-only rewrite that would force a much smaller core |
 | One flag or two | **One: `ads_eligible`** decides noindex, ad code, listings and sitemap | A separate `indexable` column, and so the state "indexed without ads" |
 | The three sensitive quizzes | **Outside the core.** They stay up by link, `noindex`, no ad code | Bringing restricted-adjacent content into what Google evaluates |
+| Catalogue taken from quizpanda.com (found 2026-10-18, [[2026-10-18-catalogue-origin/research\|catalogue-origin]]) | **Archive all 680 seed quizzes outside the core** (slice 3b) | Keeping the tail up by link, as the original plan had it |
+| How deep slice 4 rewrites the core | **Everything:** new questions, new outcomes, no third-party images | Rewriting outcomes only, on top of translated questions and hotlinked images |
 
 ## Research Needed
 - [x] **Does `noindex` keep a page out of the AdSense review?** No. It is a Search directive. A page
