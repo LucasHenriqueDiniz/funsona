@@ -6,8 +6,8 @@ decided: 2026-10-18
 
 # Where did the seed catalogue come from?
 
-> From quizpanda.com (PsyCat Games), translated and rewritten: almost certainly, by the images it still
-> hotlinks. Not proven by text.
+> From quizpanda.com (PsyCat Games), translated and rewritten. The covers are quizpanda's own feature
+> images, at paths named after quizpanda's quiz slugs. The text was not compared.
 
 ## What was blocking
 
@@ -26,6 +26,7 @@ All measured on 2026-10-18, against a restored export of production `quizzes`:
 | curated core (70) with `quizpanda.com` images | **62** (58 by cover) |
 | `quizpanda.com` operator | PsyCat Games, a third-party English quiz site (`fetches/quizpanda-what-weapon-am-i.md`) |
 | FunSona's most-clicked quiz | same topic as quizpanda's "What weapon are you?", and its "Espada" outcome image is `quizpanda.com/images/quiz-images/sword.jpg` |
+| cover URL shape | `https://quizpanda.com/<quizpanda-slug>/feature-image.jpg`. FunSona's weapon quiz has `quizpanda.com/what-weapon-am-i/feature-image.jpg`, which is the path of the quizpanda page in `fetches/`. Its medieval quiz has `quizpanda.com/who-would-you-have-been-in-medieval-times/feature-image.jpg` |
 | repo | the roadmap carries "Scraper repo (QuizPanda) integration" under v2.3 |
 
 **A first count was wrong.** It said 313 quizzes, 25 in the core. That count used a D1 dump taken
