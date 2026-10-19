@@ -6,6 +6,7 @@ import QuizReportButton from "@/components/quiz/QuizReportButton";
 import CommentSection from "@/components/quiz/CommentSection";
 import AdSlot from "@/components/ads/AdSlot";
 import { apiFetch } from "@/lib/api";
+import { apiUnavailableResponse, isApiUnavailable } from "@/lib/api-unavailable";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
 import { BRAND_DISCLAIMER } from "@/lib/legal";
 import { getProfile } from "@/lib/api-server";
@@ -14,12 +15,18 @@ import { publicCount } from "@/lib/public-count";
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/");
 
-const { data: quiz, error } = await apiFetch(`/quizzes/${slug}`);
+const { data: quiz, error, status } = await apiFetch(`/quizzes/${slug}`);
 
 if (error || !quiz) {
-  const { data: redirectData } = await apiFetch(`/quizzes/redirect/${slug}`);
-  if (redirectData?.new_slug) {
-    return Astro.redirect(`/quiz/${redirectData.new_slug}`, 301);
+  if (isApiUnavailable({ error, status })) {
+    return apiUnavailableResponse(Astro.url.pathname, { error, status });
+  }
+  const redirect = await apiFetch(`/quizzes/redirect/${slug}`);
+  if (redirect.data?.new_slug) {
+    return Astro.redirect(`/quiz/${redirect.data.new_slug}`, 301);
+  }
+  if (isApiUnavailable(redirect)) {
+    return apiUnavailableResponse(Astro.url.pathname, redirect);
   }
   return Astro.redirect("/404");
 }
