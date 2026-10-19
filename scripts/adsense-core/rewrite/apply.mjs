@@ -55,5 +55,10 @@ const statements = drafts.map(({ draft }) => `UPDATE quizzes SET
   updated_at = STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'now')
 WHERE slug = ${sqlString(draft.slug)} AND status = 'PUBLISHED' AND ads_eligible = 1;`);
 
-executeFile(target, statements.join("\n"));
-console.log(`wrote ${drafts.length} quiz(zes) to ${target}: ${slugs.join(", ")}`);
+// One statement per call: D1 rejects a file holding several of these at once
+// (SQLITE_TOOBIG), while each alone is well inside the limit.
+for (const [i, statement] of statements.entries()) {
+  executeFile(target, statement);
+  console.log(`wrote ${slugs[i]} to ${target}`);
+}
+console.log(`---- ${drafts.length} quiz(zes) written to ${target}`);

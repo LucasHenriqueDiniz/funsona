@@ -103,7 +103,7 @@ export default function QuizResultScreen({
           </h1>
 
           {description && (
-            <p className="mb-6 max-w-md text-sm leading-relaxed text-white/65 sm:text-base">
+            <p className="mb-6 max-w-md whitespace-pre-line text-sm leading-relaxed text-white/65 sm:text-base">
               {description}
             </p>
           )}

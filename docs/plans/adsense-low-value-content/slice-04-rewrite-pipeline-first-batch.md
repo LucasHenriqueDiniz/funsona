@@ -72,8 +72,29 @@ On top of the gate, only curated, published slugs can be written.
 `report.mjs` crashed on its first run: an untouched quiz stores `intro_content` as the JSON text
 `"null"`. Fixed before the numbers above.
 
-**Waiting on the owner:** reading and editing the first draft, then setting `reviewed: true`. Nothing
-reaches production before that.
+### First batch drafted (2026-10-19)
+
+All 10 quizzes of the batch are drafted in `scripts/adsense-core/drafts/`, the 10 most-clicked kept
+in `core.csv`. Each is written from scratch: 10 new questions, outcomes of 160–235 words (strength,
+blind spot, one practical suggestion), an intro in three parts, and no images.
+
+- The character quizzes (Mushoku Tensei, Rick and Morty, Demon Slayer, Magic) say in the intro that
+  they are fan quizzes with no affiliation, and avoid late-story spoilers.
+- The two relationship quizzes say they are reflection, not therapy. They point to the CVV (188), and
+  the breakup quiz also points to the Ligue 180 and 190 where control or violence shows up.
+
+| check | result |
+|---|---|
+| `check.mjs` on all 10 drafts | 10 ok: every gate rule passes except `reviewed`, which is still false |
+| all 10 applied to the **local** copy from local-only `reviewed: true` copies | written. Applying the 10 in one file failed with `SQLITE_TOOBIG`, so `apply.mjs` now writes one quiz per call |
+| `report.mjs --target local` on the 10 | **10 of 10** meet the bar (outcomes in range, intro, 0 third-party media, changed) |
+| played the werewolf quiz end to end on the local web app, always picking the first answer | result "Lobisomem" with the new text. The result screen ran the paragraphs together, so `QuizResultScreen.tsx` gained `whitespace-pre-line`. The landing page already had it |
+
+"Related quizzes" on the local result screen says "Failed to fetch". That is the browser calling the
+local API across ports (CORS in local dev), not a production behaviour.
+
+**Waiting on the owner:** reading and editing the 10 drafts, then setting `reviewed: true` in each.
+Nothing reaches production before that.
 
 ## Needs
 
