@@ -1,5 +1,5 @@
 ---
-status: todo
+status: done
 ---
 
 # Slice 3 — Pick the core and turn the rest off
@@ -15,6 +15,43 @@ ships **before** the core is rewritten: the recrawl clock is the longest wait in
 
 The core list itself is committed as data the decision can be audited against:
 `scripts/adsense-core/core.csv` (slug, clicks, impressions, reason kept/dropped).
+
+### Done (2026-10-18)
+
+**The core.** `scripts/adsense-core/pick_core.py` takes the GSC window 2026-07-19 → 2026-10-16 and
+finds 75 quiz URLs with at least one click. The plan expected 82; that figure had counted `www.` and
+apex rows separately. The script applies the exclusions and writes `core.csv`:
+
+- **70 kept**, holding **135 of 141 quiz clicks (96%)**.
+- 5 dropped: 2 with broken images, 2 with unresolved `%GIPHY` placeholders, 1 near-duplicate
+  (`voce-e-kira-ou-l-5`).
+- None of the three sensitive quizzes had a click, so the sensitive exclusion did not fire. They left
+  the index with the rest.
+
+**Backup, before the write:**
+- `wrangler d1 export --remote --table quizzes` at 23:28 UTC, 11.4 MB, kept outside the repo.
+- Loaded into a scratch sqlite to prove it restores: 775 rows, the same as production.
+- D1 Time Travel bookmark `00006627-00000000-00005108-75d4fc0b85d9c0be4938426d3b55c30c`.
+
+**Dry run.** `scripts/adsense-core/apply-core.sql` ran first against the restored backup: 70 published
+flagged, 692 published unflagged.
+
+**The write.** The owner said go. `wrangler d1 execute funsona-db --remote --file apply-core.sql`
+reported `rows_written: 693`: the 680 published seed quizzes outside the core, plus the 13 archived
+ones that still carried the flag from 0004.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **70** · PUBLISHED flag=0 **692** · ARCHIVED flag=0 13 |
+| flagged slugs in D1 = `keep` rows in `core.csv` | equal, 70 = 70 |
+| `sitemap.xml` quiz URLs (browser, funsona.com) | **70**. The sitemap has 85 URLs in all: 70 quizzes, 11 static pages, 4 guides |
+| a kept quiz (`que-arma-voce-tem-…`) | 200, indexed, loader |
+| a dropped quiz (`quantas-criancas-de-cinco-anos-…`) | 200, `noindex`, no loader |
+| quiz links on home, `/explore`, 5 categories, `/explore?sort=plays`, `/profile/admin` | 110 links, **0 outside the core**. The first count said 9: the check's regex matched `/quiz/new`, the "create quiz" link, once per page |
+| home quiz stat | `+70` |
+
+**Still the owner's:** re-submitting `sitemap.xml` in Search Console, which is an account action.
+The recrawl clock that slice 7 waits on starts here.
 
 ## Needs
 

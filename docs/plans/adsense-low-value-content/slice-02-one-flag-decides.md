@@ -1,5 +1,5 @@
 ---
-status: doing
+status: done
 ---
 
 # Slice 2 — One flag decides index, ad code and listings
@@ -31,7 +31,29 @@ listings, search and the sitemap. **That last part is a visible product change**
 stop being discoverable through explore and search. It follows from the decision, and the pitch puts
 community curation out of scope.
 
-### Built and verified locally (2026-10-18), not yet deployed
+### Done on the live site (2026-10-18)
+
+Merged as #11 (`38bb143`) at 23:25 UTC. Cloudflare Pages had the web build active within the minute,
+and the Workers Build for the API finished at 23:26:34. Measured in the browser against funsona.com
+right after, with D1 showing 750 flagged and 12 unflagged published quizzes:
+
+| check | result |
+|---|---|
+| `/quiz/6-ano` (community) | 200, `noindex, follow`, no loader; `/play` has no loader either |
+| curated quiz | no `noindex`, loader present |
+| sitemap quiz URLs | **750 = 750** flagged rows in D1; none of the 12 community slugs |
+| home, `/explore`, `/explore/personality`, `/explore/trivia`, `/explore?sort=plays` | 0 community slugs linked |
+| search for the community quiz's title | not returned |
+| loader present on `/`, `/explore`, `/guides`; absent on `/about`, `/privacy`, `/login`, `/leaderboard`, `/search` | 8 of 8 |
+| `/profile/admin` | no archived quiz among its 7 quiz links |
+| **total** | **23 PASS, 0 FAIL** |
+
+The profile check on production is the weak form: the archived quizzes are older than the 6 a profile
+shows, so it would pass without the filter. The strong form, which makes one the newest, ran only
+against the local copy, as did the flag flip. The production flag was not flipped, because that is a
+write to the live catalogue.
+
+### Built and verified locally (2026-10-18), before the merge
 
 Beyond what is listed above, two more listings went through the same rule:
 
