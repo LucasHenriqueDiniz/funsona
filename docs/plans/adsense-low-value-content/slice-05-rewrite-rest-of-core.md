@@ -43,10 +43,38 @@ the owner's go.
 | applied to the local copy, then `report.mjs --target local` | 10 of 10 meet the bar |
 | four batch 2 pages from the local web app | new intro present, 0 third-party media in the quiz body |
 
-**Waiting on the owner:**
-- the review, or approval, of batch 2;
-- the call on the waifu quiz;
-- whether to vary batch 1's openers.
+### Batch 2 in production, batch 1 re-applied, waifu archived (2026-10-19)
+
+**The owner's three answers in chat:**
+- write batch 2 as it is;
+- archive the waifu quiz;
+- vary batch 1's openers and re-apply.
+
+As with batch 1, the agent set `reviewed: true`, with no owner edits.
+
+**Batch 1 openers.** 19 sentences rewritten by hand where an opener repeated inside one quiz: "O
+risco" ×5 in the weapons quiz, "O lado sombrio" ×5 in Magic, "O desafio" ×4 in Demon Slayer, and a
+few more.
+
+**Before the writes:**
+- export at 02:18 UTC, restored: 775 rows, 82 published, 70 curated;
+- Time Travel bookmark `00006661-00000000-00005109-05bc3533743cdc8c98ddd3dc6ddeba0f`.
+
+**The writes:**
+- `apply.mjs --target remote` on 20 drafts: the 10 of batch 1 again, plus the 10 of batch 2;
+- `scripts/adsense-core/archive-waifu.sql` (status `ARCHIVED`, flag 0). Wrangler reported
+  `changes: 2` for the one row; the counts below show one quiz moved.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **69** · PUBLISHED flag=0 12 · ARCHIVED 694 |
+| `report.mjs --target remote` on the whole core | **20 of 69** meet the bar |
+| same report against the pre-write export, on the 20 | 16 changed. The other 4 are the batch 1 quizzes whose openers were not touched (werewolf, ex, breakup, horsemen), so they equal the export, as expected |
+| the 20 pages on funsona.com (browser) | **20 of 20**: new text found, indexed, loader present, 0 third-party media in the quiz body |
+| waifu quiz | 404 at `/404`; not in the sitemap |
+| `sitemap.xml` quiz URLs | **69** |
+
+Next: batch 3, keep rows 22 onwards of `core.csv`.
 
 ## Needs
 
