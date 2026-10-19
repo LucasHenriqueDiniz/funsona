@@ -20,3 +20,11 @@ pages_build_output_dir = "./apps/web/dist"
 # code.
 [vars]
 PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_Y2xlcmsuZnVuc29uYS5jb20k"
+
+# Server-rendered pages call the API Worker through this binding instead of
+# over the internet to api.funsona.com, where the zone's Bot Fight Mode
+# challenged those calls and turned every quiz into a 404 for Googlebot. See
+# apps/web/src/lib/api-transport.ts.
+[[services]]
+binding = "API"
+service = "funsona-api"
