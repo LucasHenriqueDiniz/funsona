@@ -1,4 +1,5 @@
 import type { APIContext } from "astro";
+import { apiTransport } from "@/lib/api-transport";
 import { PUBLIC_API_BASE_URL, PUBLIC_API_ORIGIN } from "@/lib/public-env";
 
 // Server-side twin of lib/auth-fetch.ts, for .astro pages rendering on the
@@ -27,7 +28,7 @@ export async function apiFetchServer<T = unknown>(
 
   let res: Response;
   try {
-    res = await fetch(`${base}${path}`, { ...init, headers });
+    res = await apiTransport(`${base}${path}`, { ...init, headers });
   } catch {
     return { data: null, error: "Network error", meta: null, status: 0 };
   }
