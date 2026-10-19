@@ -1,5 +1,5 @@
 ---
-status: todo
+status: doing
 ---
 
 # Slice 5 — The rest of the core, in batches
@@ -14,6 +14,39 @@ the whole core.
 
 A quiz the owner decides is not worth rewriting leaves the core instead: `ads_eligible = 0`, and a
 reason line in `core.csv`. The core shrinks rather than carrying a thin quiz into the review.
+
+### Batch 2 drafted (2026-10-19)
+
+Ten drafts: keep rows 11–20 of `core.csv`, minus one, plus row 21.
+
+**Held back:** `qual-garota-de-anime-e-o-seu-verdadeiro-amor-descubra-sua-waifu-ideal`. It is a
+"your ideal romantic partner" quiz built on anime characters, several of them teenagers and one from
+an ecchi series. With romantic framing, that sits against the child-sexualization policy, the most
+severe one AdSense has. The proposal to the owner is the same treatment as the three sensitive
+quizzes: out of the core. `qual-time-da-nfl-…` (row 21) took its place.
+
+**Within the drafts:** Hisoka was left out of the Hunter x Hunter quiz. Canon gives him an unsettling
+interest in child characters. Biscuit Krueger takes the slot.
+
+**A template signature, measured and reduced.** Across the 20 drafts of batches 1 and 2, cross-quiz
+text overlap was negligible: 5-gram Jaccard mean 0.02%, max 10.5%, which is the shared helpline
+sentence in the two relationship quizzes. But "O desafio de/do…" opened the last paragraph of 54 of
+109 outcomes, and inside one quiz page, where every outcome shows together, that reads as a form.
+Batch 2's openers were rewritten by hand: 40 sentences, down to 9 of 57.
+
+Batch 1, already in production, still carries the pattern. Re-applying it with varied openers needs
+the owner's go.
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 2 | 10 ok. The opener edit pushed one Steelers outcome to 149 words, so it was lengthened |
+| applied to the local copy, then `report.mjs --target local` | 10 of 10 meet the bar |
+| four batch 2 pages from the local web app | new intro present, 0 third-party media in the quiz body |
+
+**Waiting on the owner:**
+- the review, or approval, of batch 2;
+- the call on the waifu quiz;
+- whether to vary batch 1's openers.
 
 ## Needs
 
