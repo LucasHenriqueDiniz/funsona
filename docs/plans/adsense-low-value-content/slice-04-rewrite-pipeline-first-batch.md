@@ -1,5 +1,5 @@
 ---
-status: todo
+status: doing
 ---
 
 # Slice 4 — Review-gated rewrite, first 10 quizzes
@@ -30,6 +30,71 @@ The path, in three steps:
 Review files are pt-BR product copy. They live outside the repo, or in a gitignored directory, so the
 repo's English rule is untouched. The apply script and its prompt-free logic are English and
 committed under `scripts/adsense-core/`.
+
+### Scope widened (2026-10-18)
+
+The content check this slice opened with found the core's images served from `quizpanda.com`
+([[2026-10-18-catalogue-origin/research|catalogue-origin]]). The owner widened the slice: each core
+quiz is rewritten **whole**, with new questions, new answer weights, new outcomes and a new intro,
+and it carries **no third-party image**.
+
+- Drafts carry no image fields. The gate refuses any draft containing a URL.
+- On write, `apply.mjs` clears a cover unless it lives on `api.funsona.com`. Covers there (12 core
+  quizzes) have an unknown origin, which is an open question in the research note.
+- A quiz without a cover renders the gradient fallback already in `QuizCard.astro` and `[slug].astro`.
+
+### Built so far (2026-10-18)
+
+The pipeline lives in `scripts/adsense-core/rewrite/`. `lib.mjs` holds the gate and D1 access,
+`apply.mjs` writes, `report.mjs` measures. Drafts go in `scripts/adsense-core/drafts/`, which is
+gitignored: pt-BR product copy under review.
+
+**The gate.** A draft is refused unless all of these hold:
+- `reviewed: true`;
+- every outcome has 150–350 words;
+- all three intro keys have at least 25 words;
+- at least 8 questions, each with 3 or more answers;
+- every answer points to a known outcome, and every outcome is reachable from at least 3 answers;
+- the draft contains no URL.
+
+On top of the gate, only curated, published slugs can be written.
+
+**Tested against the local copy of production, never against production:**
+
+| test | result |
+|---|---|
+| first draft (`que-arma-voce-tem-…`) as written, `reviewed: false` | refused, exit 1, nothing written; it was the only error, so the draft clears every other rule |
+| same draft, `reviewed: true`, one outcome cut to 120 words | refused, exit 1, nothing written |
+| a local-only copy with `reviewed: true` → `apply.mjs --target local` | written |
+| `report.mjs --target local --baseline <pre-write copy>` on that quiz and an untouched one | rewritten: PASS (8/8 outcomes in range, intro ok, 0 third-party media, changed). Untouched: FAIL (0/6, intro missing, 36 third-party media, unchanged) |
+| the page from the local web app | new title, intro, questions and all 8 outcomes rendered; gradient instead of the quizpanda cover; "Equipe FunSona" as author |
+
+`report.mjs` crashed on its first run: an untouched quiz stores `intro_content` as the JSON text
+`"null"`. Fixed before the numbers above.
+
+### First batch drafted (2026-10-19)
+
+All 10 quizzes of the batch are drafted in `scripts/adsense-core/drafts/`, the 10 most-clicked kept
+in `core.csv`. Each is written from scratch: 10 new questions, outcomes of 160–235 words (strength,
+blind spot, one practical suggestion), an intro in three parts, and no images.
+
+- The character quizzes (Mushoku Tensei, Rick and Morty, Demon Slayer, Magic) say in the intro that
+  they are fan quizzes with no affiliation, and avoid late-story spoilers.
+- The two relationship quizzes say they are reflection, not therapy. They point to the CVV (188), and
+  the breakup quiz also points to the Ligue 180 and 190 where control or violence shows up.
+
+| check | result |
+|---|---|
+| `check.mjs` on all 10 drafts | 10 ok: every gate rule passes except `reviewed`, which is still false |
+| all 10 applied to the **local** copy from local-only `reviewed: true` copies | written. Applying the 10 in one file failed with `SQLITE_TOOBIG`, so `apply.mjs` now writes one quiz per call |
+| `report.mjs --target local` on the 10 | **10 of 10** meet the bar (outcomes in range, intro, 0 third-party media, changed) |
+| played the werewolf quiz end to end on the local web app, always picking the first answer | result "Lobisomem" with the new text. The result screen ran the paragraphs together, so `QuizResultScreen.tsx` gained `whitespace-pre-line`. The landing page already had it |
+
+"Related quizzes" on the local result screen says "Failed to fetch". That is the browser calling the
+local API across ports (CORS in local dev), not a production behaviour.
+
+**Waiting on the owner:** reading and editing the 10 drafts, then setting `reviewed: true` in each.
+Nothing reaches production before that.
 
 ## Needs
 

@@ -64,3 +64,6 @@ scripts/migration/output/
 
 # derived board — regenerate with /hexagram:board, never track it
 .kanban.json
+
+# pt-BR quiz rewrite drafts under owner review (slice 4 of the AdSense plan): product copy, not repo content
+scripts/adsense-core/drafts/
