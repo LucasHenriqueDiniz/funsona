@@ -1,5 +1,5 @@
 ---
-status: todo
+status: done
 ---
 
 # Slice 0 — Measure today's page, and write the checks the redesign has to pass
@@ -57,15 +57,34 @@ All curated, all rewritten (they carry `intro_content`), mixed covers and outcom
 - The baseline table below, filled from `measure-landing.js` on the live site. The pitch's figure
   for the weapons quiz (14,867 px, 18.3 screens, comments at screen 15.5) must reproduce within 2%.
 
-## Baseline (to fill)
+## Baseline, measured 2026-10-20 on funsona.com
 
-| quiz | 375: height / screens | 375: comments at screen | 375: Play top | 1024: Play top | 1024: h1 under the cover card |
+`measure-landing.js` in the browser pane, viewport emulated at 375×812 and 1024×768, dark theme.
+Positions are document pixels. "h1 overflow" is the title text's right edge past the `<h1>` box;
+"past the card" is how far that text runs past the cover card's left edge.
+
+| quiz | 375: height / screens | 375: comments at screen | 375: Play top–bottom | 1024: Play top–bottom | 1024: h1 overflow / past the card |
 |---|---|---|---|---|---|
-| arma | | | | | |
-| demon slayer | | | | | |
-| slime | | | | | |
-| harry potter inimigo | | | | | |
-| chá | | | | | |
+| arma | 14,919 / 18.37 | 15.48 | 510–582 | 651–723, above the fold | +60 / +28 px |
+| demon slayer | 12,829 / 15.80 | 12.91 | 510–582 | 792–864, **below** | −10 / none |
+| slime | 13,036 / 16.05 | 13.16 | 545–617 | 901–973, **below** | −9 / none |
+| harry potter inimigo | 14,586 / 17.96 | 15.07 | 545–617 | 863–935, **below** | −26 / none |
+| chá | 13,389 / 16.49 | 13.60 | 475–547 | 651–723, above the fold | +60 / +28 px |
+
+- The pitch's 14,867 px for the weapons quiz reproduces at 14,919 (+0.3%).
+- Two things the pitch did not say: at 1024×768 Play is **below the fold on 3 of 5** today, pushed
+  down by a 4–5-line title (the cover card does not push it; the title does), and the title runs
+  under the cover card on the two short-titled quizzes, where one long word overflows the column
+  by 60 px.
+- No horizontal overflow on any of the 10 runs (`scrollWidth` 375 and 1016).
+- The ad slot could not be positioned on production: the page carries no `quiz-landing` `<ins>` and
+  no "Publicidade" label, only an AdSense-injected unfilled `<ins>` at 0×0. The measure snippet
+  therefore reads the slot's wrapper, which exists on the local app built with `.env.production`.
+
+`check-landing-html.py https://funsona.com`, same day, 26.5 s: **40 PASS, 10 FAIL**, the 10 FAILs
+being the question-title checks (10/10 titles in the HTML on every page). Intro and outcome first
+sentences present 10/10 (outcomes 6–8 per quiz); flag rule 20/20 (10 curated, 10 non-curated
+confirmed through the API from the production copy's candidates); related 10/10 curated, never self.
 
 ## Done when
 
