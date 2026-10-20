@@ -161,6 +161,38 @@ For the image step (slice 5b): Milim Nava looks about 14 in canon and dresses in
 outfit, and Jolyne's prison scenes include sexual content. Neither is in the text. Any image for
 those outcomes should be an emblem or a theme, never the character.
 
+### Batch 3 in production, DxD archived (2026-10-20)
+
+**Approval.** The owner wrote in chat: "pode gravar". As in batches 1 and 2, the agent set
+`reviewed: true` on the 10 drafts as written after the review pass, with no owner edits. Archiving the
+DxD quiz was the owner's earlier answer in the same conversation ("vamos tirar ele então").
+
+**Before the writes:**
+- `wrangler d1 export --remote --table quizzes` at 14:17 UTC, restored and counted: 775 rows, 81
+  published, 69 curated;
+- Time Travel bookmark `00006a03-00000000-0000510a-0a1fab0759f5f93a7ea55484f471e591`.
+
+**The writes:**
+- `apply.mjs --target remote` on the 10 drafts, one per call;
+- `scripts/adsense-core/archive-dxd.sql`.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **68** · PUBLISHED flag=0 12 · ARCHIVED 695 |
+| `report.mjs --target remote --baseline <the 14:17 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target remote` on the whole core | **30 of 68** meet the bar |
+| `render.mjs https://funsona.com` on the 10 | **10 of 10**: title, intro 3/3, every outcome, 0 third-party media in the quiz body |
+| the 10 pages in the browser | **10 of 10**: new title, intro and last outcome on screen, AdSense loader present, 0 third-party images above "Mais para jogar" |
+| robots on the 10 | no robots meta (indexable). A flag-0 page, `internet-das-coisas-iot`, shows `noindex, follow` and no loader, so the check can tell them apart |
+| DxD quiz | 302 to `/404`; not in the sitemap |
+| `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 68 = 68, the same slugs (`diff` empty) |
+
+Next: batch 4, starting at `qual-personagem-sanrio-voce-e-descubra-seu-personagem-sanrio-favorito`
+and taking the next `keep` rows of `core.csv`. Four of the remaining 38 need the same screen as DxD
+before any drafting: the Naruto and Harry Potter "soulmate" quizzes (a romantic match among teenage
+characters), the Disney soulmate quiz (several princesses are teenagers), and "Que tipo de atração
+você desperta nos outros?", which is close to the attractiveness quiz the owner already removed.
+
 ## Needs
 
 - Slice 4's scripts working and gated.
