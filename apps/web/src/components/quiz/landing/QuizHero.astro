@@ -1,119 +1,55 @@
 ---
-import LikeButton from "@/components/quiz/LikeButton";
-import QuizReportButton from "@/components/quiz/QuizReportButton";
-import { BRAND_DISCLAIMER } from "@/lib/legal";
-import { publicCount } from "@/lib/public-count";
 import type { LandingQuiz } from "@/lib/quiz-landing";
 
-// The hero reads a dozen fields of the payload, so it takes the whole quiz rather than a dozen props.
+// One job above the fold: the banner (cover or gradient), the title, the description, one meta
+// line and one Play. Everything else the old hero carried (chips, like, tags, disclaimer, the
+// cover card with its counts and dates) moved to the byline or to the end of the page.
 interface Props {
   quiz: LandingQuiz;
-  currentUserId: string | null;
+  questionCount: number;
 }
 
-const { quiz, currentUserId } = Astro.props;
-const slug = quiz.slug;
+const { quiz, questionCount } = Astro.props;
+
+// Ten questions read as about three minutes; a shorter quiz never claims less than one.
+const minutes = Math.max(1, Math.round(questionCount * 0.3));
+const typeLabel = quiz.type === "TRIVIA" ? "Trivia" : "Personalidade";
+const meta = [
+  ...(questionCount > 0 ? [`${questionCount} perguntas`, `~${minutes} min`] : []),
+  typeLabel,
+].join(" · ");
 ---
 
-<section class="relative mx-auto grid max-w-7xl gap-8 px-4 pb-12 pt-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_26rem] lg:px-8 lg:pb-16 lg:pt-10">
-  <div class="min-w-0">
-    <div class="mb-5 flex flex-wrap items-center gap-2">
-      <span class="rounded-full border border-brand-500/20 bg-brand-500/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-brand-600 dark:text-brand-300">
-        {quiz.type === "TRIVIA" ? "Trivia" : "Personalidade"}
-      </span>
-      {quiz.language && (
-        <span class="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          {quiz.language}
-        </span>
+<!-- On a phone the banner starts behind the floating navbar (the layout's 5.8rem spacer is pulled
+     back), so the first viewport is the quiz, not a top margin. From lg it is a rounded card. -->
+<section class="relative -mt-[5.8rem] lg:mx-auto lg:mt-3 lg:max-w-7xl lg:px-8">
+  <div class="relative isolate flex min-h-[34rem] flex-col justify-end overflow-hidden bg-gradient-to-br from-brand-600 via-brand-500 to-accent-600 px-4 pb-6 pt-28 text-white sm:px-6 lg:min-h-[26rem] lg:rounded-[2rem] lg:px-10 lg:pb-10 lg:pt-16 lg:shadow-2xl lg:shadow-black/30">
+    {quiz.cover_url ? (
+      <img src={quiz.cover_url} alt="" class="absolute inset-0 -z-10 h-full w-full object-cover" />
+    ) : (
+      <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.32),transparent_30%),radial-gradient(circle_at_85%_35%,rgba(255,255,255,0.14),transparent_28%)]"></div>
+    )}
+    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-950/5 lg:from-slate-950/90 lg:via-slate-950/55 lg:to-transparent"></div>
+
+    <div class="max-w-3xl">
+      <h1 class="text-3xl font-black leading-[1.06] tracking-tight drop-shadow-[0_2px_18px_rgba(0,0,0,0.45)] sm:text-4xl lg:text-5xl xl:text-[3.25rem]">
+        {quiz.title}
+      </h1>
+      {quiz.description && (
+        <p class="mt-3 text-[15px] font-medium leading-relaxed text-white/85 drop-shadow-[0_1px_10px_rgba(0,0,0,0.5)] sm:text-lg">
+          {quiz.description}
+        </p>
       )}
-    </div>
 
-    <h1 class="max-w-4xl text-4xl font-black leading-[0.98] tracking-tight text-[var(--color-text-primary)] sm:text-6xl lg:text-7xl">
-      {quiz.title}
-    </h1>
-    {quiz.description && (
-      <p class="mt-6 max-w-2xl text-lg font-medium leading-relaxed text-[var(--color-text-secondary)] sm:text-xl">
-        {quiz.description}
-      </p>
-    )}
-
-    <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-      <a href={`/quiz/${slug}/play`} class="group inline-flex items-center justify-center gap-3 rounded-[1.4rem] bg-gradient-to-r from-brand-600 via-brand-500 to-accent-600 px-8 py-4 text-lg font-black text-white shadow-2xl shadow-brand-500/25 transition hover:-translate-y-0.5 hover:shadow-brand-500/35">
-        <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/20 transition group-hover:scale-105">
-          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-        </span>
-        Jogar agora
-      </a>
-      <LikeButton quizId={quiz.id} initialLikes={quiz.likes_count || 0} client:load />
-    </div>
-
-    {quiz.tags && quiz.tags.length > 0 && (
-      <div class="mt-7 flex flex-wrap gap-2">
-        {quiz.tags.map((tag: string) => (
-          <a href={`/explore?tag=${tag}`} class="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-4 py-2 text-sm font-bold text-[var(--color-text-secondary)] transition hover:border-brand-300 hover:bg-brand-500/10 hover:text-brand-500">#{tag}</a>
-        ))}
+      <div class="mt-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
+        <p class="text-xs font-extrabold uppercase tracking-[0.12em] text-white/80 lg:order-last">{meta}</p>
+        <a href={`/quiz/${quiz.slug}/play`} class="group flex h-14 items-center justify-center gap-3 rounded-[1.1rem] bg-gradient-to-r from-brand-600 via-brand-500 to-accent-600 px-7 text-lg font-black text-white shadow-2xl shadow-brand-500/30 transition hover:-translate-y-0.5 hover:shadow-brand-500/40 lg:self-start">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 transition group-hover:scale-105">
+            <svg class="h-[18px] w-[18px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+          </span>
+          Jogar agora
+        </a>
       </div>
-    )}
-
-    <div class="mt-6 flex flex-wrap items-center gap-4">
-      <p class="max-w-2xl text-xs text-[var(--color-text-muted)]">{BRAND_DISCLAIMER}</p>
-      <QuizReportButton quizId={quiz.id} currentUserId={currentUserId} client:load />
     </div>
   </div>
-
-  <aside class="lg:sticky lg:top-28 lg:self-start">
-    <div class="overflow-hidden rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl shadow-slate-950/10 dark:shadow-black/30">
-      <div class="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-brand-600 via-brand-500 to-accent-600">
-        {quiz.cover_url ? (
-          <img src={quiz.cover_url} alt={quiz.title} class="h-full w-full object-cover" />
-        ) : (
-          <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.35),transparent_28%)]"></div>
-        )}
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-        {(publicCount(quiz.attempts_count) !== null || publicCount(quiz.likes_count) !== null) && (
-          <div class="absolute bottom-4 left-4 right-4 grid grid-cols-2 gap-2 text-white">
-            {publicCount(quiz.attempts_count) !== null && (
-              <div class="rounded-2xl border border-white/15 bg-white/15 p-3 backdrop-blur-xl">
-                <p class="text-2xl font-black">{(quiz.attempts_count ?? 0).toLocaleString("pt-BR")}</p>
-                <p class="text-xs font-bold uppercase tracking-wider text-white/65">jogadas</p>
-              </div>
-            )}
-            {publicCount(quiz.likes_count) !== null && (
-              <div class="rounded-2xl border border-white/15 bg-white/15 p-3 backdrop-blur-xl">
-                <p class="text-2xl font-black">{(quiz.likes_count ?? 0).toLocaleString("pt-BR")}</p>
-                <p class="text-xs font-bold uppercase tracking-wider text-white/65">curtidas</p>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div class="space-y-5 p-5">
-        <a href={`/profile/${quiz.author?.handle}`} class="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-3 transition hover:border-brand-300">
-          {quiz.author?.avatar_url ? (
-            <img src={quiz.author.avatar_url} alt={quiz.author.display_name} class="h-12 w-12 rounded-2xl object-cover" />
-          ) : (
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-accent-500 text-sm font-black text-white">
-              {(quiz.author?.display_name || quiz.author?.handle || "?")[0].toUpperCase()}
-            </div>
-          )}
-          <div class="min-w-0">
-            <p class="truncate font-black text-[var(--color-text-primary)]">{quiz.author?.display_name || quiz.author?.handle}</p>
-            <p class="truncate text-sm font-semibold text-[var(--color-text-muted)]">@{quiz.author?.handle}</p>
-          </div>
-        </a>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div class="rounded-2xl bg-[var(--color-surface-elevated)] p-4">
-            <p class="text-xs font-black uppercase tracking-wider text-[var(--color-text-muted)]">Criado em</p>
-            <p class="mt-1 font-black text-[var(--color-text-primary)]">{new Date(quiz.created_at).toLocaleDateString("pt-BR")}</p>
-          </div>
-          <div class="rounded-2xl bg-[var(--color-surface-elevated)] p-4">
-            <p class="text-xs font-black uppercase tracking-wider text-[var(--color-text-muted)]">Tipo</p>
-            <p class="mt-1 font-black text-[var(--color-text-primary)]">{quiz.type === "TRIVIA" ? "Trivia" : "Perfil"}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </aside>
 </section>

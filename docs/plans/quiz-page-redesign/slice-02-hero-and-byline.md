@@ -1,5 +1,5 @@
 ---
-status: todo
+status: done
 ---
 
 # Slice 2 — The hero is the quiz: banner, title, one Play, and a byline under it
@@ -59,8 +59,34 @@ beside the title any more; the title sits inside the banner with its own `max-w`
 The measure table in this file holds `playBottom` for 5 quizzes × 2 viewports, all under the fold,
 and `overflowX: false` 5 of 5.
 
-| quiz | 375: Play top–bottom | 1024: Play top–bottom | 375: scrollWidth | 1024: h1 overflow |
+### Done 2026-10-20
+
+`measure-landing.js` on the local app against the production API (`web-prod-api`), browser pane,
+viewport emulated, dark theme. Baseline figures in parentheses, from slice 0.
+
+| quiz | 375: Play top–bottom | 1024: Play top–bottom | 375: scrollWidth | 1024: h1 text overflow |
 |---|---|---|---|---|
+| arma | 464–520 (510–582) | 425–481 (651–723) | 375 | −57 px (+60) |
+| demon slayer | 464–520 (510–582) | 425–481 (792–864, below) | 375 | −86 px (−10) |
+| slime | 464–520 (545–617) | 425–481 (901–973, below) | 375 | −2 px (−9) |
+| harry potter inimigo | 464–520 (545–617) | 425–481 (863–935, below) | 375 | −9 px (−26) |
+| chá | 464–520 (475–547) | 425–481 (651–723) | 375 | −105 px (+60) |
+
+- Play above the fold **10 of 10** (was 7 of 10). `overflowX: false` 5 of 5 at 375; `scrollWidth`
+  1016 at 1024 (the viewport minus its scrollbar).
+- Title overflow at 1024: no run positive (was +60 on the two short titles). There is no cover card
+  beside the title any more; the Slime title's 76 characters wrap to three lines inside the banner.
+- The banner shows the cover on demon slayer, slime and harry potter and the gradient on arma and
+  chá (screenshots at both widths, in the session).
+- Byline: author, the like as a 44×40 icon (every sample quiz is under the public count threshold),
+  report hidden for anonymous visitors, as before. The disclaimer sits above the footer.
+- Not in this slice: from `lg` the byline is still a row under the banner; slice 4's two-column
+  grid moves it into the right column.
+- `pnpm --filter @funsona/web lint` exit 0; `typecheck` 0 errors, 8 pre-existing hints.
+- `check-landing-html.py http://localhost:4322`, 24 s: **40 PASS, 10 FAIL**, the 10 being the
+  question-title checks (10/10 titles still in the HTML, which slice 3 removes). Intro and outcome
+  sentences 10/10, flag rule 20/20, related 10/10. The API listed 67 curated quizzes with 40
+  carrying `intro_content` by then: a rewrite batch landed during the day.
 
 ## If stuck
 

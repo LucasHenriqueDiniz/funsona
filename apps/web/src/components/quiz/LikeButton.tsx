@@ -54,21 +54,28 @@ export default function LikeButton({ quizId, initialLikes, initialLiked = false 
     setLoading(false);
   }
 
+  // Below the public threshold the count is hidden, and the button is an icon, not an empty bar.
+  const count = publicCount(likes);
+
   return (
     <button
       onClick={toggleLike}
       disabled={loading}
-      className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all duration-200 ${
+      aria-label={liked ? "Remover curtida" : "Curtir"}
+      className={`flex h-10 items-center justify-center gap-2 rounded-xl border-2 font-bold transition-all duration-200 ${
+        count === null ? "w-11" : "px-4"
+      } ${
         liked
-          ? "bg-red-500/10 text-red-500 border-2 border-red-500/30 hover:bg-red-500/20"
-          : "bg-[var(--color-surface-elevated)] text-[var(--color-text-secondary)] border-2 border-[var(--color-border)] hover:border-red-500/30 hover:text-red-500 transition"
+          ? "border-red-500/30 bg-red-500/10 text-red-500 hover:bg-red-500/20"
+          : "border-[var(--color-border)] bg-[var(--color-surface-elevated)] text-[var(--color-text-secondary)] hover:border-red-500/30 hover:text-red-500"
       }`}
     >
       <svg
-        className={`w-5 h-5 transition-transform ${liked ? "scale-110" : ""} ${loading ? "animate-pulse" : ""}`}
+        className={`h-5 w-5 transition-transform ${liked ? "scale-110" : ""} ${loading ? "animate-pulse" : ""}`}
         fill={liked ? "currentColor" : "none"}
         stroke="currentColor"
         viewBox="0 0 24 24"
+        aria-hidden="true"
       >
         <path
           strokeLinecap="round"
@@ -77,7 +84,7 @@ export default function LikeButton({ quizId, initialLikes, initialLiked = false 
           d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
         />
       </svg>
-      {publicCount(likes) !== null && <span>{likes}</span>}
+      {count !== null && <span>{count}</span>}
     </button>
   );
 }

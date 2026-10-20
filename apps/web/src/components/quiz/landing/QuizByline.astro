@@ -1,0 +1,35 @@
+---
+import LikeButton from "@/components/quiz/LikeButton";
+import QuizReportButton from "@/components/quiz/QuizReportButton";
+import type { LandingAuthor } from "@/lib/quiz-landing";
+
+// One row under the banner: who made the quiz, like it, report it.
+interface Props {
+  quizId: string;
+  author: LandingAuthor | null | undefined;
+  likesCount: number;
+  currentUserId: string | null;
+}
+
+const { quizId, author, likesCount, currentUserId } = Astro.props;
+const name = author?.display_name || author?.handle || "?";
+---
+
+<div class="mx-auto flex max-w-7xl items-center gap-3 px-4 pb-7 pt-3 sm:px-6 lg:px-8 lg:pt-5">
+  <a href={`/profile/${author?.handle}`} class="group flex min-w-0 items-center gap-2.5">
+    {author?.avatar_url ? (
+      <img src={author.avatar_url} alt="" class="h-9 w-9 shrink-0 rounded-xl object-cover" />
+    ) : (
+      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-accent-500 text-sm font-black text-white">
+        {name[0].toUpperCase()}
+      </span>
+    )}
+    <span class="flex min-w-0 flex-col leading-tight">
+      <span class="truncate text-sm font-extrabold text-[var(--color-text-primary)] transition group-hover:text-brand-500">{name}</span>
+      {author?.handle && <span class="truncate text-xs font-semibold text-[var(--color-text-muted)]">@{author.handle}</span>}
+    </span>
+  </a>
+  <span class="flex-1"></span>
+  <LikeButton quizId={quizId} initialLikes={likesCount} client:load />
+  <QuizReportButton quizId={quizId} currentUserId={currentUserId} client:load />
+</div>

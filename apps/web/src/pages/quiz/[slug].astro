@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import QuizHero from "@/components/quiz/landing/QuizHero.astro";
+import QuizByline from "@/components/quiz/landing/QuizByline.astro";
 import QuizAbout from "@/components/quiz/landing/QuizAbout.astro";
 import QuizQuestions from "@/components/quiz/landing/QuizQuestions.astro";
 import QuizOutcomes from "@/components/quiz/landing/QuizOutcomes.astro";
@@ -10,6 +11,7 @@ import AdSlot from "@/components/ads/AdSlot";
 import { apiFetch } from "@/lib/api";
 import { apiUnavailableResponse, isApiUnavailable } from "@/lib/api-unavailable";
 import { getProfile } from "@/lib/api-server";
+import { BRAND_DISCLAIMER } from "@/lib/legal";
 import { landingOutcomes, landingQuestions, type LandingQuiz } from "@/lib/quiz-landing";
 
 const { slug } = Astro.params;
@@ -74,7 +76,8 @@ const curated = Boolean(quiz.ads_eligible);
   <div class="relative overflow-hidden">
     <div class="pointer-events-none absolute inset-x-0 top-0 h-[34rem] bg-[radial-gradient(circle_at_25%_10%,rgba(99,102,241,0.18),transparent_34%),radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.16),transparent_30%)]"></div>
 
-    <QuizHero quiz={quiz} currentUserId={currentUserId} />
+    <QuizHero quiz={quiz} questionCount={questions.length} />
+    <QuizByline quizId={quiz.id} author={quiz.author} likesCount={quiz.likes_count || 0} currentUserId={currentUserId} />
     <QuizAbout intro={quiz.intro_content} />
     <QuizQuestions questions={questions} slug={slug} title={quiz.title} type={quiz.type} />
     <QuizOutcomes outcomes={outcomes} />
@@ -85,12 +88,14 @@ const curated = Boolean(quiz.ads_eligible);
       </section>
     )}
 
-    <section class="relative mx-auto grid max-w-7xl gap-8 px-4 pb-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-8">
+    <section class="relative mx-auto grid max-w-7xl gap-8 px-4 pb-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-8">
       <div class="min-w-0 rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-xl shadow-slate-950/5 sm:p-6 dark:shadow-black/20">
         <CommentSection quizSlug={slug} currentUserId={currentUserId} client:load />
       </div>
 
       <QuizRelated quizzes={filteredRelated} />
     </section>
+
+    <p class="relative mx-auto max-w-7xl px-4 pb-10 text-xs leading-relaxed text-[var(--color-text-muted)] sm:px-6 lg:px-8">{BRAND_DISCLAIMER}</p>
   </div>
 </Layout>
