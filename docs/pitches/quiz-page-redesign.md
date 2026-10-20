@@ -220,9 +220,14 @@ Today's figures are the baseline in the Problem table.
   1024×768 the sidebar slot is at most 300 px wide and it is the only sticky element holding an ad.
 
 ## Success Criteria
-- [ ] Mobile page height for the 5 sampled quizzes at most a third of today's (18.3 → ≤ 6 screens)
-- [ ] Play in the first viewport on mobile and desktop, 5 of 5
-- [ ] 100% of outcome and intro text still in the server HTML of curated quizzes
-- [ ] Slice 2 flag check 20/20 after the change
+- [x] Mobile page height for the 5 sampled quizzes at most a third of today's (18.3 → ≤ 6 screens).
+      Measured 2026-10-20 on the branch: 3.48–3.61 screens, from 15.8–18.4
+      ([[quiz-page-redesign/slice-06-whole-page-against-baseline|slice 6]])
+- [x] Play in the first viewport on mobile and desktop, 5 of 5. Play ends at 520 px on 375×812 and
+      at 481 px on 1024×768, on all five (it was below the fold at 1024 on three)
+- [x] 100% of outcome and intro text still in the server HTML of curated quizzes. 10 of 10 pages,
+      and the check goes red with `QuizOutcomes` removed
+- [x] Slice 2 flag check 20/20 after the change. 20 of 20, landing and play
 - [ ] Start rate (`/play` ÷ landing pageviews, GA4) measured for the 28 days before and after. It is
-      reported, not gated, since the traffic is small (153 Search clicks in 90 days)
+      reported, not gated, since the traffic is small (153 Search clicks in 90 days). Pending the
+      deploy

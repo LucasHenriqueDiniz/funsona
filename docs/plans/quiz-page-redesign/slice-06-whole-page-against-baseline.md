@@ -1,5 +1,5 @@
 ---
-status: todo
+status: done
 ---
 
 # Slice 6 — The whole page against the baseline, and the hand-over for the deploy
@@ -33,15 +33,42 @@ the Success Criteria in the pitch ticked with numbers. The deploy itself is the 
 | play ad placement, both viewports | `measure-play.js` | as slice 5 |
 | `pnpm lint`, `pnpm typecheck`, `pnpm --filter web build` | — | exit 0 |
 
-## Before / after (to fill)
+## Before / after, 2026-10-20
+
+Before: funsona.com on 2026-10-20 (slice 0). After: the branch at slice 5, local app against the
+production API (`web-prod-api`), browser pane, viewport emulated at 375×812.
 
 | quiz | height before → after (px) | screens before → after | comments screen before → after |
 |---|---|---|---|
-| arma | 14,867 → | 18.3 → | 15.5 → |
-| demon slayer | | | |
-| slime | | | |
-| harry potter inimigo | | | |
-| chá | | | |
+| arma | 14,919 → **2,932** | 18.37 → **3.61** | 15.48 → **2.00** |
+| demon slayer | 12,829 → **2,826** | 15.80 → **3.48** | 12.91 → **1.87** |
+| slime | 13,036 → **2,826** | 16.05 → **3.48** | 13.16 → **1.87** |
+| harry potter inimigo | 14,586 → **2,932** | 17.96 → **3.61** | 15.07 → **2.00** |
+| chá | 13,389 → **2,826** | 16.49 → **3.48** | 13.60 → **1.87** |
+
+Every row at a fifth of its baseline, under the 6-screen target on 5 of 5.
+
+### The checks, rerun on the final tree
+
+| check | result |
+|---|---|
+| Play above the fold, 375×812 | 5 of 5, bottom at 520 px |
+| Play above the fold, 1024×768 | 5 of 5, bottom at 481 px (was 3 of 5 below the fold) |
+| ad slot ≥ 150 px from Play | 10 of 10: 939–1,045 px at 375, 839–969 px at 1024 |
+| horizontal overflow at 375 / title overflow at 1024 | none, 5 of 5 each (title text overflow −2 to −105 px) |
+| `check-landing-html.py http://localhost:4322` | **53 PASS, 0 FAIL**, 25 s |
+| → intro and outcome first sentences in the HTML | 10 of 10 pages |
+| → question titles in the HTML | 0 on 10 of 10 |
+| → flag rule, 10 curated + 10 non-curated, landing and play | 20 of 20 |
+| → related: curated, never self; tagged quizzes | 10 of 10; 3 of 3 (fallback, no sibling shares a tag) |
+| play ad, 375 | top 1,040 px, under the last answer (938) and the controls (1,020), 0 sticky ancestors |
+| play ad, 1024 | 300 px wide, inside the only sticky element holding an ad |
+| `pnpm lint`, `pnpm typecheck` (root) | exit 0, 0 errors |
+| `pnpm --filter @funsona/web build` | `[build] Complete!`, exit 0 |
+
+Not run: the expand-by-itself path of the comment section (no quiz in the production catalogue has
+a comment) and the tag path with siblings (no two curated quizzes share a tag). Both are read, not
+measured.
 
 ## After the deploy (owner), reported not gated
 
