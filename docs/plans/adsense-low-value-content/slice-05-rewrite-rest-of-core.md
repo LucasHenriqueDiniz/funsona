@@ -83,11 +83,15 @@ D1 confirmed all eleven candidates `PUBLISHED` with `ads_eligible = 1`. The loca
 checks below was loaded from a full remote export taken at 12:35 UTC: 694 archived, 12 published
 unflagged, 69 published flagged, the same as production.
 
-**Held back:** `que-personagem-dxd-do-ensino-medio-sou-eu`. High School DxD is an ecchi series about
-high-school students, and the live quiz leans on that framing: "sedutora", "atrair olhares", a
-question about your love life. The proposal to the owner is the waifu quiz's treatment: out of the
-core. `sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-star-wars` (row 32) took its
-place.
+**Held back, then archived by the owner:** `que-personagem-dxd-do-ensino-medio-sou-eu`. High School
+DxD is an ecchi series about high-school students, and the live quiz leans on that framing:
+"sedutora", "atrair olhares", a question about your love life. The owner asked whether a clean
+"which character are you" rewrite would do. It would fix the text but not the page's subject, and
+the quiz had 1 click. The owner chose to archive it, as with the waifu quiz:
+`scripts/adsense-core/archive-dxd.sql`, run with the batch 3 write. `core.csv` now marks it and the
+waifu quiz `drop` with the reason. That shifts the keep-row numbers above, so the next batch is
+pointed at by slug. `sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-star-wars` (row 32)
+took its place.
 
 **Within the drafts,** the same screen as Hisoka in batch 2:
 - Orochimaru left the Naruto arch-enemy quiz. Canon has him kidnapping children and experimenting on
@@ -99,11 +103,27 @@ place.
 - The Japanese-name quiz had 60 outcomes and answers like "Opção visual A" with no image behind them.
   It now has 8 real names, each with its kanji, its meaning and which genders use it.
 - JoJo went from 10 outcomes to 8.
-- The girlfriend quiz points to 190, CVV 188 and the Central de Atendimento à Mulher 180. The
-  sentence is worded apart from the boyfriend and husband quizzes, whose shared helpline paragraph is
-  the largest overlap in batches 1 and 2.
+- The girlfriend quiz takes its own angle: the reader's own jealousy and control, not only the
+  partner's. Every one of its four results points to 190, and the last one also points to CVV 188,
+  the Central de Atendimento à Mulher 180, and the UBS for a reader who sees the controlling is
+  theirs.
 
-**Template signature,** measured by `scripts/adsense-core/rewrite/signature.mjs`:
+**Review pass, after drafting.** The `quiz-authoring` skill reached this session after the drafts
+were written. It asks for a canon check per franchise and one adversarial read, so both ran on the
+finished drafts: four `general-purpose` subagents checked facts against the fandom wikis and
+Wikipedia, and a fifth read the whole batch as a hostile reviewer. One finding was serious, the
+safety routing in the girlfriend quiz; the rest was smaller, and nearly all of it was real:
+
+| found | count | example | fix |
+|---|---|---|---|
+| canon or fact wrong or imprecise | 25 | a name-quiz intro said one sound could mean "sky, happiness or snow"; Shikamaru's shadow "without spending energy"; Iron Man's cave is the 2008 film, not the comics | each sentence rewritten to what the source says |
+| lines breaking the quiz's own spoiler promise | 7, in JoJo and Star Wars | JoJo's time stop, revealed at the end of part 3; lines hinting at Vader's redemption | rewritten or swapped |
+| safety routing in the girlfriend quiz | 1 | three abuse answers plus four "conversa" answers landed on "Falta uma conversa franca", which advised talking and had no safety pointer | abuse answers weigh 3, every result points to 190, the last one leads with safety |
+| answers scoring the wrong outcome, or saying the opposite | 3 | "boas fotos para postar" scored envy, not vanity; "Orgulho de admitir que me importo" | relabelled |
+| template feel | | the reader counted 21 of 61 results closing on "your trait stays, it only gains X"; 4 questions repeated word for word across quizzes; all 10 descriptions shaped "[lista]? Responda dez perguntas…" | 10 closings, the 4 questions and all 10 descriptions rewritten |
+| answers that assume a male reader | 19 | "Fico ofendido", "eu estava certo", "Sensato e equilibrado" | neutral forms |
+
+**Template signature,** measured with a scratch script, not committed:
 - openers: the first two words of an outcome's second and last paragraphs, repeated inside one quiz;
 - overlap: 5-gram Jaccard between outcomes of different quizzes.
 
@@ -115,23 +135,31 @@ name quiz. 40 sentences were rewritten by hand.
 |---|---|---|
 | outcomes sharing a second- or last-paragraph opener inside their quiz | 77 | **0** |
 | last paragraphs opening with "O desafio…" | 14 | **0** |
-| 5-gram Jaccard per outcome pair across quizzes | mean 0.017%, max 11.4% (5,621 pairs) | mean 0.006%, max 1.1% (8,979 pairs touching batch 3) |
+| 5-gram Jaccard per outcome pair across quizzes | mean 0.017%, max 11.4% (5,621 pairs) | mean 0.005%, max 1.1% (8,979 pairs touching batch 3) |
+| 5-gram overlap, girlfriend quiz against the boyfriend quiz in production | | 9 of 1,461 shared |
 
 Batch 2 reported 0.02% and 10.5% for the same twenty drafts. The recount differs slightly in the
 maximum and agrees on the cause: the boyfriend and husband helpline paragraph.
 
+All numbers below are after the review pass.
+
 | check | result |
 |---|---|
-| `check.mjs` on batch 3 | 10 ok: 157–212 words per outcome, 10 questions each, every rule but `reviewed` |
+| `check.mjs` on batch 3 | 10 ok: 151–265 words per outcome, 10 questions each, every rule but `reviewed` |
 | `apply.mjs --target local` on the drafts themselves | refused, 10 of 10, nothing written: `reviewed` is false |
 | local-only `reviewed: true` copies → `apply.mjs --target local` | written |
+| `archive-dxd.sql` on the local copy | published flagged 69 → 68; the DxD page redirects to `/404`; local sitemap 68 quiz URLs |
 | `report.mjs --target local --baseline <the 12:35 export>` on the 10 | **10 of 10** meet the bar, all changed |
-| `report.mjs --target local` on the whole core | 30 of 69 |
+| `report.mjs --target local` on the whole core | 30 of 68 |
 | `render.mjs` on the 10 pages from the local web app | **10 of 10**: title, intro 3/3, every outcome, 0 third-party media in the quiz body |
 | same check on an untouched core quiz (cheese), as a negative control | FAIL: intro 0/3, 1 quizpanda image in the body |
 
 Every page still shows 2 quizpanda images further down, in the "Mais para jogar" cards. They are
 covers of core quizzes not yet rewritten (cheese, PC game), so they leave as later batches land.
+
+For the image step (slice 5b): Milim Nava looks about 14 in canon and dresses in a swimsuit-like
+outfit, and Jolyne's prison scenes include sexual content. Neither is in the text. Any image for
+those outcomes should be an emblem or a theme, never the character.
 
 ## Needs
 
