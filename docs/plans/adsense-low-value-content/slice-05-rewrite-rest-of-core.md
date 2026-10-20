@@ -193,6 +193,90 @@ before any drafting: the Naruto and Harry Potter "soulmate" quizzes (a romantic 
 characters), the Disney soulmate quiz (several princesses are teenagers), and "Que tipo de atração
 você desperta nos outros?", which is close to the attractiveness quiz the owner already removed.
 
+### Batch 4 drafted (2026-10-20)
+
+Ten drafts: the next `keep` rows of `core.csv` from
+`qual-personagem-sanrio-voce-e-descubra-seu-personagem-sanrio-favorito`, minus one. A read-only
+`SELECT` on remote D1 confirmed all eleven candidates `PUBLISHED` with `ads_eligible = 1`. The local
+copy was rebuilt from a full remote export at 14:22 UTC, after batch 3: 695 archived, 12 published
+unflagged, 68 published flagged, 30 of 68 at the bar.
+
+| quiz | outcomes |
+|---|---|
+| Sanrio | 8 |
+| stinky cheeses | 6 |
+| My Hero Academia, class 1-A | 7 |
+| superhero codename | 8, down from 36 |
+| Resident Evil 4 | 6 |
+| RPG class | 8 |
+| Pokémon Unite | 10, down from 25 |
+| The Lion King | 7 |
+| game console | 5, up from 3 |
+| love or friendship | 4 |
+
+**Held back, proposed out of the core:** `como-sou-atraente-teste-de-atracao-e-autoconfianca`. It asks
+the reader's height, face, body, hair and eye colour to score how attractive they are, which is close
+to the attractiveness quiz the owner already removed. `e-amor-ou-amizade-desvende-suas-verdadeiras-emocoes`
+took its place.
+
+**Canon checked before drafting this time.** Five `general-purpose` subagents read the fandom wikis,
+Wikipedia and official sites (sanrio.co.jp, unite.pokemon.com) for every character, item and date, and
+returned red flags the drafts then stayed clear of:
+- My Hero Academia: the cast are 15; no Mineta, no romance, no detail of Todoroki's family; seasons 1–2 only.
+- Resident Evil 4, rated 18 in Brazil: no gore, no character fates; Ada described by competence, not looks.
+- The Lion King: Mufasa's death is never described.
+- Sanrio: Aggretsuko from Sanrio's official profile only; Gudetama is lazy, never depressed.
+- Love or friendship: built on Sternberg's triangular theory of love (1986), nothing sexual, since teenagers read it.
+
+**Rewritten whole, not trimmed.** The superhero quiz had 36 English codenames ("The Torturess",
+"Lifesucker") and a first question asking the reader's gender. It now gives 8 Portuguese codenames
+that suit anyone, each tied to a power archetype and the comics heroes behind it. Pokémon Unite went
+from 25 outcomes to 10, two per official role: seven questions set the role and three set the style.
+
+**Adversarial read, after drafting.** One subagent read the whole batch as a hostile reviewer. All of
+it was fixed in the gitignored drafts:
+
+| found | example | fix |
+|---|---|---|
+| facts overstated | Vieux-Boulogne "in the Guinness"; Pompompurin "back to first place" in 2026 (his second win in a row); Kirishima's self-doubt is a season 4 arc | sentences cut to what the sources say |
+| Brazilian names | "Timon e Pumbaa" | "Timão e Pumba" |
+| answer logic | "Lembre de quem você é" (Mufasa's line) scored Simba; the Pokémon style question tied "classic" to generation and "bold" to melee | relabelled |
+| a promise the page broke | the superhero intro said "any gender" while every result said "Seu nome de herói" and used masculine adjectives | "Seu codinome é", neutral wording |
+| answers that assume a male reader | 17, e.g. "Fico furioso", "Ser tratado como criança" | neutral forms |
+| cross-quiz formulas | "[X] demais pode…" 11 times; "Quem … às vezes …" 20; the same intro sentence in 7 of 10 | at most one of each per quiz; 5 intros rewritten |
+| ties | in the 8-outcome quizzes, a reader who answers consistently tied 19% of the time; QuizPlay breaks ties by question order | below |
+
+**Ties, measured and reduced.** A scratch simulation runs QuizPlay's own tally (stable sort, so the
+earliest outcome wins a tie). Each answer now also gives 1 point to the best-fitting outcome absent
+from that question. Every outcome gets the same number of those points, so the balance holds.
+
+| quiz | ties for a consistent reader, before → after | reader lands on their own outcome, before → after |
+|---|---|---|
+| RPG, superhero, Sanrio (8 outcomes) | 19% → 5–7% | 79% → 88–91% |
+| My Hero Academia, Lion King (7) | 12% → 5–6% | 87% → 89–92% |
+| Resident Evil 4, cheeses (6) | 7–8% → 3–4% | 92% → 93–94% |
+| consoles (5) | 5% → 2% | 95% → 96% |
+
+The Pokémon quiz was played end to end on the local web app: always the first answer gives Pikachu,
+and the role answers plus the "bold" style answers give Cinderace, as designed.
+
+**Template signature,** same scratch measure as batch 3, against the 30 earlier drafts:
+
+| measure | batch 4 (10 drafts, 69 outcomes) |
+|---|---|
+| outcomes sharing a second- or last-paragraph opener inside their quiz | **0** |
+| last paragraphs opening with "O desafio…" | **0** |
+| 5-gram Jaccard per outcome pair across quizzes | mean 0.004%, max 1.6% (14,135 pairs) |
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 4 | 10 ok: 151–202 words per outcome, 10 questions each, every rule but `reviewed` |
+| `apply.mjs --target local` on the drafts themselves | refused, 10 of 10, nothing written |
+| local-only `reviewed: true` copies → `apply.mjs --target local` | written |
+| `report.mjs --target local --baseline <the 14:22 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target local` on the whole core | 40 of 68 |
+| `render.mjs` on the 10 pages from the local web app | **10 of 10** |
+
 ## Needs
 
 - Slice 4's scripts working and gated.
