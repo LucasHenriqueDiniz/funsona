@@ -277,6 +277,37 @@ and the role answers plus the "bold" style answers give Cinderace, as designed.
 | `report.mjs --target local` on the whole core | 40 of 68 |
 | `render.mjs` on the 10 pages from the local web app | **10 of 10** |
 
+### Batch 4 in production, attraction quiz archived (2026-10-20)
+
+**Approval.** The owner answered both questions in chat with "s e s": yes to archiving the attraction
+quiz, and yes to writing the ten drafts as they were. As before, the agent set `reviewed: true`, with
+no owner edits.
+
+**Before the writes:**
+- `wrangler d1 export --remote --table quizzes` at 16:46 UTC, restored and counted: 775 rows, 80
+  published, 68 curated;
+- Time Travel bookmark `00006a2a-00000000-0000510a-fb05c5670badc458655c199fa477f029`.
+
+**The writes:**
+- `apply.mjs --target remote` on the ten drafts, one per call;
+- `scripts/adsense-core/archive-atracao.sql`, run on the local copy first: published flagged 68 → 67;
+- `core.csv` marks the quiz `drop` with the reason.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **67** · PUBLISHED flag=0 12 · ARCHIVED 696 |
+| `report.mjs --target remote --baseline <the 16:46 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target remote` on the whole core | **40 of 67** meet the bar |
+| `render.mjs https://funsona.com` on the 10 | **10 of 10** |
+| the 10 pages in the browser | **10 of 10**: new title, intro and last outcome on screen, AdSense loader present, 0 third-party images above "Mais para jogar" |
+| robots on the 10 | no robots meta, indexable |
+| attraction quiz | 302 to `/404`; not in the sitemap |
+| `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 67 = 67, the same slugs |
+
+Next: batch 5, starting at `onde-devo-viver-descubra-o-lugar-ideal-para-morar` and taking the next
+`keep` rows. Three of the remaining 27 need the sensitive-content screen before any drafting: the
+Naruto, Harry Potter and Disney "soulmate" quizzes.
+
 ## Needs
 
 - Slice 4's scripts working and gated.
