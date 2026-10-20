@@ -15,6 +15,8 @@ last deploy. And a recorded outcome either way.
 ## Needs
 
 - Slices 1–6 done.
+- [[quiz-page-redesign]] in production. The reviewer reads the quiz landing page, and the owner
+  decided on 2026-10-20 not to request review on the old one.
 - **Wait.** At least two weeks after slice 5's last batch. Google gives "up to 1 or 2 weeks" for the
   AdSense crawler index, and Search coverage moves no faster. Both documented figures are minimums,
   not promises.
