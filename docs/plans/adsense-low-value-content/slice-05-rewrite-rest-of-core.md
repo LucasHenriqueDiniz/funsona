@@ -513,7 +513,31 @@ visible across the four quizzes.
 | `render.mjs` on the 10 pages from the local web app | **10 of 10** |
 | the cat quiz played end to end, always the first answer | "Pode adotar, mas ajuste alguns pontos antes", as the tally predicts |
 
-Next, after the owner's review: write batch 6. Then batch 7, the last seven rows (61–67).
+### Batch 6 in production (2026-10-20)
+
+**Approval.** The owner answered "s" to writing the ten drafts as they were. As before, the agent set
+`reviewed: true`, with no owner edits.
+
+**Before the writes:**
+- `wrangler d1 export --remote --table quizzes` at 23:41 UTC, restored and counted: 775 rows, 79
+  published, 67 curated, 696 archived;
+- Time Travel bookmark `00006a99-00000000-0000510a-e38b963076c358dfe44448cad1da9b7c`.
+
+**The writes:** `apply.mjs --target remote` on the ten drafts, one per call. Nothing was archived.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **67** · PUBLISHED flag=0 12 · ARCHIVED 696 |
+| `report.mjs --target remote --baseline <the 23:41 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target remote` on the whole core | **60 of 67** meet the bar |
+| `render.mjs https://funsona.com` on the 10 | **10 of 10** |
+| the 10 pages fetched from a browser tab on funsona.com and parsed there | **10 of 10**: new title and last outcome present, AdSense loader present, no robots meta, 0 third-party images above "Mais para jogar" |
+| `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 67 = 67, the same slugs |
+
+The in-browser check fetched each page's HTML, rather than rendering it in an iframe as batches 4–5
+did. The iframe run timed out with the browser pane hidden.
+
+Next: batch 7, the last seven rows (61–67).
 `responde-a-estas-perguntas-e-nos-dizemos-te-qual-e-o-teu-cocktail-de-assinatura` is in European
 Portuguese and duplicates the cocktail quiz, so it is a candidate to merge or archive.
 
