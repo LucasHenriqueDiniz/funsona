@@ -76,6 +76,63 @@ few more.
 
 Next: batch 3, keep rows 22 onwards of `core.csv`.
 
+### Batch 3 drafted (2026-10-20)
+
+Ten drafts: keep rows 22–31 of `core.csv`, minus one, plus row 32. A read-only `SELECT` on remote
+D1 confirmed all eleven candidates `PUBLISHED` with `ads_eligible = 1`. The local copy behind the
+checks below was loaded from a full remote export taken at 12:35 UTC: 694 archived, 12 published
+unflagged, 69 published flagged, the same as production.
+
+**Held back:** `que-personagem-dxd-do-ensino-medio-sou-eu`. High School DxD is an ecchi series about
+high-school students, and the live quiz leans on that framing: "sedutora", "atrair olhares", a
+question about your love life. The proposal to the owner is the waifu quiz's treatment: out of the
+core. `sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-star-wars` (row 32) took its
+place.
+
+**Within the drafts,** the same screen as Hisoka in batch 2:
+- Orochimaru left the Naruto arch-enemy quiz. Canon has him kidnapping children and experimenting on
+  them.
+- Dio Brando left the JoJo quiz. In the first part, he forcibly kisses a child to humiliate the
+  hero.
+
+**Rewritten whole, not trimmed:**
+- The Japanese-name quiz had 60 outcomes and answers like "Opção visual A" with no image behind them.
+  It now has 8 real names, each with its kanji, its meaning and which genders use it.
+- JoJo went from 10 outcomes to 8.
+- The girlfriend quiz points to 190, CVV 188 and the Central de Atendimento à Mulher 180. The
+  sentence is worded apart from the boyfriend and husband quizzes, whose shared helpline paragraph is
+  the largest overlap in batches 1 and 2.
+
+**Template signature,** measured by `scripts/adsense-core/rewrite/signature.mjs`:
+- openers: the first two words of an outcome's second and last paragraphs, repeated inside one quiz;
+- overlap: 5-gram Jaccard between outcomes of different quizzes.
+
+The second paragraph is new to the measure. With the last paragraph varied, "Como ele, você…"
+opened the second paragraph of 7 of 8 JoJo outcomes, and "Combina com você porque…" all 8 of the
+name quiz. 40 sentences were rewritten by hand.
+
+| measure | batches 1 + 2 (20 drafts, 109 outcomes) | batch 3 (10 drafts, 65 outcomes) |
+|---|---|---|
+| outcomes sharing a second- or last-paragraph opener inside their quiz | 77 | **0** |
+| last paragraphs opening with "O desafio…" | 14 | **0** |
+| 5-gram Jaccard per outcome pair across quizzes | mean 0.017%, max 11.4% (5,621 pairs) | mean 0.006%, max 1.1% (8,979 pairs touching batch 3) |
+
+Batch 2 reported 0.02% and 10.5% for the same twenty drafts. The recount differs slightly in the
+maximum and agrees on the cause: the boyfriend and husband helpline paragraph.
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 3 | 10 ok: 157–212 words per outcome, 10 questions each, every rule but `reviewed` |
+| `apply.mjs --target local` on the drafts themselves | refused, 10 of 10, nothing written: `reviewed` is false |
+| local-only `reviewed: true` copies → `apply.mjs --target local` | written |
+| `report.mjs --target local --baseline <the 12:35 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target local` on the whole core | 30 of 69 |
+| `render.mjs` on the 10 pages from the local web app | **10 of 10**: title, intro 3/3, every outcome, 0 third-party media in the quiz body |
+| same check on an untouched core quiz (cheese), as a negative control | FAIL: intro 0/3, 1 quizpanda image in the body |
+
+Every page still shows 2 quizpanda images further down, in the "Mais para jogar" cards. They are
+covers of core quizzes not yet rewritten (cheese, PC game), so they leave as later batches land.
+
 ## Needs
 
 - Slice 4's scripts working and gated.
@@ -91,11 +148,16 @@ Next: batch 3, keep rows 22 onwards of `core.csv`.
 ## Done when
 
 ```
-node scripts/adsense-core/report.mjs --where "ads_eligible = 1"
+node scripts/adsense-core/rewrite/report.mjs --target remote
 ```
 
-prints `outcomes>=150w 100%  intro 100%  changed 100%  rendered N/N` with N equal to the D1 count of
-`ads_eligible = 1`.
+prints `---- N of N quizzes meet the bar`, with N equal to the D1 count of `PUBLISHED` and
+`ads_eligible = 1`. With no slugs, the script already reports exactly that set. It has no `--where`
+flag: given one, it reads the clause as a slug and prints `0 of 0`.
+
+The pages are checked with
+`node scripts/adsense-core/rewrite/render.mjs https://funsona.com scripts/adsense-core/drafts/*.json`.
+It prints `N of N pages pass`.
 
 ## If stuck
 
