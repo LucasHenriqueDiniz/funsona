@@ -399,9 +399,30 @@ that carried one was rewritten:
 | `render.mjs` on the 10 pages from the local web app | **10 of 10** |
 | the anime quiz played end to end on the local web app, always the last answer | "Personagem misterioso", as the tally predicts |
 
-Next, after the owner's review: write batch 5. Batch 6 starts with the Naruto soulmate quiz (row 47)
-and row 52. The Harry Potter, Disney and DC "soulmate" quizzes stay in the core on the same terms as
-Naruto. They still get the screen, for sexualised content rather than for the premise.
+### Batch 5 in production (2026-10-20)
+
+**Approval.** In chat, the owner kept the Naruto soulmate quiz in the core, then answered "s" to
+writing the ten drafts as they were. As before, the agent set `reviewed: true`, with no owner edits.
+
+**Before the writes:**
+- `wrangler d1 export --remote --table quizzes` at 22:28 UTC, restored and counted: 775 rows, 79
+  published, 67 curated, 696 archived;
+- Time Travel bookmark `00006a8e-00000000-0000510a-3c58d5e8272fddadab58693f08e14533`.
+
+**The writes:** `apply.mjs --target remote` on the ten drafts, one per call. Nothing was archived.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **67** · PUBLISHED flag=0 12 · ARCHIVED 696 |
+| `report.mjs --target remote --baseline <the 22:28 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target remote` on the whole core | **50 of 67** meet the bar |
+| `render.mjs https://funsona.com` on the 10 | **10 of 10** |
+| the 10 pages in the browser | **10 of 10**: new title, intro 3/3 and last outcome on screen, AdSense loader present, 0 third-party images above "Mais para jogar" |
+| robots on the 10 | no robots meta, indexable |
+| `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 67 = 67, the same slugs |
+
+Next: batch 6 starts with the Naruto soulmate quiz (row 47) and row 52. The Harry Potter, Disney
+and DC "soulmate" quizzes stay in the core on the same terms as Naruto. They still get the screen, for sexualised content rather than for the premise.
 `responde-a-estas-perguntas-e-nos-dizemos-te-qual-e-o-teu-cocktail-de-assinatura` is in European
 Portuguese and duplicates the cocktail quiz, so it is a candidate to merge or archive.
 
