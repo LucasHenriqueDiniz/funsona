@@ -56,10 +56,10 @@ environment is the one and only way to produce what production serves.
 
 | # | finding | source | kind |
 |---|---|---|---|
-| 10 | "environment variables that already exist when Vite is executed have the highest priority"; `vite build` is a production build and loads `.env.production` | `vite-6-env-and-mode.md` | primary |
-| 11 | Once a Pages project uses a Wrangler file, "you can not edit the same fields in the dashboard"; `vars` is "A map of environment variables to set when deploying your Function" | `cloudflare-pages-wrangler-configuration.md` | vendor |
-| 12 | Build-time variables are set under **Settings > Environment variables** of the Pages project; Cloudflare injects `CI`, `CF_PAGES`, `CF_PAGES_BRANCH` and friends into the build | `cloudflare-pages-build-configuration.md` | vendor |
-| 13 | Neither Cloudflare page mentions encoding, a byte-order mark, or any sanitization. A web search for the BOM behaviour found no report of it, on Cloudflare's docs, forums, or the `workers-sdk` issues | search only, no fetch | — |
+| 11 | "environment variables that already exist when Vite is executed have the highest priority"; `vite build` is a production build and loads `.env.production` | `vite-6-env-and-mode.md` | primary |
+| 12 | Once a Pages project uses a Wrangler file, "you can not edit the same fields in the dashboard"; `vars` is "A map of environment variables to set when deploying your Function" | `cloudflare-pages-wrangler-configuration.md` | vendor |
+| 13 | Build-time variables are set under **Settings > Environment variables** of the Pages project; Cloudflare injects `CI`, `CF_PAGES`, `CF_PAGES_BRANCH` and friends into the build | `cloudflare-pages-build-configuration.md` | vendor |
+| 14 | Neither Cloudflare page mentions encoding, a byte-order mark, or any sanitization. A web search for the BOM behaviour found no report of it, on Cloudflare's docs, forums, or the `workers-sdk` issues | search only, no fetch | — |
 
 ### From the repo history
 
@@ -72,7 +72,7 @@ environment is the one and only way to produce what production serves.
   .env.production". The sanitizer that commit added names that one variable.
 - The three slot ids are not in any `wrangler.toml`. Measurement 1 says they reach the build through
   the environment all the same, so they are defined on the Cloudflare side of the project, in its
-  variables or secrets (finding 12). That is also why the client id (measurement 2), which nobody
+  variables or secrets (finding 13). That is also why the client id (measurement 2), which nobody
   ever put there, is clean.
 
 ## Verdict
@@ -115,7 +115,7 @@ depend on it.
   entries were added to the project after 07-31, or they were there and the injection started adding
   the BOM when the project switched to a Wrangler-file configuration on 08-20. The Wayback Machine was
   offline during this research, so no snapshot brackets it.
-- **Whether Cloudflare documents the BOM.** No primary source found (finding 13). The two commits of
+- **Whether Cloudflare documents the BOM.** No primary source found (finding 14). The two commits of
   2026-08-20 and measurements 1 and 6 are the evidence.
 - **A rendered page from the fixed Worker.** The pinned wrangler cannot start it locally (measurement 8) and the Pages Preview environment answers 500 on every route, for every PR (measurement 10); the check after the production deploy covers it.
 - **Whether the Preview environment carries the BOM-prefixed variables too.** Measurement 10 shows clean ids from Cloudflare's build with the fix, which is what matters, but it cannot tell a stripped BOM from a variable that was never set for Preview. The Clerk key, which `[vars]` sets for both environments, would tell, and it only shows on a rendered page.
