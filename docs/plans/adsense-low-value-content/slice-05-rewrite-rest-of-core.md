@@ -304,9 +304,103 @@ no owner edits.
 | attraction quiz | 302 to `/404`; not in the sitemap |
 | `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 67 = 67, the same slugs |
 
-Next: batch 5, starting at `onde-devo-viver-descubra-o-lugar-ideal-para-morar` and taking the next
-`keep` rows. Three of the remaining 27 need the sensitive-content screen before any drafting: the
-Naruto, Harry Potter and Disney "soulmate" quizzes.
+### Batch 5 drafted (2026-10-20)
+
+Ten drafts: `keep` rows 41–52 of `core.csv`, minus two. A read-only `SELECT` on remote D1 confirmed
+all twelve candidates `PUBLISHED` with `ads_eligible = 1`. The local copy was rebuilt from a full
+remote export at 17:07 UTC, after batch 4: 696 archived, 12 published unflagged, 67 published
+flagged, 40 of 67 at the bar.
+
+| quiz | outcomes |
+|---|---|
+| where to live | 8 cities |
+| condiment | 8 |
+| anime character archetype (slug `qual-e-o-seu-nome-de-anime`) | 8 |
+| cocktail, 18+ | 8 |
+| PlayStation 4 game | 6 |
+| League of Legends champion | 8 |
+| Overwatch hero | 8 |
+| Japanese dish (`desvende-sua-personalidade-culinaria`) | 6 |
+| Saiki K. character | 6 |
+| potato chip flavour | 8 |
+
+**Held back, proposed out of the core:** `qual-personagem-de-naruto-e-a-sua-alma-gemea`, a romantic
+match with characters who are teenagers for most of the series, the same reason the waifu and DxD
+quizzes left. `e-maluco-mas-essas-perguntas-podem-revelar-qual-personagem-de-anime-seria-seu-arqui-inimigo`
+(row 52) moves to batch 6.
+
+**Reframed, slug kept.** The anime quiz promised a generated "anime name". It now places the reader
+in one of eight archetypes, protagonist to mysterious mentor, each with characters from Naruto, One
+Piece, Dragon Ball, My Hero Academia, Dr. Stone and Yu Yu Hakusho. The slug stays because renaming
+it is a URL change. The title and every result say what the page does.
+
+**Canon and facts checked before drafting.** Subagents returned red flags, and the drafts stayed
+clear of them:
+- PlayStation 4: Brazilian ClassInd ratings, not ESRB. Fortnite is 16 since the 2026
+  reclassification. Games are described by genre and tone only. Nothing of Persona 5's abuse
+  storyline.
+- Japanese dishes: no health claims, and no link between okonomiyaki and the atomic bomb.
+- Saiki K.: the cast are high-schoolers. Teruhashi and Aiura are described by what they do, never
+  by looks or crushes. No flirting question.
+- Anime archetypes: none of Death Note, Itachi, Jiraiya, Roshi, Mineta or Kakashi's novels. The
+  original "romantic arc" question is gone.
+- Cocktail: 18+ framing, the Ministério da Saúde line that there is no safe level of drinking,
+  "quem bebe não deve dirigir", and a non-alcoholic version where one exists.
+
+**Adversarial read, after drafting.** One subagent read the whole batch as a hostile reviewer,
+checked every claim against sources, and proposed 100 exact replacements. All were applied to the
+gitignored drafts after a read:
+
+| found | count | example |
+|---|---|---|
+| facts wrong or overstated | 22 | Kakashi's face shown in the anime in 2016, not 2015; "Rede Manchete", not "TV Manchete"; Mei slows rather than freezes since Overwatch 2; LoL's official pt-BR names (Stemmaguarda, Bandópolis, Demacia); the first dry martini recipe is from 1904 |
+| sensitive framing | 2 | Teruhashi's line leaned on her crush; "passar do próprio limite" in the cocktail quiz could read as a drinking limit |
+| text that assumes a male reader | about 48 | adjective lists said of "você" ("É carinhoso, paciente"); answer sets like "O que respeita o silêncio" |
+| a promise the page broke | 9 | three intros promised a legend for every item; the anime intro promised an author and year for each example |
+| answer logic | 2 fixed in text, 6 in weights | two PS4 answers meant the same; secondary points such as Thresh on the top-lane answer |
+
+Of the six contradicting secondary points, four were moved to a better answer inside the same
+questions, so each outcome still gets the same number of them: Japanese dish q1, q4 and q7; where to
+live q2 and q10; PS4 q1 and q7; LoL q1. Two stayed, cocktail q9 and where to live q7, because no
+other answer in those questions fits the outcome better. The review's fixes added one new repeated mould ("Tem X, Y e Z" in four results),
+which was varied, and the Kasato Maru sentence, which the condiment quiz repeated from the dish
+quiz's intro, was rewritten.
+
+**Template signature,** same scratch measures as before, against the 40 earlier drafts. The first
+drafts of this batch were worse than batch 4 on the cross-quiz formulas, so every last paragraph
+that carried one was rewritten:
+
+| measure | first drafts | after rewrite and review |
+|---|---|---|
+| last paragraph opening "[X] demais…" | 13 of 74 | **0** |
+| "Quem … às vezes …" | 18 | **0** |
+| closing sentence with "também" | 19 | **0** |
+| "semana" | 11 | 3 |
+| outcomes sharing a second- or last-paragraph opener inside their quiz | 18 | **0** |
+| 5-gram Jaccard per outcome pair across quizzes | mean 0.005%, max 1.8% | mean 0.005%, max 1.8% (20,442 pairs) |
+
+**Ties,** from the scratch QuizPlay simulation, after secondary points on every answer:
+
+| quiz size | ties for a consistent reader | reader lands on their own outcome |
+|---|---|---|
+| 8 outcomes | 5–8% | 87–92% |
+| 6 outcomes | 3–4% | 93–94% |
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 5 | 10 ok: 151–178 words per outcome, 10 questions each, every rule but `reviewed` |
+| `apply.mjs --target local` on the drafts themselves | refused, 10 of 10, nothing written |
+| local-only `reviewed: true` copies → `apply.mjs --target local` | written |
+| `report.mjs --target local --baseline <the 17:07 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target local` on the whole core | 50 of 67 |
+| `render.mjs` on the 10 pages from the local web app | **10 of 10** |
+| the anime quiz played end to end on the local web app, always the last answer | "Personagem misterioso", as the tally predicts |
+
+Next, after the owner's review: write batch 5, and archive the Naruto soulmate quiz if the owner
+agrees (the core would go to 66). Batch 6 starts at row 52. The Harry Potter, Disney and DC
+"soulmate" quizzes need the sensitive-content screen before any drafting.
+`responde-a-estas-perguntas-e-nos-dizemos-te-qual-e-o-teu-cocktail-de-assinatura` is in European
+Portuguese and duplicates the cocktail quiz, so it is a candidate to merge or archive.
 
 ## Needs
 
