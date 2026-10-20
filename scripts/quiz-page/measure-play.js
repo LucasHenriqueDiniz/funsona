@@ -8,10 +8,16 @@
   const bottom = (el) => Math.round(el.getBoundingClientRect().bottom + window.scrollY);
   const textOf = (el) => (el.textContent || "").trim();
 
-  const buttons = [...document.querySelectorAll("main button")];
+  // The answers and the Anterior/Próxima row share the question <section>; the exit control and
+  // the navbar do not.
+  const buttons = [...document.querySelectorAll("main section button")];
   const navRow = buttons.filter((b) => /^(Anterior|Próxima|Ver resultado|Salvando)/.test(textOf(b)));
-  const answers = buttons.filter((b) => !navRow.includes(b) && /^[A-H]\b/.test(textOf(b)));
-  const ads = [...document.querySelectorAll("ins.adsbygoogle")];
+  const answers = buttons.filter((b) => !navRow.includes(b));
+  // An unfilled unit is display:none, so measure the slot's wrapper (the "Publicidade" label's
+  // parent), which is where the unit sits whether or not an ad filled it.
+  const ads = [...document.querySelectorAll("span")]
+    .filter((el) => textOf(el) === "Publicidade")
+    .map((el) => el.parentElement);
 
   const stickyAncestors = (el) => {
     let n = 0;

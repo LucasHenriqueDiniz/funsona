@@ -1,5 +1,5 @@
 ---
-status: todo
+status: done
 ---
 
 # Slice 5 — The play-screen ad: sticky sidebar of 300 px on desktop, inline under the answers on mobile
@@ -46,6 +46,38 @@ progress bar and the question. After this slice:
 `measure-play.js` prints `mobileAdBelowAnswers: true`, `mobileStickyAdAncestors: 0`,
 `desktopAdWidth: ≤300`, `desktopStickyAdCount: 1` on the weapons quiz, recorded here with the raw
 numbers.
+
+### Done 2026-10-20
+
+The plan's first cut (ad as its own grid item under a sticky sidebar) does not work: with the
+question section spanning two rows, CSS grid splits the span's height across both rows, so the ad's
+cell starts halfway down the page, and a sidebar tall enough to hold the clamped title card leaves
+no room above the fold for a unit pinned under it. What shipped instead: DOM order progress →
+question → answers → controls → aside; the progress bar pins alone at `top-28`, the aside (title
+card plus the ad, `lg:max-w-[300px]`) pins under it at `14.25rem`, the section spans both rows with
+`grid-rows-[auto_1fr]` so the aside's cell starts right under the progress bar. One `AdSlot`, one
+`<ins>`.
+
+`measure-play.js` on `/quiz/que-arma-voce-tem-descubra-sua-arma-interior/play`, local app against
+the production API:
+
+| | 375×812 | 1024×768 |
+|---|---|---|
+| answers found | 4 | 4 |
+| last answer bottom | 938 px | 1,149 px |
+| Anterior/Próxima row bottom | 1,020 px | 1,231 px |
+| ad slot top | **1,040 px** (below both) | 547 px, natural; pins at 228 px |
+| ad slot width | 343 px (full width) | **300 px** |
+| sticky ancestors of the ad | **0** | **1** (the aside) |
+| sticky elements holding an ad | 0 | **1** of 2 sticky elements (the progress box holds none) |
+| horizontal overflow | none (375) | none (1,016) |
+
+- `/quiz/6-ano/play` (not curated): `grep -c adsbygoogle` → 0, no `<ins>`. The curated play page
+  carries the loader, one `data-ad-slot`, one "Publicidade" label.
+- Flow at 1024: selecting answer A enables Próxima; Próxima shows "Pergunta 2 de 10" with Anterior
+  enabled and the ad still in place (driven from the page's own JavaScript, since the pane's
+  coordinate click landed on the question card).
+- Lint exit 0, typecheck 0 errors.
 
 ## If stuck
 
