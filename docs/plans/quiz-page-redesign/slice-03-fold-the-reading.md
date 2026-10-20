@@ -1,5 +1,5 @@
 ---
-status: todo
+status: done
 ---
 
 # Slice 3 — Fold the reading: "Sobre" first part open, one `<details>` per outcome, no questions list
@@ -44,8 +44,32 @@ python3 scripts/quiz-page/check-landing-html.py http://localhost:4322
 prints `0 FAIL` with the question-title check now passing, the revert run above printed it red and
 the restore printed it green, and this table is full:
 
-| quiz | height px | screens (÷812) | comments at screen | `<details>` count |
-|---|---|---|---|---|
+### Done 2026-10-20
+
+Local app against the production API (`web-prod-api`). `check-landing-html.py http://localhost:4322`,
+25 s: **50 PASS, 0 FAIL**. Intro and outcome first sentences 10/10; **question titles 0/10 on 10 of
+10 pages** (was 10/10 on every page); flag rule 20/20; related 10/10.
+
+**Revert check.** With `<QuizOutcomes>` replaced by a comment in the page: 40 PASS, 10 FAIL, every
+FAIL the outcome check (`outcomes present 0/4` … `0/8`, all titles listed as missing). Restored:
+50 PASS, 0 FAIL again. Note for the next person: `git checkout -- [slug].astro` restored the
+*committed* page, which still imported the deleted `QuizQuestions.astro`, so every route answered
+500 until the slice's own edit was redone. Revert with a comment, restore by hand.
+
+`measure-landing.js` at 375×812 (baseline from slice 0 in parentheses):
+
+| quiz | height px | screens (÷812) | comments at screen | `<details>` count | ad − Play |
+|---|---|---|---|---|---|
+| arma | 4,075 (14,919) | 5.02 (18.37) | 2.02 (15.48) | 9 = 8 + 1 | 1,049 px |
+| demon slayer | 3,969 (12,829) | 4.89 (15.80) | 1.89 (12.91) | 7 = 6 + 1 | 943 px |
+| slime | 3,969 (13,036) | 4.89 (16.05) | 1.89 (13.16) | 7 = 6 + 1 | 943 px |
+| harry potter inimigo | 4,075 (14,586) | 5.02 (17.96) | 2.02 (15.07) | 9 = 8 + 1 | 1,049 px |
+| chá | 3,969 (13,389) | 4.89 (16.49) | 1.89 (13.60) | 7 = 6 + 1 | 943 px |
+
+All five under the pitch's 6 screens already, with the comments block and the related cards still
+at full size (slice 4 shrinks both). `curl | grep -c '<details'` on the five pages: 9, 7, 7, 9, 7,
+each outcomes + 1. No horizontal overflow (`scrollWidth` 375, 5 of 5). Lint exit 0, typecheck 0
+errors.
 
 ## If stuck
 

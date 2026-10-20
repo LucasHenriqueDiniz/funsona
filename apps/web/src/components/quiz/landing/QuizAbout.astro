@@ -1,35 +1,46 @@
 ---
 import type { LandingIntro } from "@/lib/quiz-landing";
 
+// The first part reads open; the other two sit behind "Ler mais". All three are in the HTML:
+// the fold is a <details>, never a fetch.
 interface Props {
   intro: LandingIntro | null | undefined;
 }
 
 const { intro } = Astro.props;
+const hasMore = Boolean(intro?.what_youll_learn || intro?.how_scoring_works);
 ---
 
 {intro?.context && (
-  <section class="relative mx-auto mb-8 max-w-4xl px-4 sm:px-6 lg:px-8">
+  <section class="relative mx-auto mb-6 max-w-4xl px-4 sm:px-6 lg:px-8">
     <div class="rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 sm:p-8">
-      <h2 class="mb-4 text-xl font-black text-[var(--color-text-primary)]">Sobre este quiz</h2>
+      <h2 class="mb-3 text-xl font-black text-[var(--color-text-primary)]">Sobre este quiz</h2>
       <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
         {intro.context}
       </div>
-      {intro.what_youll_learn && (
-        <>
-          <h3 class="mb-3 mt-6 text-lg font-black text-[var(--color-text-primary)]">O que você vai descobrir</h3>
-          <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
-            {intro.what_youll_learn}
-          </div>
-        </>
-      )}
-      {intro.how_scoring_works && (
-        <>
-          <h3 class="mb-3 mt-6 text-lg font-black text-[var(--color-text-primary)]">Como a pontuação funciona</h3>
-          <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
-            {intro.how_scoring_works}
-          </div>
-        </>
+      {hasMore && (
+        <details class="group mt-4">
+          <summary class="inline-flex h-9 cursor-pointer list-none items-center gap-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 text-[13px] font-extrabold text-brand-500 transition hover:border-brand-300 [&::-webkit-details-marker]:hidden">
+            Ler mais
+            <svg class="h-3.5 w-3.5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </summary>
+          {intro.what_youll_learn && (
+            <>
+              <h3 class="mb-2 mt-5 text-lg font-black text-[var(--color-text-primary)]">O que você vai descobrir</h3>
+              <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
+                {intro.what_youll_learn}
+              </div>
+            </>
+          )}
+          {intro.how_scoring_works && (
+            <>
+              <h3 class="mb-2 mt-5 text-lg font-black text-[var(--color-text-primary)]">Como a pontuação funciona</h3>
+              <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
+                {intro.how_scoring_works}
+              </div>
+            </>
+          )}
+        </details>
       )}
     </div>
   </section>

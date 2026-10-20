@@ -3,7 +3,6 @@ import Layout from "@/layouts/Layout.astro";
 import QuizHero from "@/components/quiz/landing/QuizHero.astro";
 import QuizByline from "@/components/quiz/landing/QuizByline.astro";
 import QuizAbout from "@/components/quiz/landing/QuizAbout.astro";
-import QuizQuestions from "@/components/quiz/landing/QuizQuestions.astro";
 import QuizOutcomes from "@/components/quiz/landing/QuizOutcomes.astro";
 import QuizRelated from "@/components/quiz/landing/QuizRelated.astro";
 import CommentSection from "@/components/quiz/CommentSection";
@@ -41,11 +40,9 @@ const image = `${Astro.url.origin}/og/${slug}`;
 const { data: related } = await apiFetch(`/quizzes?limit=3&sort=likes`);
 const filteredRelated = related?.filter((q: { id: string }) => q.id !== quiz.id).slice(0, 3) || [];
 
-// The substance of a quiz — its questions — used to exist only inside the
-// client-rendered /quiz/:slug/play screen, so crawlers (and the AdSense
-// reviewer) only ever saw this landing page: a title, a blurb, and shared
-// nav/footer chrome. We now publish the questions and, for personality
-// quizzes, the possible outcomes as static HTML on this canonical URL.
+// The outcomes are published as static HTML on this canonical URL: they are the text crawlers and
+// the AdSense reviewer read. The questions are not; they belong to /play, and the landing only
+// counts them for the meta line.
 const questions = landingQuestions(quiz.content);
 const outcomes = landingOutcomes(quiz.content);
 
@@ -79,7 +76,6 @@ const curated = Boolean(quiz.ads_eligible);
     <QuizHero quiz={quiz} questionCount={questions.length} />
     <QuizByline quizId={quiz.id} author={quiz.author} likesCount={quiz.likes_count || 0} currentUserId={currentUserId} />
     <QuizAbout intro={quiz.intro_content} />
-    <QuizQuestions questions={questions} slug={slug} title={quiz.title} type={quiz.type} />
     <QuizOutcomes outcomes={outcomes} />
 
     {curated && (
