@@ -55,6 +55,16 @@ export interface LandingQuiz {
   content?: LandingContent | null;
 }
 
+// What "Mais para jogar" reads from a GET /quizzes listing entry.
+export interface RelatedQuiz {
+  id: string;
+  slug: string;
+  title: string;
+  cover_url?: string | null;
+  type: string;
+  content?: LandingContent | null;
+}
+
 export interface LandingQuestion {
   title: string;
   options: string[];

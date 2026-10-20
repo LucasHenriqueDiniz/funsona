@@ -150,6 +150,27 @@ def main() -> int:
         bad = [s for s in rel if s not in curated_slugs or s == slug]
         check(bool(rel) and not bad, f"{slug}: related {len(rel)} slugs, curated and not self{' (bad: ' + ', '.join(bad) + ')' if bad else ''}")
 
+    # The tag path of "Mais para jogar": on quizzes that carry tags, the related list is the curated
+    # siblings sharing the first tag when there are any, else the fallback (most played, not self).
+    tags_by_slug = {q["slug"]: set(q.get("tags") or []) for q in listed}
+    tagged = [q for q in listed if q.get("tags")][:3]
+    for quiz in tagged:
+        slug = quiz["slug"]
+        first_tag = quiz["tags"][0]
+        siblings = {s for s, tags in tags_by_slug.items() if first_tag in tags and s != slug}
+        _, page = fetch(f"{base}/quiz/{slug}")
+        rel = related_slugs(page)
+        if siblings:
+            off = [s for s in rel if s not in siblings]
+            check(bool(rel) and not off,
+                  f"{slug} (tag '{first_tag}', {len(siblings)} siblings): related {len(rel)} all share it{' (not: ' + ', '.join(off) + ')' if off else ''}")
+        else:
+            bad = [s for s in rel if s not in curated_slugs or s == slug]
+            check(bool(rel) and not bad,
+                  f"{slug} (tag '{first_tag}', no curated sibling carries it): fallback list of {len(rel)}, curated and not self")
+    if not tagged:
+        print("      no tagged curated quiz in the listing; the tag path is untested here", flush=True)
+
     # Non-curated: candidates from the production copy, each confirmed through the API.
     db_paths = [p for g in DB_GLOBS for p in glob.glob(g)]
     candidates: list[str] = []

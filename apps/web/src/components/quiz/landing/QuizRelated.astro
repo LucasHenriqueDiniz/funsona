@@ -1,29 +1,46 @@
 ---
-import QuizCard from "@/components/QuizCard.astro";
+import { landingQuestions, type RelatedQuiz } from "@/lib/quiz-landing";
 
-interface RelatedQuiz {
-  slug: string;
-  title: string;
-  description?: string;
-  cover_url?: string;
-  type: string;
-  likes_count: number;
-  attempts_count: number;
-}
-
+// Compact rows, not the explore cards: three of these take about 260 px on a phone where three
+// QuizCards take about 1,000. The list is curated quizzes sharing a tag with this one, or the
+// most played when there is no tag to share (see docs/plans/quiz-page-redesign/slice-04).
 interface Props {
   quizzes: RelatedQuiz[];
+  class?: string;
 }
 
-const { quizzes } = Astro.props;
+const { quizzes, class: className = "" } = Astro.props;
+
+const fallbackGradients: Record<string, string> = {
+  TRIVIA: "from-sky-800 to-indigo-800",
+  PERSONALITY: "from-brand-800 to-violet-800",
+};
+
+const summary = (quiz: RelatedQuiz) => {
+  const count = landingQuestions(quiz.content).length;
+  const type = quiz.type === "TRIVIA" ? "Trivia" : "Personalidade";
+  return count > 0 ? `${count} perguntas · ${type}` : type;
+};
 ---
 
 {quizzes.length > 0 && (
-  <aside>
-    <h2 class="mb-4 text-2xl font-black text-[var(--color-text-primary)]">Mais para jogar</h2>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-      {quizzes.map((q) => (
-        <QuizCard {...q} />
+  <aside class={className}>
+    <h2 class="mb-3 text-lg font-black text-[var(--color-text-primary)]">Mais para jogar</h2>
+    <div class="flex flex-col gap-2">
+      {quizzes.map((quiz) => (
+        <a href={`/quiz/${quiz.slug}`} class="group flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-2 transition hover:border-brand-400/40">
+          {quiz.cover_url ? (
+            <img src={quiz.cover_url} alt="" class="h-[60px] w-[92px] shrink-0 rounded-xl object-cover" loading="lazy" decoding="async" />
+          ) : (
+            <span class={`flex h-[60px] w-[92px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${fallbackGradients[quiz.type] ?? "from-slate-700 to-slate-800"}`}>
+              <svg class="h-5 w-5 text-white/85" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.5 5.5 6 .7-4.5 4 1.3 6L12 16.3 6.7 19.2 8 13.2l-4.5-4 6-.7z" /></svg>
+            </span>
+          )}
+          <span class="flex min-w-0 flex-col gap-0.5">
+            <span class="line-clamp-2 text-sm font-extrabold leading-snug text-[var(--color-text-primary)] transition group-hover:text-brand-500">{quiz.title}</span>
+            <span class="text-xs font-semibold text-[var(--color-text-muted)]">{summary(quiz)}</span>
+          </span>
+        </a>
       ))}
     </div>
   </aside>

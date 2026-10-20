@@ -3,33 +3,37 @@ import LikeButton from "@/components/quiz/LikeButton";
 import QuizReportButton from "@/components/quiz/QuizReportButton";
 import type { LandingAuthor } from "@/lib/quiz-landing";
 
-// One row under the banner: who made the quiz, like it, report it.
+// Who made the quiz, like it, report it. One row under the banner on a phone; from lg the same
+// content is the card at the top of the right column.
 interface Props {
   quizId: string;
   author: LandingAuthor | null | undefined;
   likesCount: number;
   currentUserId: string | null;
+  class?: string;
 }
 
-const { quizId, author, likesCount, currentUserId } = Astro.props;
+const { quizId, author, likesCount, currentUserId, class: className = "" } = Astro.props;
 const name = author?.display_name || author?.handle || "?";
 ---
 
-<div class="mx-auto flex max-w-7xl items-center gap-3 px-4 pb-7 pt-3 sm:px-6 lg:px-8 lg:pt-5">
+<div class={`flex items-center gap-3 lg:flex-col lg:items-stretch lg:gap-4 lg:rounded-3xl lg:border lg:border-[var(--color-border)] lg:bg-[var(--color-surface-elevated)] lg:p-5 ${className}`}>
   <a href={`/profile/${author?.handle}`} class="group flex min-w-0 items-center gap-2.5">
     {author?.avatar_url ? (
-      <img src={author.avatar_url} alt="" class="h-9 w-9 shrink-0 rounded-xl object-cover" />
+      <img src={author.avatar_url} alt="" class="h-9 w-9 shrink-0 rounded-xl object-cover lg:h-11 lg:w-11" />
     ) : (
-      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-accent-500 text-sm font-black text-white">
+      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-accent-500 text-sm font-black text-white lg:h-11 lg:w-11 lg:text-base">
         {name[0].toUpperCase()}
       </span>
     )}
     <span class="flex min-w-0 flex-col leading-tight">
-      <span class="truncate text-sm font-extrabold text-[var(--color-text-primary)] transition group-hover:text-brand-500">{name}</span>
-      {author?.handle && <span class="truncate text-xs font-semibold text-[var(--color-text-muted)]">@{author.handle}</span>}
+      <span class="truncate text-sm font-extrabold text-[var(--color-text-primary)] transition group-hover:text-brand-500 lg:text-[15px]">{name}</span>
+      {author?.handle && <span class="truncate text-xs font-semibold text-[var(--color-text-muted)] lg:text-[13px]">@{author.handle}</span>}
     </span>
   </a>
-  <span class="flex-1"></span>
-  <LikeButton quizId={quizId} initialLikes={likesCount} client:load />
-  <QuizReportButton quizId={quizId} currentUserId={currentUserId} client:load />
+  <span class="flex-1 lg:hidden"></span>
+  <div class="flex items-center gap-2">
+    <LikeButton quizId={quizId} initialLikes={likesCount} client:load />
+    <QuizReportButton quizId={quizId} currentUserId={currentUserId} client:load />
+  </div>
 </div>

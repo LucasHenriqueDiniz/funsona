@@ -11,7 +11,7 @@ import { apiFetch } from "@/lib/api";
 import { apiUnavailableResponse, isApiUnavailable } from "@/lib/api-unavailable";
 import { getProfile } from "@/lib/api-server";
 import { BRAND_DISCLAIMER } from "@/lib/legal";
-import { landingOutcomes, landingQuestions, type LandingQuiz } from "@/lib/quiz-landing";
+import { landingOutcomes, landingQuestions, type LandingQuiz, type RelatedQuiz } from "@/lib/quiz-landing";
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/");
@@ -37,8 +37,14 @@ const title = `${quiz.title} | FunSona`;
 const description = quiz.description || `Jogue o quiz ${quiz.title} no FunSona`;
 const image = `${Astro.url.origin}/og/${slug}`;
 
-const { data: related } = await apiFetch(`/quizzes?limit=3&sort=likes`);
-const filteredRelated = related?.filter((q: { id: string }) => q.id !== quiz.id).slice(0, 3) || [];
+// "Mais para jogar": curated quizzes sharing this quiz's first tag, or the most played when there
+// is no tag or nothing else carries it. Both listings are curated-only since AdSense slice 2.
+const notSelf = (list: RelatedQuiz[] | null): RelatedQuiz[] => (list || []).filter((q) => q.id !== quiz.id).slice(0, 3);
+const tag = quiz.tags?.[0];
+let related: RelatedQuiz[] = tag ? notSelf((await apiFetch(`/quizzes?tag=${encodeURIComponent(tag)}&limit=4`)).data) : [];
+if (related.length === 0) {
+  related = notSelf((await apiFetch(`/quizzes?limit=4&sort=plays`)).data);
+}
 
 // The outcomes are published as static HTML on this canonical URL: they are the text crawlers and
 // the AdSense reviewer read. The questions are not; they belong to /play, and the landing only
@@ -74,23 +80,27 @@ const curated = Boolean(quiz.ads_eligible);
     <div class="pointer-events-none absolute inset-x-0 top-0 h-[34rem] bg-[radial-gradient(circle_at_25%_10%,rgba(99,102,241,0.18),transparent_34%),radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.16),transparent_30%)]"></div>
 
     <QuizHero quiz={quiz} questionCount={questions.length} />
-    <QuizByline quizId={quiz.id} author={quiz.author} likesCount={quiz.likes_count || 0} currentUserId={currentUserId} />
-    <QuizAbout intro={quiz.intro_content} />
-    <QuizOutcomes outcomes={outcomes} />
 
-    {curated && (
-      <section class="relative mx-auto mb-8 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <AdSlot slot="quiz-landing" client:visible />
-      </section>
-    )}
+    {/* One column on a phone, in DOM order. From lg the reading stays left and the byline and
+        the related list go right; every left item names its column so auto-placement cannot
+        drift into the right one. */}
+    <div class="relative mx-auto grid max-w-7xl gap-6 px-4 pb-8 pt-3 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-8 lg:px-8 lg:pt-7">
+      <QuizByline quizId={quiz.id} author={quiz.author} likesCount={quiz.likes_count || 0} currentUserId={currentUserId} class="lg:col-start-2 lg:row-start-1" />
+      <QuizAbout intro={quiz.intro_content} class="lg:col-start-1" />
+      <QuizOutcomes outcomes={outcomes} class="lg:col-start-1" />
 
-    <section class="relative mx-auto grid max-w-7xl gap-8 px-4 pb-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-8">
-      <div class="min-w-0 rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-xl shadow-slate-950/5 sm:p-6 dark:shadow-black/20">
+      {curated && (
+        <div class="lg:col-start-1">
+          <AdSlot slot="quiz-landing" client:visible />
+        </div>
+      )}
+
+      <div class="rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-xl shadow-slate-950/5 sm:p-5 lg:col-start-1 dark:shadow-black/20">
         <CommentSection quizSlug={slug} currentUserId={currentUserId} client:load />
       </div>
 
-      <QuizRelated quizzes={filteredRelated} />
-    </section>
+      <QuizRelated quizzes={related} class="lg:sticky lg:top-28 lg:col-start-2 lg:row-span-3 lg:row-start-2 lg:self-start" />
+    </div>
 
     <p class="relative mx-auto max-w-7xl px-4 pb-10 text-xs leading-relaxed text-[var(--color-text-muted)] sm:px-6 lg:px-8">{BRAND_DISCLAIMER}</p>
   </div>
