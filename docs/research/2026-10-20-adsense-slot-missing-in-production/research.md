@@ -45,8 +45,9 @@ commit ccb2811). The web app builds with astro 5.18.1 on vite 6.4.2.
 | 7 | Same BOM build, plus a BOM on the Clerk key, after the fix in `astro.config.mjs` | same shell, `git diff` applied | 0 files with a BOM-prefixed id, 6 with the clean ids; 0 with a BOM Clerk key, 5 with the clean key |
 | 8 | Built Worker served locally after the fix | `wrangler pages dev ./dist --compatibility-flags nodejs_compat`, `curl` of the quiz landing and `/play` | **Not run.** wrangler 3.114.17, the version pinned in `apps/web`, ships a Workers runtime whose latest compatibility date is 2025-07-18, and the built Worker fails to start under it with `ReferenceError: MessageChannel is not defined` from React's server renderer, before any request. Production runs on compatibility date 2026-05-22. The render path is the same `isConfigured` check that `astro dev --mode production` passed with these values earlier on 2026-10-20 (quiz page redesign session) |
 | 9 | Vite precedence | `vite@6.4.2` `dist/node/chunks/dep-Dq2t6Dq0.js`, `loadEnv` | the loop over `.env*` files runs first; then `for (const key in process.env)` overwrites every `PUBLIC_`-prefixed key (Astro's `envPrefix`, `astro/dist/core/create-vite.js:147`) |
+| 10 | Cloudflare's own build of this branch, after the fix (PR #16 preview, deployment `06db8125`) | `curl` of `/_astro/AdSlot.CDlbcJB5.js` on the preview host, the hash the clean local build produced | ids **clean**, 0 `\uFEFF`. Production has no chunk by that hash (404), as expected. The rendered page could not be checked there: every route on the preview host answers 500 with an empty body, and so do the previews of PRs #13, #14 and #15 while production answers 200, so the Preview environment is broken on its own |
 
-Measurement 8 is the one gap: the built Worker was not served locally, so the proof for the fix is the bundle bytes (measurement 7), not a rendered page.
+Measurement 8 is the one gap: the built Worker was not served locally, so the proof for the fix is the bundle bytes (measurements 7 and 10), not a rendered page.
 
 Measurements 5 and 6 together are the reproduction: the file loads, and a BOM-prefixed copy in the
 environment is the one and only way to produce what production serves.
@@ -116,7 +117,9 @@ depend on it.
   offline during this research, so no snapshot brackets it.
 - **Whether Cloudflare documents the BOM.** No primary source found (finding 13). The two commits of
   2026-08-20 and measurements 1 and 6 are the evidence.
-- **A rendered page from the fixed Worker.** The pinned wrangler cannot start it locally (measurement 8); the check after the deploy covers it.
+- **A rendered page from the fixed Worker.** The pinned wrangler cannot start it locally (measurement 8) and the Pages Preview environment answers 500 on every route, for every PR (measurement 10); the check after the production deploy covers it.
+- **Whether the Preview environment carries the BOM-prefixed variables too.** Measurement 10 shows clean ids from Cloudflare's build with the fix, which is what matters, but it cannot tell a stripped BOM from a variable that was never set for Preview. The Clerk key, which `[vars]` sets for both environments, would tell, and it only shows on a rendered page.
+- **Why the Preview environment answers 500.** Pre-existing and outside this note; bindings or secrets set for Production only are the usual reason.
 - **The exact build command** configured in the Pages project (`pnpm build` or the web filter). Both
   run `astro build`, and the finding does not depend on which.
 
