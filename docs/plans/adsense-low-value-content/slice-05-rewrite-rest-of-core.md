@@ -421,8 +421,99 @@ writing the ten drafts as they were. As before, the agent set `reviewed: true`, 
 | robots on the 10 | no robots meta, indexable |
 | `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 67 = 67, the same slugs |
 
-Next: batch 6 starts with the Naruto soulmate quiz (row 47) and row 52. The Harry Potter, Disney
-and DC "soulmate" quizzes stay in the core on the same terms as Naruto. They still get the screen, for sexualised content rather than for the premise.
+Next: batch 6 starts with the Naruto soulmate quiz (row 47) and row 52.
+
+### Batch 6 drafted (2026-10-20)
+
+Ten drafts: row 47, the Naruto soulmate quiz kept by the owner, and rows 52–60 of `core.csv`. A
+read-only `SELECT` on remote D1 confirmed all ten `PUBLISHED` with `ads_eligible = 1`. The local
+copy already matched production after batch 5: 50 of 67 at the bar.
+
+| quiz | outcomes |
+|---|---|
+| Naruto soulmate | 6, adult era |
+| anime rival (slug says "arqui-inimigo") | 6 |
+| Diablo Immortal class | 8 of the 10 classes |
+| ancient mythology | 6, rewritten from European Portuguese |
+| Harry Potter soulmate | 6, down from 12 |
+| Disney soulmate | 7, down from 12 |
+| cat adoption readiness | 4 graded levels |
+| The Vampire Diaries | 6 |
+| DC hero soulmate | 6 |
+| angel, demon or both | 3 |
+
+**Nothing held back.** The screen found no sexualised content, so the four soulmate quizzes stay, as
+the owner decided in batch 5. They are rewritten on these terms:
+- "Alma gêmea" is defined in each intro as whoever the reader would match, as a partner, a friend or
+  a companion for adventure. Every one of these adults is married in canon.
+- Only adults. Each character is described in their adult life: Naruto as Seventh Hokage, Hermione
+  as Minister for Magic in *Cursed Child*, and so on. Nothing about looks or the body.
+- Disney: the canon check dropped every character with no sourced adult age, or whose romance
+  involves a minor (Rapunzel and Flynn, Aladdin, Li Shang, Esmeralda). The quiz keeps Tiana, Naveen,
+  Anna, Kristoff, Elsa, Kida and Milo.
+- Harry Potter: down to the six who have an adult career in canon. Snape, Bellatrix, Umbridge and
+  McGonagall are gone.
+- DC: Supergirl is out, because she is a teenager in the main comics. The Flash takes her place.
+
+**Other screen outcomes:**
+- The rival quiz drops Light Yagami (Death Note), as the batch 5 archetype quiz did.
+- Diablo Immortal is rated 18 by both Brazilian app stores and sells random-reward items. The intro
+  says both, and that the quiz recommends no purchase.
+- The Vampire Diaries is a personality match, not a romance. The cast are minors in season 1. Damon
+  is described as an antagonist whose harm earns no admiration. Matt replaces Tyler, whose story
+  starts with a violent father.
+- The angel quiz treats angels and demons as images from culture and art. Its "both" result uses
+  Saci and Curupira, which are not demons. It names no Afro-Brazilian religious entity.
+
+**Canon and facts checked before drafting.** Six subagents covered the four franchises, Diablo
+Immortal, and the cat, mythology and angel facts:
+- Diablo's official pt-BR class names are Arcanista and Cavaleiro Sangrento. The tenth class, Bruxo,
+  arrived in June 2026.
+- Lei Sansão (14.064/2020) covers maus-tratos to cats and dogs. Abandonment is treated as maus-tratos
+  under art. 32 of Lei 9.605/1998.
+- The cat quiz gives no doses, no fixed castration age and no R$ cost, and sends the reader to a vet.
+
+**Adversarial read, after drafting,** split in two subagents of five quizzes each. They proposed 92
+exact replacements; all were applied after a read:
+
+| found | count | example |
+|---|---|---|
+| facts wrong or overstated | 15 | Naruto did take the chūnin exam; Diablo skill effects (Onda de Luz drops no bell, Nuvem de Morcegos summons bats); Gina has six brothers, not seven; the Planeta Diário name came from the 1939 strip, not the radio show; Naveen came to marry for money, not for jazz; Osiris is named before the Pyramid Texts; no federal law found for the mandatory rabies vaccine |
+| sensitive framing | 5 | Kakashi's "Ler um bom livro" answer read as a nod to his novels; Bonnie, the only Black lead, scored on "distrust of the different" |
+| text that assumes a male reader | 19 | "Colado no inimigo", "sozinho", "estratégico", "subestimado" |
+| promises the page broke | 4 | the rival intro promised author and year, missing for Gary; the HP intro promised the house, missing in three results |
+| repeated phrasing across quizzes | 14 | "pergunte se a pessoa quer ouvir agora" in two quizzes; "fora do jogo, vale o mesmo" in five Diablo results |
+| contradicting secondary points | 26 questions | Sasuke scoring on "Minha irmã"; a ranged answer giving its point to a melee class in Diablo |
+
+The secondary points were moved inside their questions, so each outcome keeps the same number of
+them. One primary moved: in the mythology quiz, "Espera o momento certo, com paciência" now scores
+the Japanese result instead of the Celtic one.
+
+**Template signature,** same scratch measures, against the 50 earlier drafts:
+
+| measure | batch 6 (10 drafts, 58 outcomes) |
+|---|---|
+| last paragraph opening "[X] demais…", "Quem … às vezes …", closing sentence with "também", "semana" | **0** each |
+| outcomes sharing a second- or last-paragraph opener inside their quiz | 20 in the first drafts → **0** |
+| 5-gram Jaccard per outcome pair across quizzes | mean 0.004%, max 2.1% (19,891 pairs) |
+
+Left as is: in the soulmate quizzes the second paragraph often opens with the shared quality
+("Gentileza e coragem silenciosa uniriam vocês"). The words differ every time, but the mould is
+visible across the four quizzes.
+
+**Ties** for a reader who answers consistently: 2–4%, landing on their own outcome 93–98%.
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 6 | 10 ok: 150–188 words per outcome, 10 questions each, every rule but `reviewed` |
+| `apply.mjs --target local` on the drafts themselves | refused, 10 of 10, nothing written |
+| local-only `reviewed: true` copies → `apply.mjs --target local` | written |
+| `report.mjs --target local --baseline <the 22:28 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target local` on the whole core | 60 of 67 |
+| `render.mjs` on the 10 pages from the local web app | **10 of 10** |
+| the cat quiz played end to end, always the first answer | "Pode adotar, mas ajuste alguns pontos antes", as the tally predicts |
+
+Next, after the owner's review: write batch 6. Then batch 7, the last seven rows (61–67).
 `responde-a-estas-perguntas-e-nos-dizemos-te-qual-e-o-teu-cocktail-de-assinatura` is in European
 Portuguese and duplicates the cocktail quiz, so it is a candidate to merge or archive.
 
