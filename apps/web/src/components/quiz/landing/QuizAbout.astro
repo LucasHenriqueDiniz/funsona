@@ -1,0 +1,36 @@
+---
+import type { LandingIntro } from "@/lib/quiz-landing";
+
+interface Props {
+  intro: LandingIntro | null | undefined;
+}
+
+const { intro } = Astro.props;
+---
+
+{intro?.context && (
+  <section class="relative mx-auto mb-8 max-w-4xl px-4 sm:px-6 lg:px-8">
+    <div class="rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 sm:p-8">
+      <h2 class="mb-4 text-xl font-black text-[var(--color-text-primary)]">Sobre este quiz</h2>
+      <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
+        {intro.context}
+      </div>
+      {intro.what_youll_learn && (
+        <>
+          <h3 class="mb-3 mt-6 text-lg font-black text-[var(--color-text-primary)]">O que você vai descobrir</h3>
+          <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
+            {intro.what_youll_learn}
+          </div>
+        </>
+      )}
+      {intro.how_scoring_works && (
+        <>
+          <h3 class="mb-3 mt-6 text-lg font-black text-[var(--color-text-primary)]">Como a pontuação funciona</h3>
+          <div class="space-y-4 whitespace-pre-line text-[var(--color-text-secondary)]">
+            {intro.how_scoring_works}
+          </div>
+        </>
+      )}
+    </div>
+  </section>
+)}

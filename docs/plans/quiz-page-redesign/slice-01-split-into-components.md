@@ -1,5 +1,5 @@
 ---
-status: todo
+status: done
 ---
 
 # Slice 1 — Split the page into components that render the same page
@@ -49,6 +49,23 @@ pnpm --filter web typecheck
 ```
 
 prints `SAME` five times and typecheck exits 0.
+
+### Done 2026-10-20
+
+Five components under `components/quiz/landing/`, the normalisers and the page's view type in
+`lib/quiz-landing.ts`, the page down to composition. Verified on the local app against the
+production API (`web-prod-api`), the five sample quizzes curled before and after the split and
+their visible text diffed (tags stripped, entities unescaped, one line per text node):
+
+| check | result |
+|---|---|
+| text parity, 5 quizzes | **SAME 5/5** (181–191 text lines each) |
+| flag parity on the weapons quiz | no `noindex`, loader 1, `quiz-landing` slot 1, as before |
+| `pnpm --filter @funsona/web lint` | exit 0 |
+| `pnpm --filter @funsona/web typecheck` | 0 errors, 0 warnings, 8 hints (all pre-existing: the deprecated `ViewTransitions` import and astro-check's "never read" on early-return imports) |
+
+The worktree needed `apps/web/.dev.vars` (gitignored, holds `CLERK_SECRET_KEY`) copied from the
+main checkout before `astro dev` would render any page: without it every route answers 500.
 
 ## If stuck
 

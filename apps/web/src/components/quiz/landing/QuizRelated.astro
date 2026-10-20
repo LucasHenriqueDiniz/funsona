@@ -1,0 +1,30 @@
+---
+import QuizCard from "@/components/QuizCard.astro";
+
+interface RelatedQuiz {
+  slug: string;
+  title: string;
+  description?: string;
+  cover_url?: string;
+  type: string;
+  likes_count: number;
+  attempts_count: number;
+}
+
+interface Props {
+  quizzes: RelatedQuiz[];
+}
+
+const { quizzes } = Astro.props;
+---
+
+{quizzes.length > 0 && (
+  <aside>
+    <h2 class="mb-4 text-2xl font-black text-[var(--color-text-primary)]">Mais para jogar</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+      {quizzes.map((q) => (
+        <QuizCard {...q} />
+      ))}
+    </div>
+  </aside>
+)}

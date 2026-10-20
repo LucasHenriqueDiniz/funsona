@@ -1,0 +1,33 @@
+---
+import type { LandingOutcome } from "@/lib/quiz-landing";
+
+interface Props {
+  outcomes: LandingOutcome[];
+}
+
+const { outcomes } = Astro.props;
+---
+
+{outcomes.length > 0 && (
+  <section class="relative mx-auto mb-8 max-w-4xl px-4 sm:px-6 lg:px-8">
+    <div class="rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 sm:p-8">
+      <h2 class="text-xl font-black text-[var(--color-text-primary)]">
+        Os {outcomes.length} resultados possíveis
+      </h2>
+      <p class="mt-2 text-sm font-medium text-[var(--color-text-muted)]">
+        Cada combinação de respostas leva a um destes perfis.
+      </p>
+
+      <dl class="mt-6 space-y-5">
+        {outcomes.map((outcome) => (
+          <div class="border-t border-[var(--color-border)] pt-5 first:border-t-0 first:pt-0">
+            <dt class="font-black text-[var(--color-text-primary)]">{outcome.title}</dt>
+            {outcome.description && (
+              <dd class="mt-1.5 whitespace-pre-line text-[var(--color-text-secondary)]">{outcome.description}</dd>
+            )}
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+)}
