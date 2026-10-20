@@ -143,6 +143,12 @@ These skills carry the rules, and none of them are on disk in this repo:
 Read them through the plugin (`/hexagram:<skill>`, or let the skill trigger itself). If a returning
 reader finds no local rules directory, this section is the answer: there is nothing missing.
 
+## Project skill
+
+One skill is specific to this repo and lives in it: `.claude/skills/quiz-authoring/`. It runs the core
+quiz rewrite batches (pick, screen, fact-check, draft, gate, owner review, production write, record)
+and image generation with fal. `.mcp.json` registers fal's MCP server for it.
+
 ## Commit hook
 
 `.githooks/commit-msg` strips AI attribution trailers from commit messages. Git does not version
