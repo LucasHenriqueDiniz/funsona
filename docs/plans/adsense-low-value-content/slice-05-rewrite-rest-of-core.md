@@ -324,10 +324,13 @@ flagged, 40 of 67 at the bar.
 | Saiki K. character | 6 |
 | potato chip flavour | 8 |
 
-**Held back, proposed out of the core:** `qual-personagem-de-naruto-e-a-sua-alma-gemea`, a romantic
-match with characters who are teenagers for most of the series, the same reason the waifu and DxD
-quizzes left. `e-maluco-mas-essas-perguntas-podem-revelar-qual-personagem-de-anime-seria-seu-arqui-inimigo`
-(row 52) moves to batch 6.
+**Held back, then kept:** `qual-personagem-de-naruto-e-a-sua-alma-gemea` was held back and proposed
+out of the core, because it is a romantic match with characters who are teenagers for most of the
+series. The owner kept it. A soulmate premise is not a reason to archive. Waifu and DxD left because
+their content was sexualised. The quiz goes into batch 6, rewritten with the same care as the Saiki
+K. quiz: nothing about looks or the body, and nothing physical.
+`e-maluco-mas-essas-perguntas-podem-revelar-qual-personagem-de-anime-seria-seu-arqui-inimigo`
+(row 52) also moves to batch 6.
 
 **Reframed, slug kept.** The anime quiz promised a generated "anime name". It now places the reader
 in one of eight archetypes, protagonist to mysterious mentor, each with characters from Naruto, One
@@ -396,9 +399,9 @@ that carried one was rewritten:
 | `render.mjs` on the 10 pages from the local web app | **10 of 10** |
 | the anime quiz played end to end on the local web app, always the last answer | "Personagem misterioso", as the tally predicts |
 
-Next, after the owner's review: write batch 5, and archive the Naruto soulmate quiz if the owner
-agrees (the core would go to 66). Batch 6 starts at row 52. The Harry Potter, Disney and DC
-"soulmate" quizzes need the sensitive-content screen before any drafting.
+Next, after the owner's review: write batch 5. Batch 6 starts with the Naruto soulmate quiz (row 47)
+and row 52. The Harry Potter, Disney and DC "soulmate" quizzes stay in the core on the same terms as
+Naruto. They still get the screen, for sexualised content rather than for the premise.
 `responde-a-estas-perguntas-e-nos-dizemos-te-qual-e-o-teu-cocktail-de-assinatura` is in European
 Portuguese and duplicates the cocktail quiz, so it is a candidate to merge or archive.
 
