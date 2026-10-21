@@ -538,8 +538,67 @@ The in-browser check fetched each page's HTML, rather than rendering it in an if
 did. The iframe run timed out with the browser pane hidden.
 
 Next: batch 7, the last seven rows (61–67).
-`responde-a-estas-perguntas-e-nos-dizemos-te-qual-e-o-teu-cocktail-de-assinatura` is in European
-Portuguese and duplicates the cocktail quiz, so it is a candidate to merge or archive.
+
+### Batch 7 drafted (2026-10-21)
+
+Seven drafts, the last `keep` rows of `core.csv` (61–67). A read-only `SELECT` on remote D1 confirmed
+all seven `PUBLISHED` with `ads_eligible = 1`.
+
+| quiz | outcomes | what changed |
+|---|---|---|
+| vacation type by emoji | 6 | the "crush" question is gone; Brazilian destinations with sourced facts |
+| Star Wars name and role | 8, down from 16 | the gender question is gone; eight roles, each with an invented name checked against Wookieepedia |
+| PC game | 6 | Overwatch replaced by Hades (there is already an Overwatch quiz); Brazilian ratings |
+| "quão boa pessoa você é" | 6 | reframed as "Que tipo de gentileza é a sua?": styles of kindness, no moral grade |
+| car | 6 | the gender question is gone; the intro says it is not purchase advice |
+| cocktail, European Portuguese | 6 | rewritten as non-alcoholic drinks in pt-BR, so it no longer duplicates the batch 5 cocktail quiz |
+| truth or dare | 5, down from 8 | built on the Big Five; the bar, attraction, shoplifting and risky-driving questions are gone |
+
+**Screen.** Nothing was held back. Three quizzes changed their promise, as the anime quiz did in batch
+5, and the slugs stay to keep the URLs. The cocktail duplicate could have been archived instead. It was
+rewritten because a non-alcoholic drinks quiz is new content, with no alcohol and no overlap.
+
+**Facts checked before drafting.** Three subagents covered Star Wars canon and name collisions, PC
+games and cars, and the travel, kindness, Big Five and drinks facts. Among the findings:
+- Four of the first eight invented names collided with canon surnames (Rook, Vexx, Marr, Trune).
+- The NEO-PI of 1985 had three factors. The five-factor version is the NEO PI-R of 1992.
+- The CAF index is now the World Giving Report.
+- Nobody knows why limonada suíça is called "suíça".
+
+**Adversarial read, after drafting.** One subagent proposed 71 exact replacements, all applied after a
+read:
+
+| found | count | example |
+|---|---|---|
+| facts wrong or overstated | 9 | Wedge was the only pilot to survive both Death Star runs (Luke did not fly at Endor); Among Us first came out on mobile in June 2018; the Mustang's 22 thousand on day one were orders; Allan Luks is not a psychologist; the NEO PI-R has 240 items |
+| sensitive framing | 4 | alcohol emoji and wine in the vacation quiz; going to a waterfall in the rain |
+| text that assumes a male reader | 10 | "Um líder…", "ser notado", "querido por todos", one gender per Star Wars role |
+| promises the page broke | 4 | "clássico" for a 2014 Huracán; "prêmios ou vendas" where Civ VI has neither |
+| repeated phrasing across the batch | 11 moulds | "definem você" ×5, "é o seu forte" ×4 |
+| contradicting secondary points | 15 questions | Volvo scoring on "rápido como um avião"; Fusca on "Segurança" |
+
+**Template signature,** against the 60 earlier drafts:
+
+| measure | batch 7 (7 drafts, 43 outcomes) |
+|---|---|
+| "[X] demais…", "Quem … às vezes …", closing "também", "semana" | **0** each |
+| outcomes sharing a second- or last-paragraph opener inside their quiz | **0** |
+| 5-gram Jaccard per outcome pair across quizzes | mean 0.006%, max 3.0% (Witcher 3 × The Last of Us Part II, the award sentences) |
+
+**Ties** for a reader who answers consistently: 2–4%, landing on their own outcome 93–98%.
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 7 | 7 ok: 151–169 words per outcome, 10 questions each, every rule but `reviewed` |
+| `apply.mjs --target local` on the drafts themselves | refused, 7 of 7, nothing written |
+| local-only `reviewed: true` copies → `apply.mjs --target local` | written |
+| `report.mjs --target local --baseline <the 23:41 export>` on the 7 | **7 of 7** meet the bar, all changed |
+| `report.mjs --target local` on the whole core | **67 of 67** |
+| `render.mjs` on the 7 pages from the local web app | **7 of 7** |
+| the Big Five quiz played end to end on the local web app, mostly first answers | "Abertura à experiência", as the tally predicts |
+
+Next, after the owner's review: write batch 7. That should bring the remote core to 67 of 67, which is
+this slice's "Done when".
 
 ## Needs
 
