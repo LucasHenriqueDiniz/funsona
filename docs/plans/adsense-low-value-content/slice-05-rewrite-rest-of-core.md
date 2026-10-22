@@ -1,5 +1,5 @@
 ---
-status: todo
+status: doing
 ---
 
 # Slice 5 — The rest of the core, in batches
@@ -14,6 +14,733 @@ the whole core.
 
 A quiz the owner decides is not worth rewriting leaves the core instead: `ads_eligible = 0`, and a
 reason line in `core.csv`. The core shrinks rather than carrying a thin quiz into the review.
+
+### Batch 2 drafted (2026-10-19)
+
+Ten drafts: keep rows 11–20 of `core.csv`, minus one, plus row 21.
+
+**Held back:** `qual-garota-de-anime-e-o-seu-verdadeiro-amor-descubra-sua-waifu-ideal`. It is a
+"your ideal romantic partner" quiz built on anime characters, several of them teenagers and one from
+an ecchi series. With romantic framing, that sits against the child-sexualization policy, the most
+severe one AdSense has. The proposal to the owner is the same treatment as the three sensitive
+quizzes: out of the core. `qual-time-da-nfl-…` (row 21) took its place.
+
+**Within the drafts:** Hisoka was left out of the Hunter x Hunter quiz. Canon gives him an unsettling
+interest in child characters. Biscuit Krueger takes the slot.
+
+**A template signature, measured and reduced.** Across the 20 drafts of batches 1 and 2, cross-quiz
+text overlap was negligible: 5-gram Jaccard mean 0.02%, max 10.5%, which is the shared helpline
+sentence in the two relationship quizzes. But "O desafio de/do…" opened the last paragraph of 54 of
+109 outcomes, and inside one quiz page, where every outcome shows together, that reads as a form.
+Batch 2's openers were rewritten by hand: 40 sentences, down to 9 of 57.
+
+Batch 1, already in production, still carries the pattern. Re-applying it with varied openers needs
+the owner's go.
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 2 | 10 ok. The opener edit pushed one Steelers outcome to 149 words, so it was lengthened |
+| applied to the local copy, then `report.mjs --target local` | 10 of 10 meet the bar |
+| four batch 2 pages from the local web app | new intro present, 0 third-party media in the quiz body |
+
+### Batch 2 in production, batch 1 re-applied, waifu archived (2026-10-19)
+
+**The owner's three answers in chat:**
+- write batch 2 as it is;
+- archive the waifu quiz;
+- vary batch 1's openers and re-apply.
+
+As with batch 1, the agent set `reviewed: true`, with no owner edits.
+
+**Batch 1 openers.** 19 sentences rewritten by hand where an opener repeated inside one quiz: "O
+risco" ×5 in the weapons quiz, "O lado sombrio" ×5 in Magic, "O desafio" ×4 in Demon Slayer, and a
+few more.
+
+**Before the writes:**
+- export at 02:18 UTC, restored: 775 rows, 82 published, 70 curated;
+- Time Travel bookmark `00006661-00000000-00005109-05bc3533743cdc8c98ddd3dc6ddeba0f`.
+
+**The writes:**
+- `apply.mjs --target remote` on 20 drafts: the 10 of batch 1 again, plus the 10 of batch 2;
+- `scripts/adsense-core/archive-waifu.sql` (status `ARCHIVED`, flag 0). Wrangler reported
+  `changes: 2` for the one row; the counts below show one quiz moved.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **69** · PUBLISHED flag=0 12 · ARCHIVED 694 |
+| `report.mjs --target remote` on the whole core | **20 of 69** meet the bar |
+| same report against the pre-write export, on the 20 | 16 changed. The other 4 are the batch 1 quizzes whose openers were not touched (werewolf, ex, breakup, horsemen), so they equal the export, as expected |
+| the 20 pages on funsona.com (browser) | **20 of 20**: new text found, indexed, loader present, 0 third-party media in the quiz body |
+| waifu quiz | 404 at `/404`; not in the sitemap |
+| `sitemap.xml` quiz URLs | **69** |
+
+Next: batch 3, keep rows 22 onwards of `core.csv`.
+
+### Batch 3 drafted (2026-10-20)
+
+Ten drafts: keep rows 22–31 of `core.csv`, minus one, plus row 32. A read-only `SELECT` on remote
+D1 confirmed all eleven candidates `PUBLISHED` with `ads_eligible = 1`. The local copy behind the
+checks below was loaded from a full remote export taken at 12:35 UTC: 694 archived, 12 published
+unflagged, 69 published flagged, the same as production.
+
+**Held back, then archived by the owner:** `que-personagem-dxd-do-ensino-medio-sou-eu`. High School
+DxD is an ecchi series about high-school students, and the live quiz leans on that framing:
+"sedutora", "atrair olhares", a question about your love life. The owner asked whether a clean
+"which character are you" rewrite would do. It would fix the text but not the page's subject, and
+the quiz had 1 click. The owner chose to archive it, as with the waifu quiz:
+`scripts/adsense-core/archive-dxd.sql`, run with the batch 3 write. `core.csv` now marks it and the
+waifu quiz `drop` with the reason. That shifts the keep-row numbers above, so the next batch is
+pointed at by slug. `sera-que-conseguimos-adivinhar-seu-personagem-favorito-de-star-wars` (row 32)
+took its place.
+
+**Within the drafts,** the same screen as Hisoka in batch 2:
+- Orochimaru left the Naruto arch-enemy quiz. Canon has him kidnapping children and experimenting on
+  them.
+- Dio Brando left the JoJo quiz. In the first part, he forcibly kisses a child to humiliate the
+  hero.
+
+**Rewritten whole, not trimmed:**
+- The Japanese-name quiz had 60 outcomes and answers like "Opção visual A" with no image behind them.
+  It now has 8 real names, each with its kanji, its meaning and which genders use it.
+- JoJo went from 10 outcomes to 8.
+- The girlfriend quiz takes its own angle: the reader's own jealousy and control, not only the
+  partner's. Every one of its four results points to 190, and the last one also points to CVV 188,
+  the Central de Atendimento à Mulher 180, and the UBS for a reader who sees the controlling is
+  theirs.
+
+**Review pass, after drafting.** The `quiz-authoring` skill reached this session after the drafts
+were written. It asks for a canon check per franchise and one adversarial read, so both ran on the
+finished drafts: four `general-purpose` subagents checked facts against the fandom wikis and
+Wikipedia, and a fifth read the whole batch as a hostile reviewer. One finding was serious, the
+safety routing in the girlfriend quiz; the rest was smaller, and nearly all of it was real:
+
+| found | count | example | fix |
+|---|---|---|---|
+| canon or fact wrong or imprecise | 25 | a name-quiz intro said one sound could mean "sky, happiness or snow"; Shikamaru's shadow "without spending energy"; Iron Man's cave is the 2008 film, not the comics | each sentence rewritten to what the source says |
+| lines breaking the quiz's own spoiler promise | 7, in JoJo and Star Wars | JoJo's time stop, revealed at the end of part 3; lines hinting at Vader's redemption | rewritten or swapped |
+| safety routing in the girlfriend quiz | 1 | three abuse answers plus four "conversa" answers landed on "Falta uma conversa franca", which advised talking and had no safety pointer | abuse answers weigh 3, every result points to 190, the last one leads with safety |
+| answers scoring the wrong outcome, or saying the opposite | 3 | "boas fotos para postar" scored envy, not vanity; "Orgulho de admitir que me importo" | relabelled |
+| template feel | | the reader counted 21 of 61 results closing on "your trait stays, it only gains X"; 4 questions repeated word for word across quizzes; all 10 descriptions shaped "[lista]? Responda dez perguntas…" | 10 closings, the 4 questions and all 10 descriptions rewritten |
+| answers that assume a male reader | 19 | "Fico ofendido", "eu estava certo", "Sensato e equilibrado" | neutral forms |
+
+**Template signature,** measured with a scratch script, not committed:
+- openers: the first two words of an outcome's second and last paragraphs, repeated inside one quiz;
+- overlap: 5-gram Jaccard between outcomes of different quizzes.
+
+The second paragraph is new to the measure. With the last paragraph varied, "Como ele, você…"
+opened the second paragraph of 7 of 8 JoJo outcomes, and "Combina com você porque…" all 8 of the
+name quiz. 40 sentences were rewritten by hand.
+
+| measure | batches 1 + 2 (20 drafts, 109 outcomes) | batch 3 (10 drafts, 65 outcomes) |
+|---|---|---|
+| outcomes sharing a second- or last-paragraph opener inside their quiz | 77 | **0** |
+| last paragraphs opening with "O desafio…" | 14 | **0** |
+| 5-gram Jaccard per outcome pair across quizzes | mean 0.017%, max 11.4% (5,621 pairs) | mean 0.005%, max 1.1% (8,979 pairs touching batch 3) |
+| 5-gram overlap, girlfriend quiz against the boyfriend quiz in production | | 9 of 1,461 shared |
+
+Batch 2 reported 0.02% and 10.5% for the same twenty drafts. The recount differs slightly in the
+maximum and agrees on the cause: the boyfriend and husband helpline paragraph.
+
+All numbers below are after the review pass.
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 3 | 10 ok: 151–265 words per outcome, 10 questions each, every rule but `reviewed` |
+| `apply.mjs --target local` on the drafts themselves | refused, 10 of 10, nothing written: `reviewed` is false |
+| local-only `reviewed: true` copies → `apply.mjs --target local` | written |
+| `archive-dxd.sql` on the local copy | published flagged 69 → 68; the DxD page redirects to `/404`; local sitemap 68 quiz URLs |
+| `report.mjs --target local --baseline <the 12:35 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target local` on the whole core | 30 of 68 |
+| `render.mjs` on the 10 pages from the local web app | **10 of 10**: title, intro 3/3, every outcome, 0 third-party media in the quiz body |
+| same check on an untouched core quiz (cheese), as a negative control | FAIL: intro 0/3, 1 quizpanda image in the body |
+
+Every page still shows 2 quizpanda images further down, in the "Mais para jogar" cards. They are
+covers of core quizzes not yet rewritten (cheese, PC game), so they leave as later batches land.
+
+For the image step (slice 5b): Milim Nava looks about 14 in canon and dresses in a swimsuit-like
+outfit, and Jolyne's prison scenes include sexual content. Neither is in the text. Any image for
+those outcomes should be an emblem or a theme, never the character.
+
+### Batch 3 in production, DxD archived (2026-10-20)
+
+**Approval.** The owner wrote in chat: "pode gravar". As in batches 1 and 2, the agent set
+`reviewed: true` on the 10 drafts as written after the review pass, with no owner edits. Archiving the
+DxD quiz was the owner's earlier answer in the same conversation ("vamos tirar ele então").
+
+**Before the writes:**
+- `wrangler d1 export --remote --table quizzes` at 14:17 UTC, restored and counted: 775 rows, 81
+  published, 69 curated;
+- Time Travel bookmark `00006a03-00000000-0000510a-0a1fab0759f5f93a7ea55484f471e591`.
+
+**The writes:**
+- `apply.mjs --target remote` on the 10 drafts, one per call;
+- `scripts/adsense-core/archive-dxd.sql`.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **68** · PUBLISHED flag=0 12 · ARCHIVED 695 |
+| `report.mjs --target remote --baseline <the 14:17 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target remote` on the whole core | **30 of 68** meet the bar |
+| `render.mjs https://funsona.com` on the 10 | **10 of 10**: title, intro 3/3, every outcome, 0 third-party media in the quiz body |
+| the 10 pages in the browser | **10 of 10**: new title, intro and last outcome on screen, AdSense loader present, 0 third-party images above "Mais para jogar" |
+| robots on the 10 | no robots meta (indexable). A flag-0 page, `internet-das-coisas-iot`, shows `noindex, follow` and no loader, so the check can tell them apart |
+| DxD quiz | 302 to `/404`; not in the sitemap |
+| `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 68 = 68, the same slugs (`diff` empty) |
+
+Next: batch 4, starting at `qual-personagem-sanrio-voce-e-descubra-seu-personagem-sanrio-favorito`
+and taking the next `keep` rows of `core.csv`. Four of the remaining 38 need the same screen as DxD
+before any drafting: the Naruto and Harry Potter "soulmate" quizzes (a romantic match among teenage
+characters), the Disney soulmate quiz (several princesses are teenagers), and "Que tipo de atração
+você desperta nos outros?", which is close to the attractiveness quiz the owner already removed.
+
+### Batch 4 drafted (2026-10-20)
+
+Ten drafts: the next `keep` rows of `core.csv` from
+`qual-personagem-sanrio-voce-e-descubra-seu-personagem-sanrio-favorito`, minus one. A read-only
+`SELECT` on remote D1 confirmed all eleven candidates `PUBLISHED` with `ads_eligible = 1`. The local
+copy was rebuilt from a full remote export at 14:22 UTC, after batch 3: 695 archived, 12 published
+unflagged, 68 published flagged, 30 of 68 at the bar.
+
+| quiz | outcomes |
+|---|---|
+| Sanrio | 8 |
+| stinky cheeses | 6 |
+| My Hero Academia, class 1-A | 7 |
+| superhero codename | 8, down from 36 |
+| Resident Evil 4 | 6 |
+| RPG class | 8 |
+| Pokémon Unite | 10, down from 25 |
+| The Lion King | 7 |
+| game console | 5, up from 3 |
+| love or friendship | 4 |
+
+**Held back, proposed out of the core:** `como-sou-atraente-teste-de-atracao-e-autoconfianca`. It asks
+the reader's height, face, body, hair and eye colour to score how attractive they are, which is close
+to the attractiveness quiz the owner already removed. `e-amor-ou-amizade-desvende-suas-verdadeiras-emocoes`
+took its place.
+
+**Canon checked before drafting this time.** Five `general-purpose` subagents read the fandom wikis,
+Wikipedia and official sites (sanrio.co.jp, unite.pokemon.com) for every character, item and date, and
+returned red flags the drafts then stayed clear of:
+- My Hero Academia: the cast are 15; no Mineta, no romance, no detail of Todoroki's family; seasons 1–2 only.
+- Resident Evil 4, rated 18 in Brazil: no gore, no character fates; Ada described by competence, not looks.
+- The Lion King: Mufasa's death is never described.
+- Sanrio: Aggretsuko from Sanrio's official profile only; Gudetama is lazy, never depressed.
+- Love or friendship: built on Sternberg's triangular theory of love (1986), nothing sexual, since teenagers read it.
+
+**Rewritten whole, not trimmed.** The superhero quiz had 36 English codenames ("The Torturess",
+"Lifesucker") and a first question asking the reader's gender. It now gives 8 Portuguese codenames
+that suit anyone, each tied to a power archetype and the comics heroes behind it. Pokémon Unite went
+from 25 outcomes to 10, two per official role: seven questions set the role and three set the style.
+
+**Adversarial read, after drafting.** One subagent read the whole batch as a hostile reviewer. All of
+it was fixed in the gitignored drafts:
+
+| found | example | fix |
+|---|---|---|
+| facts overstated | Vieux-Boulogne "in the Guinness"; Pompompurin "back to first place" in 2026 (his second win in a row); Kirishima's self-doubt is a season 4 arc | sentences cut to what the sources say |
+| Brazilian names | "Timon e Pumbaa" | "Timão e Pumba" |
+| answer logic | "Lembre de quem você é" (Mufasa's line) scored Simba; the Pokémon style question tied "classic" to generation and "bold" to melee | relabelled |
+| a promise the page broke | the superhero intro said "any gender" while every result said "Seu nome de herói" and used masculine adjectives | "Seu codinome é", neutral wording |
+| answers that assume a male reader | 17, e.g. "Fico furioso", "Ser tratado como criança" | neutral forms |
+| cross-quiz formulas | "[X] demais pode…" 11 times; "Quem … às vezes …" 20; the same intro sentence in 7 of 10 | at most one of each per quiz; 5 intros rewritten |
+| ties | in the 8-outcome quizzes, a reader who answers consistently tied 19% of the time; QuizPlay breaks ties by question order | below |
+
+**Ties, measured and reduced.** A scratch simulation runs QuizPlay's own tally (stable sort, so the
+earliest outcome wins a tie). Each answer now also gives 1 point to the best-fitting outcome absent
+from that question. Every outcome gets the same number of those points, so the balance holds.
+
+| quiz | ties for a consistent reader, before → after | reader lands on their own outcome, before → after |
+|---|---|---|
+| RPG, superhero, Sanrio (8 outcomes) | 19% → 5–7% | 79% → 88–91% |
+| My Hero Academia, Lion King (7) | 12% → 5–6% | 87% → 89–92% |
+| Resident Evil 4, cheeses (6) | 7–8% → 3–4% | 92% → 93–94% |
+| consoles (5) | 5% → 2% | 95% → 96% |
+
+The Pokémon quiz was played end to end on the local web app: always the first answer gives Pikachu,
+and the role answers plus the "bold" style answers give Cinderace, as designed.
+
+**Template signature,** same scratch measure as batch 3, against the 30 earlier drafts:
+
+| measure | batch 4 (10 drafts, 69 outcomes) |
+|---|---|
+| outcomes sharing a second- or last-paragraph opener inside their quiz | **0** |
+| last paragraphs opening with "O desafio…" | **0** |
+| 5-gram Jaccard per outcome pair across quizzes | mean 0.004%, max 1.6% (14,135 pairs) |
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 4 | 10 ok: 151–202 words per outcome, 10 questions each, every rule but `reviewed` |
+| `apply.mjs --target local` on the drafts themselves | refused, 10 of 10, nothing written |
+| local-only `reviewed: true` copies → `apply.mjs --target local` | written |
+| `report.mjs --target local --baseline <the 14:22 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target local` on the whole core | 40 of 68 |
+| `render.mjs` on the 10 pages from the local web app | **10 of 10** |
+
+### Batch 4 in production, attraction quiz archived (2026-10-20)
+
+**Approval.** The owner answered both questions in chat with "s e s": yes to archiving the attraction
+quiz, and yes to writing the ten drafts as they were. As before, the agent set `reviewed: true`, with
+no owner edits.
+
+**Before the writes:**
+- `wrangler d1 export --remote --table quizzes` at 16:46 UTC, restored and counted: 775 rows, 80
+  published, 68 curated;
+- Time Travel bookmark `00006a2a-00000000-0000510a-fb05c5670badc458655c199fa477f029`.
+
+**The writes:**
+- `apply.mjs --target remote` on the ten drafts, one per call;
+- `scripts/adsense-core/archive-atracao.sql`, run on the local copy first: published flagged 68 → 67;
+- `core.csv` marks the quiz `drop` with the reason.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **67** · PUBLISHED flag=0 12 · ARCHIVED 696 |
+| `report.mjs --target remote --baseline <the 16:46 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target remote` on the whole core | **40 of 67** meet the bar |
+| `render.mjs https://funsona.com` on the 10 | **10 of 10** |
+| the 10 pages in the browser | **10 of 10**: new title, intro and last outcome on screen, AdSense loader present, 0 third-party images above "Mais para jogar" |
+| robots on the 10 | no robots meta, indexable |
+| attraction quiz | 302 to `/404`; not in the sitemap |
+| `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 67 = 67, the same slugs |
+
+### Batch 5 drafted (2026-10-20)
+
+Ten drafts: `keep` rows 41–52 of `core.csv`, minus two. A read-only `SELECT` on remote D1 confirmed
+all twelve candidates `PUBLISHED` with `ads_eligible = 1`. The local copy was rebuilt from a full
+remote export at 17:07 UTC, after batch 4: 696 archived, 12 published unflagged, 67 published
+flagged, 40 of 67 at the bar.
+
+| quiz | outcomes |
+|---|---|
+| where to live | 8 cities |
+| condiment | 8 |
+| anime character archetype (slug `qual-e-o-seu-nome-de-anime`) | 8 |
+| cocktail, 18+ | 8 |
+| PlayStation 4 game | 6 |
+| League of Legends champion | 8 |
+| Overwatch hero | 8 |
+| Japanese dish (`desvende-sua-personalidade-culinaria`) | 6 |
+| Saiki K. character | 6 |
+| potato chip flavour | 8 |
+
+**Held back, then kept:** `qual-personagem-de-naruto-e-a-sua-alma-gemea` was held back and proposed
+out of the core, because it is a romantic match with characters who are teenagers for most of the
+series. The owner kept it. A soulmate premise is not a reason to archive. Waifu and DxD left because
+their content was sexualised. The quiz goes into batch 6, rewritten with the same care as the Saiki
+K. quiz: nothing about looks or the body, and nothing physical.
+`e-maluco-mas-essas-perguntas-podem-revelar-qual-personagem-de-anime-seria-seu-arqui-inimigo`
+(row 52) also moves to batch 6.
+
+**Reframed, slug kept.** The anime quiz promised a generated "anime name". It now places the reader
+in one of eight archetypes, protagonist to mysterious mentor, each with characters from Naruto, One
+Piece, Dragon Ball, My Hero Academia, Dr. Stone and Yu Yu Hakusho. The slug stays because renaming
+it is a URL change. The title and every result say what the page does.
+
+**Canon and facts checked before drafting.** Subagents returned red flags, and the drafts stayed
+clear of them:
+- PlayStation 4: Brazilian ClassInd ratings, not ESRB. Fortnite is 16 since the 2026
+  reclassification. Games are described by genre and tone only. Nothing of Persona 5's abuse
+  storyline.
+- Japanese dishes: no health claims, and no link between okonomiyaki and the atomic bomb.
+- Saiki K.: the cast are high-schoolers. Teruhashi and Aiura are described by what they do, never
+  by looks or crushes. No flirting question.
+- Anime archetypes: none of Death Note, Itachi, Jiraiya, Roshi, Mineta or Kakashi's novels. The
+  original "romantic arc" question is gone.
+- Cocktail: 18+ framing, the Ministério da Saúde line that there is no safe level of drinking,
+  "quem bebe não deve dirigir", and a non-alcoholic version where one exists.
+
+**Adversarial read, after drafting.** One subagent read the whole batch as a hostile reviewer,
+checked every claim against sources, and proposed 100 exact replacements. All were applied to the
+gitignored drafts after a read:
+
+| found | count | example |
+|---|---|---|
+| facts wrong or overstated | 22 | Kakashi's face shown in the anime in 2016, not 2015; "Rede Manchete", not "TV Manchete"; Mei slows rather than freezes since Overwatch 2; LoL's official pt-BR names (Stemmaguarda, Bandópolis, Demacia); the first dry martini recipe is from 1904 |
+| sensitive framing | 2 | Teruhashi's line leaned on her crush; "passar do próprio limite" in the cocktail quiz could read as a drinking limit |
+| text that assumes a male reader | about 48 | adjective lists said of "você" ("É carinhoso, paciente"); answer sets like "O que respeita o silêncio" |
+| a promise the page broke | 9 | three intros promised a legend for every item; the anime intro promised an author and year for each example |
+| answer logic | 2 fixed in text, 6 in weights | two PS4 answers meant the same; secondary points such as Thresh on the top-lane answer |
+
+Of the six contradicting secondary points, four were moved to a better answer inside the same
+questions, so each outcome still gets the same number of them: Japanese dish q1, q4 and q7; where to
+live q2 and q10; PS4 q1 and q7; LoL q1. Two stayed, cocktail q9 and where to live q7, because no
+other answer in those questions fits the outcome better. The review's fixes added one new repeated mould ("Tem X, Y e Z" in four results),
+which was varied, and the Kasato Maru sentence, which the condiment quiz repeated from the dish
+quiz's intro, was rewritten.
+
+**Template signature,** same scratch measures as before, against the 40 earlier drafts. The first
+drafts of this batch were worse than batch 4 on the cross-quiz formulas, so every last paragraph
+that carried one was rewritten:
+
+| measure | first drafts | after rewrite and review |
+|---|---|---|
+| last paragraph opening "[X] demais…" | 13 of 74 | **0** |
+| "Quem … às vezes …" | 18 | **0** |
+| closing sentence with "também" | 19 | **0** |
+| "semana" | 11 | 3 |
+| outcomes sharing a second- or last-paragraph opener inside their quiz | 18 | **0** |
+| 5-gram Jaccard per outcome pair across quizzes | mean 0.005%, max 1.8% | mean 0.005%, max 1.8% (20,442 pairs) |
+
+**Ties,** from the scratch QuizPlay simulation, after secondary points on every answer:
+
+| quiz size | ties for a consistent reader | reader lands on their own outcome |
+|---|---|---|
+| 8 outcomes | 5–8% | 87–92% |
+| 6 outcomes | 3–4% | 93–94% |
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 5 | 10 ok: 151–178 words per outcome, 10 questions each, every rule but `reviewed` |
+| `apply.mjs --target local` on the drafts themselves | refused, 10 of 10, nothing written |
+| local-only `reviewed: true` copies → `apply.mjs --target local` | written |
+| `report.mjs --target local --baseline <the 17:07 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target local` on the whole core | 50 of 67 |
+| `render.mjs` on the 10 pages from the local web app | **10 of 10** |
+| the anime quiz played end to end on the local web app, always the last answer | "Personagem misterioso", as the tally predicts |
+
+### Batch 5 in production (2026-10-20)
+
+**Approval.** In chat, the owner kept the Naruto soulmate quiz in the core, then answered "s" to
+writing the ten drafts as they were. As before, the agent set `reviewed: true`, with no owner edits.
+
+**Before the writes:**
+- `wrangler d1 export --remote --table quizzes` at 22:28 UTC, restored and counted: 775 rows, 79
+  published, 67 curated, 696 archived;
+- Time Travel bookmark `00006a8e-00000000-0000510a-3c58d5e8272fddadab58693f08e14533`.
+
+**The writes:** `apply.mjs --target remote` on the ten drafts, one per call. Nothing was archived.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **67** · PUBLISHED flag=0 12 · ARCHIVED 696 |
+| `report.mjs --target remote --baseline <the 22:28 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target remote` on the whole core | **50 of 67** meet the bar |
+| `render.mjs https://funsona.com` on the 10 | **10 of 10** |
+| the 10 pages in the browser | **10 of 10**: new title, intro 3/3 and last outcome on screen, AdSense loader present, 0 third-party images above "Mais para jogar" |
+| robots on the 10 | no robots meta, indexable |
+| `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 67 = 67, the same slugs |
+
+Next: batch 6 starts with the Naruto soulmate quiz (row 47) and row 52.
+
+### Batch 6 drafted (2026-10-20)
+
+Ten drafts: row 47, the Naruto soulmate quiz kept by the owner, and rows 52–60 of `core.csv`. A
+read-only `SELECT` on remote D1 confirmed all ten `PUBLISHED` with `ads_eligible = 1`. The local
+copy already matched production after batch 5: 50 of 67 at the bar.
+
+| quiz | outcomes |
+|---|---|
+| Naruto soulmate | 6, adult era |
+| anime rival (slug says "arqui-inimigo") | 6 |
+| Diablo Immortal class | 8 of the 10 classes |
+| ancient mythology | 6, rewritten from European Portuguese |
+| Harry Potter soulmate | 6, down from 12 |
+| Disney soulmate | 7, down from 12 |
+| cat adoption readiness | 4 graded levels |
+| The Vampire Diaries | 6 |
+| DC hero soulmate | 6 |
+| angel, demon or both | 3 |
+
+**Nothing held back.** The screen found no sexualised content, so the four soulmate quizzes stay, as
+the owner decided in batch 5. They are rewritten on these terms:
+- "Alma gêmea" is defined in each intro as whoever the reader would match, as a partner, a friend or
+  a companion for adventure. Every one of these adults is married in canon.
+- Only adults. Each character is described in their adult life: Naruto as Seventh Hokage, Hermione
+  as Minister for Magic in *Cursed Child*, and so on. Nothing about looks or the body.
+- Disney: the canon check dropped every character with no sourced adult age, or whose romance
+  involves a minor (Rapunzel and Flynn, Aladdin, Li Shang, Esmeralda). The quiz keeps Tiana, Naveen,
+  Anna, Kristoff, Elsa, Kida and Milo.
+- Harry Potter: down to the six who have an adult career in canon. Snape, Bellatrix, Umbridge and
+  McGonagall are gone.
+- DC: Supergirl is out, because she is a teenager in the main comics. The Flash takes her place.
+
+**Other screen outcomes:**
+- The rival quiz drops Light Yagami (Death Note), as the batch 5 archetype quiz did.
+- Diablo Immortal is rated 18 by both Brazilian app stores and sells random-reward items. The intro
+  says both, and that the quiz recommends no purchase.
+- The Vampire Diaries is a personality match, not a romance. The cast are minors in season 1. Damon
+  is described as an antagonist whose harm earns no admiration. Matt replaces Tyler, whose story
+  starts with a violent father.
+- The angel quiz treats angels and demons as images from culture and art. Its "both" result uses
+  Saci and Curupira, which are not demons. It names no Afro-Brazilian religious entity.
+
+**Canon and facts checked before drafting.** Six subagents covered the four franchises, Diablo
+Immortal, and the cat, mythology and angel facts:
+- Diablo's official pt-BR class names are Arcanista and Cavaleiro Sangrento. The tenth class, Bruxo,
+  arrived in June 2026.
+- Lei Sansão (14.064/2020) covers maus-tratos to cats and dogs. Abandonment is treated as maus-tratos
+  under art. 32 of Lei 9.605/1998.
+- The cat quiz gives no doses, no fixed castration age and no R$ cost, and sends the reader to a vet.
+
+**Adversarial read, after drafting,** split in two subagents of five quizzes each. They proposed 92
+exact replacements; all were applied after a read:
+
+| found | count | example |
+|---|---|---|
+| facts wrong or overstated | 15 | Naruto did take the chūnin exam; Diablo skill effects (Onda de Luz drops no bell, Nuvem de Morcegos summons bats); Gina has six brothers, not seven; the Planeta Diário name came from the 1939 strip, not the radio show; Naveen came to marry for money, not for jazz; Osiris is named before the Pyramid Texts; no federal law found for the mandatory rabies vaccine |
+| sensitive framing | 5 | Kakashi's "Ler um bom livro" answer read as a nod to his novels; Bonnie, the only Black lead, scored on "distrust of the different" |
+| text that assumes a male reader | 19 | "Colado no inimigo", "sozinho", "estratégico", "subestimado" |
+| promises the page broke | 4 | the rival intro promised author and year, missing for Gary; the HP intro promised the house, missing in three results |
+| repeated phrasing across quizzes | 14 | "pergunte se a pessoa quer ouvir agora" in two quizzes; "fora do jogo, vale o mesmo" in five Diablo results |
+| contradicting secondary points | 26 questions | Sasuke scoring on "Minha irmã"; a ranged answer giving its point to a melee class in Diablo |
+
+The secondary points were moved inside their questions, so each outcome keeps the same number of
+them. One primary moved: in the mythology quiz, "Espera o momento certo, com paciência" now scores
+the Japanese result instead of the Celtic one.
+
+**Template signature,** same scratch measures, against the 50 earlier drafts:
+
+| measure | batch 6 (10 drafts, 58 outcomes) |
+|---|---|
+| last paragraph opening "[X] demais…", "Quem … às vezes …", closing sentence with "também", "semana" | **0** each |
+| outcomes sharing a second- or last-paragraph opener inside their quiz | 20 in the first drafts → **0** |
+| 5-gram Jaccard per outcome pair across quizzes | mean 0.004%, max 2.1% (19,891 pairs) |
+
+Left as is: in the soulmate quizzes the second paragraph often opens with the shared quality
+("Gentileza e coragem silenciosa uniriam vocês"). The words differ every time, but the mould is
+visible across the four quizzes.
+
+**Ties** for a reader who answers consistently: 2–4%, landing on their own outcome 93–98%.
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 6 | 10 ok: 150–188 words per outcome, 10 questions each, every rule but `reviewed` |
+| `apply.mjs --target local` on the drafts themselves | refused, 10 of 10, nothing written |
+| local-only `reviewed: true` copies → `apply.mjs --target local` | written |
+| `report.mjs --target local --baseline <the 22:28 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target local` on the whole core | 60 of 67 |
+| `render.mjs` on the 10 pages from the local web app | **10 of 10** |
+| the cat quiz played end to end, always the first answer | "Pode adotar, mas ajuste alguns pontos antes", as the tally predicts |
+
+### Batch 6 in production (2026-10-20)
+
+**Approval.** The owner answered "s" to writing the ten drafts as they were. As before, the agent set
+`reviewed: true`, with no owner edits.
+
+**Before the writes:**
+- `wrangler d1 export --remote --table quizzes` at 23:41 UTC, restored and counted: 775 rows, 79
+  published, 67 curated, 696 archived;
+- Time Travel bookmark `00006a99-00000000-0000510a-e38b963076c358dfe44448cad1da9b7c`.
+
+**The writes:** `apply.mjs --target remote` on the ten drafts, one per call. Nothing was archived.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **67** · PUBLISHED flag=0 12 · ARCHIVED 696 |
+| `report.mjs --target remote --baseline <the 23:41 export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target remote` on the whole core | **60 of 67** meet the bar |
+| `render.mjs https://funsona.com` on the 10 | **10 of 10** |
+| the 10 pages fetched from a browser tab on funsona.com and parsed there | **10 of 10**: new title and last outcome present, AdSense loader present, no robots meta, 0 third-party images above "Mais para jogar" |
+| `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 67 = 67, the same slugs |
+
+The in-browser check fetched each page's HTML, rather than rendering it in an iframe as batches 4–5
+did. The iframe run timed out with the browser pane hidden.
+
+Next: batch 7, the last seven rows (61–67).
+
+### Batch 7 drafted (2026-10-21)
+
+Seven drafts, the last `keep` rows of `core.csv` (61–67). A read-only `SELECT` on remote D1 confirmed
+all seven `PUBLISHED` with `ads_eligible = 1`.
+
+| quiz | outcomes | what changed |
+|---|---|---|
+| vacation type by emoji | 6 | the "crush" question is gone; Brazilian destinations with sourced facts |
+| Star Wars name and role | 8, down from 16 | the gender question is gone; eight roles, each with an invented name checked against Wookieepedia |
+| PC game | 6 | Overwatch replaced by Hades (there is already an Overwatch quiz); Brazilian ratings |
+| "quão boa pessoa você é" | 6 | reframed as "Que tipo de gentileza é a sua?": styles of kindness, no moral grade |
+| car | 6 | the gender question is gone; the intro says it is not purchase advice |
+| cocktail, European Portuguese | 6 | rewritten as non-alcoholic drinks in pt-BR, so it no longer duplicates the batch 5 cocktail quiz |
+| truth or dare | 5, down from 8 | built on the Big Five; the bar, attraction, shoplifting and risky-driving questions are gone |
+
+**Screen.** Nothing was held back. Three quizzes changed their promise, as the anime quiz did in batch
+5, and the slugs stay to keep the URLs. The cocktail duplicate could have been archived instead. It was
+rewritten because a non-alcoholic drinks quiz is new content, with no alcohol and no overlap.
+
+**Facts checked before drafting.** Three subagents covered Star Wars canon and name collisions, PC
+games and cars, and the travel, kindness, Big Five and drinks facts. Among the findings:
+- Four of the first eight invented names collided with canon surnames (Rook, Vexx, Marr, Trune).
+- The NEO-PI of 1985 had three factors. The five-factor version is the NEO PI-R of 1992.
+- The CAF index is now the World Giving Report.
+- Nobody knows why limonada suíça is called "suíça".
+
+**Adversarial read, after drafting.** One subagent proposed 71 exact replacements, all applied after a
+read:
+
+| found | count | example |
+|---|---|---|
+| facts wrong or overstated | 9 | Wedge was the only pilot to survive both Death Star runs (Luke did not fly at Endor); Among Us first came out on mobile in June 2018; the Mustang's 22 thousand on day one were orders; Allan Luks is not a psychologist; the NEO PI-R has 240 items |
+| sensitive framing | 4 | alcohol emoji and wine in the vacation quiz; going to a waterfall in the rain |
+| text that assumes a male reader | 10 | "Um líder…", "ser notado", "querido por todos", one gender per Star Wars role |
+| promises the page broke | 4 | "clássico" for a 2014 Huracán; "prêmios ou vendas" where Civ VI has neither |
+| repeated phrasing across the batch | 11 moulds | "definem você" ×5, "é o seu forte" ×4 |
+| contradicting secondary points | 15 questions | Volvo scoring on "rápido como um avião"; Fusca on "Segurança" |
+
+**Template signature,** against the 60 earlier drafts:
+
+| measure | batch 7 (7 drafts, 43 outcomes) |
+|---|---|
+| "[X] demais…", "Quem … às vezes …", closing "também", "semana" | **0** each |
+| outcomes sharing a second- or last-paragraph opener inside their quiz | **0** |
+| 5-gram Jaccard per outcome pair across quizzes | mean 0.006%, max 3.0% (Witcher 3 × The Last of Us Part II, the award sentences) |
+
+**Ties** for a reader who answers consistently: 2–4%, landing on their own outcome 93–98%.
+
+| check | result |
+|---|---|
+| `check.mjs` on batch 7 | 7 ok: 151–169 words per outcome, 10 questions each, every rule but `reviewed` |
+| `apply.mjs --target local` on the drafts themselves | refused, 7 of 7, nothing written |
+| local-only `reviewed: true` copies → `apply.mjs --target local` | written |
+| `report.mjs --target local --baseline <the 23:41 export>` on the 7 | **7 of 7** meet the bar, all changed |
+| `report.mjs --target local` on the whole core | **67 of 67** |
+| `render.mjs` on the 7 pages from the local web app | **7 of 7** |
+| the Big Five quiz played end to end on the local web app, mostly first answers | "Abertura à experiência", as the tally predicts |
+
+### Batch 7 in production, cocktail duplicate archived, core at 66 of 66 (2026-10-22)
+
+**Approval.** The owner answered "1 arquivar, 2 s". That meant archive the European-Portuguese
+cocktail quiz instead of publishing its non-alcoholic rewrite, and write the other six drafts as they
+were. The agent set `reviewed: true` on those six, with no owner edits. The drinks draft stays in the
+gitignored folder, unreviewed.
+
+**Before the writes:**
+- `wrangler d1 export --remote --table quizzes` at 2026-10-22 17:18 UTC, restored and counted: 775
+  rows, 79 published, 67 curated, 696 archived;
+- Time Travel bookmark `00006da6-00000000-0000510c-417d7354ba76fe32d586cec5ae52472f`.
+
+**The writes:**
+- `apply.mjs --target remote` on the six drafts, one per call;
+- `scripts/adsense-core/archive-cocktail-pt.sql`, run on the local copy first (published flagged
+  67 → 66), then on remote;
+- `core.csv` marks the quiz `drop` with the reason.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **66** · PUBLISHED flag=0 12 · ARCHIVED 697 |
+| `report.mjs --target remote --baseline <the 17:18 export>` on the 6 | **6 of 6** meet the bar, all changed |
+| `report.mjs --target remote` on the whole core | **66 of 66** meet the bar |
+| `render.mjs https://funsona.com` on the 6 | **6 of 6** |
+| the 6 pages fetched from a browser tab on funsona.com | **6 of 6**: new title, AdSense loader present, no robots meta, 0 third-party images above "Mais para jogar" |
+| archived cocktail quiz | 302 to `/404`; not in the sitemap |
+| `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 66 = 66, the same slugs |
+
+**This slice's "Done when" holds:** `report.mjs --target remote` prints `---- 66 of 66 quizzes meet the
+bar`, and 66 is the D1 count of `PUBLISHED` with `ads_eligible = 1`. `core.csv` has 75 rows: 66
+`keep`, all rewritten, and 9 `drop`. Four of the drops were archived during this slice: waifu, DxD,
+the attraction quiz and the cocktail duplicate. The other five were dropped when the core was picked.
+
+### Boyfriend and husband quizzes: safety treatment drafted (2026-10-22)
+
+The girlfriend quiz (batch 3) weighs its fear, control and threat answers 3, and every one of its
+outcomes points to 190. The two batch 1 relationship quizzes did neither: in
+`devo-terminar-com-meu-namorado-teste-para-ajudar-na-decisao` and
+`meu-marido-me-ama-descubra-com-este-questionario`, those answers weighed 2 like any other, and 180,
+188 and 190 appeared in the last outcome only. The owner asked for both to be fixed.
+
+**Starting point.** The batch 1 drafts equal production: 0 differences in title, description, intro,
+questions, weights or outcome text. Production only adds the slice 5b `image_url` on each outcome.
+
+**What changed.** Outcome keys are unchanged, so the images carry over.
+
+| quiz | answer | before | after |
+|---|---|---|---|
+| boyfriend | q2/a4 | "Evito falar para não brigar, ou tenho medo da reação." 2 | "Há ameaças, ou eu evito falar por medo da reação." **3** |
+| boyfriend | q7/a4 | "Ciúme excessivo, controle ou desrespeito." 2 | same label, **3** |
+| boyfriend | q10/a4 | "Ansiedade ou medo do que vem." 2 | "Medo do que vem, ou de como a pessoa vai reagir se eu demorar a responder." **3** |
+| husband | q3/a4 | "Decide sem considerar o que eu penso." 2 | "Decide tudo sozinho, até o que eu posso gastar e com quem eu posso sair." **3** |
+| husband | q4/a4 | "Ele me desrespeita ou me deixa com medo." 2 | "Ele me ameaça ou me deixa com medo." **3** |
+| husband | q10/a3, a4 | "Sozinho às vezes, mesmo acompanhado." 2 · "Inseguro, triste ou com medo." 2 | sadness moves to a3 (`cuidado`, 2) · "Com medo dele, pisando em ovos." **3** |
+
+- **Outcomes.** All eight name 190, 180 and 188. The last outcome of each quiz (`terminar`,
+  `desgaste`) now opens with safety.
+- **Exceptions.** Every place that advises a conversation or couples therapy says that it does not
+  apply when there is fear, a threat or control.
+- **Reader as the one who controls.** The boyfriend quiz also addresses that reader and points them
+  to a psychologist through the UBS.
+- **Intro.** `how_scoring_works` now says that an answer scores one or two outcomes and that the
+  fear, threat and control answers weigh more.
+
+**All-fear check.** A scratch script enumerated every answer path with the tally of
+`QuizPlay.tsx` (`calculatePersonalityResult`), fixing the three fear, control and threat answers and
+varying the other seven questions:
+
+| quiz | before | after, weight 3 | weight 5, not taken |
+|---|---|---|---|
+| boyfriend | 14,099 of 16,384 (86.1%) | **16,136 of 16,384 (98.5%)** | 16,384 (100%) |
+| husband | 39,598 of 65,536 (60.4%; only 2 fear answers existed) | **16,010 of 16,384 (97.7%)** | 16,384 (100%) |
+| girlfriend, for reference | | 16,066 of 16,384 (98.1%) | |
+
+- **The misses at weight 3.** They pick all three fear answers and mostly the happiest answer
+  elsewhere. They land on an outcome that also carries the notice.
+- **Why not weight 5.** It reaches 100%, but the safety outcome's share of all answer paths would
+  rise from 35% to 46% (boyfriend). A single jealousy answer would then decide the result.
+- **The owner's choice.** Weight 3, the same as the girlfriend quiz.
+
+**Review pass.** One `general-purpose` subagent read the drafts as a hostile safety reviewer. A second
+checked every factual claim against primary sources: gov.br for 190 and the Ligue 180, cvv.org.br,
+the Ministry of Health's RAPS page, thehotline.org, and Campbell et al. 2003 (AJPH) on risk at
+separation.
+
+| found | count | example | fix |
+|---|---|---|---|
+| exception that left out control | 3 outcomes | couples therapy fine "quando não há medo nem agressão" after a control answer weighing 3 | control added to every exception |
+| a mild signal sharing a weight-3 label | 3 | "Inseguro, triste ou com medo"; "Ansiedade ou medo do que vem"; "Há gritos" | labels split or narrowed to fear and threats |
+| text for one reading only | 2 | helplines told the reader who is the jealous one to call 190 | a line for the reader who controls |
+| the same crisis block in the happy outcomes | 4 outcomes | about 60 words of helplines under "Ainda há uma base forte" | one sentence; the full block stays in the last outcome |
+| "seja claro e respeitoso" two paragraphs after "não a sós" | 1 | | "Se decidir terminar e não houver medo…" |
+| facts imprecise | 2 of 11 | "o atendimento começa no posto de saúde mais próximo"; the love-languages sentence, live since batch 1 | "o primeiro passo costuma ser a UBS do seu bairro"; "a pesquisa não confirma que combinar esses jeitos melhore a relação" |
+
+**Template signature.** No outcome shares a second- or last-paragraph opener inside its quiz. The
+maximum 5-gram Jaccard of these outcomes against every other draft fell from 11.36% to 1.53%. The old
+maximum was the helpline paragraph the two quizzes shared word for word.
+
+| check | result |
+|---|---|
+| `check.mjs` on the 2 | 2 ok: 222–253 words per outcome, 10 questions each |
+| `apply.mjs --target local` on the drafts themselves | refused, 2 of 2: `reviewed` is false |
+| local copy synced to production for the 2 rows, then `reviewed: true` copies applied | text and weights equal the draft; `image_url` kept 4/4 on each |
+| `report.mjs --target local` | 2 of 2; whole core **66 of 66** |
+| `render.mjs` on the local web app | 2 of 2 (girlfriend quiz 1 of 1 as control) |
+| a path that ends on a happy outcome in production, played locally | boyfriend `continuar` → `terminar`, husband `presente` → `desgaste`, outcome image loaded |
+
+### Boyfriend and husband quizzes: safety treatment in production (2026-10-22)
+
+**Approval.** The owner answered "vai": the drafts as they were, at weight 3. The answer reached this
+session through the session that started it. The agent set `reviewed: true`; the files are
+byte-equal, as sorted JSON, to the copies proven locally.
+
+**Before the write:**
+- `wrangler d1 export --remote --table quizzes` at 19:56 UTC, restored and counted: 775 rows, 78
+  published, 66 curated, 697 archived. Both quizzes carried 4 of 4 `image_url`.
+- Time Travel bookmark `00006dcb-00000000-0000510c-3fb3c228ea9f1a6ba6f4601d8c047677`.
+
+**The write.** The auto-mode classifier refused the agent's `apply.mjs --target remote` ("Production
+Deploy"). The owner ran it from the worktree, with this branch's `apply.mjs`, which carries
+`withImages`. Output: `---- 2 quiz(zes) written to remote`.
+
+| check, right after | result |
+|---|---|
+| D1 rows against the drafts | text and weights equal the draft on both; `image_url` kept **4/4** on each; covers kept |
+| D1 by status and flag | PUBLISHED flag=1 **66** · PUBLISHED flag=0 12 · ARCHIVED 697 |
+| core outcomes with `image_url` | **412 of 412** |
+| `report.mjs --target remote --baseline <the 19:56 export>` on the 2 | **2 of 2**, both changed |
+| `report.mjs --target remote` on the whole core | **66 of 66** |
+| `render.mjs https://funsona.com` on the 2 | **2 of 2** |
+| both played on funsona.com with the paths above | boyfriend: "Pode ser hora de considerar seguir em frente"; husband: "Amor com sinais de desgaste". Each opens with the safety paragraph, and the outcome image loads |
+| `sitemap.xml` quiz URLs | 66 = D1 66 |
+
+**Open, not part of this write:**
+- Husband q4/a2, the silent treatment ("fica quieto um tempo e depois volta como se nada tivesse
+  acontecido"), leads to "Amor sincero, do jeito dele".
+- Husband q7/a4, humiliation in front of others, still weighs 2.
+- Both quizzes keep male-default forms ("Inseguro", "Arrasado", "seguro"), most of their readers
+  being women.
+- The boyfriend quiz names no violence channel for men beyond 190. Disque 100 is a candidate, not
+  yet verified.
+- On a tie, `QuizPlay.tsx` gives the outcome that entered the tally first, never the safety one. That
+  is a code change.
+- The girlfriend quiz misses the same way: 318 of 16,384 all-abuse paths land elsewhere.
 
 ## Needs
 
@@ -30,11 +757,16 @@ reason line in `core.csv`. The core shrinks rather than carrying a thin quiz int
 ## Done when
 
 ```
-node scripts/adsense-core/report.mjs --where "ads_eligible = 1"
+node scripts/adsense-core/rewrite/report.mjs --target remote
 ```
 
-prints `outcomes>=150w 100%  intro 100%  changed 100%  rendered N/N` with N equal to the D1 count of
-`ads_eligible = 1`.
+prints `---- N of N quizzes meet the bar`, with N equal to the D1 count of `PUBLISHED` and
+`ads_eligible = 1`. With no slugs, the script already reports exactly that set. It has no `--where`
+flag: given one, it reads the clause as a slug and prints `0 of 0`.
+
+The pages are checked with
+`node scripts/adsense-core/rewrite/render.mjs https://funsona.com scripts/adsense-core/drafts/*.json`.
+It prints `N of N pages pass`.
 
 ## If stuck
 

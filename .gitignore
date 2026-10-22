@@ -67,3 +67,6 @@ scripts/migration/output/
 
 # pt-BR quiz rewrite drafts under owner review (slice 4 of the AdSense plan): product copy, not repo content
 scripts/adsense-core/drafts/
+
+# Slice 5b images before upload: generated and licensed files, manifest, contact sheet
+scripts/adsense-core/images/

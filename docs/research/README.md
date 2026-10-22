@@ -78,3 +78,9 @@ Investigations and benchmarks already done. Do not repeat research listed here u
 - Full note, the live chunk and the sources: `2026-10-20-adsense-slot-missing-in-production/research.md`.
 
 - **i18n SEO**: hreflang tags, one sitemap per locale, translated content (not just the UI).
+
+## Quiz page: can the outcomes be folded? (2026-10-20)
+
+- For Search, yes, if the text is in the server HTML: Google documents accordions as indexed and as
+  not hidden-text spam. Text fetched on click is not indexed. No source covers the AdSense reviewer.
+- Full note and sources: `2026-10-20-folded-content-indexing/research.md`.

@@ -1,5 +1,5 @@
 ---
-status: doing
+status: done
 ---
 
 # Slice 4 — Review-gated rewrite, first 10 quizzes
@@ -93,8 +93,29 @@ blind spot, one practical suggestion), an intro in three parts, and no images.
 "Related quizzes" on the local result screen says "Failed to fetch". That is the browser calling the
 local API across ports (CORS in local dev), not a production behaviour.
 
-**Waiting on the owner:** reading and editing the 10 drafts, then setting `reviewed: true` in each.
-Nothing reaches production before that.
+### Batch 1 in production (2026-10-19)
+
+**Approval.** The owner wrote in chat: "pode marcar todos como revisados e gravar em produção" (mark
+them all as reviewed and write them to production). The agent set `reviewed: true` on the 10 drafts
+as written: **no edits by the owner**, approval given in chat rather than per file. This is recorded
+because the gate exists for the policy's "manual review or curation".
+
+**Before the write:**
+- `wrangler d1 export --remote --table quizzes` at 01:48 UTC, restored and counted: 775 rows, 82
+  published, 70 curated.
+- D1 Time Travel bookmark `00006652-00000000-00005109-0c3d3b1dc0e20311f38a343ae72cca61`.
+
+**The write.** `apply.mjs --target remote` wrote the 10, one per call.
+
+| check, right after | result |
+|---|---|
+| `report.mjs --target remote --baseline <pre-write export>` on the 10 | **10 of 10** meet the bar, all changed |
+| `report.mjs --target remote` on the whole core | 10 of 70. The other 60 are slice 5 |
+| the 10 pages on funsona.com (browser) | 200, indexed, loader present, new intro and outcome text found, **0** quizpanda/giphy/unsplash URLs in the quiz body |
+| `sitemap.xml` quiz URLs | 70 |
+
+The result screen was played end to end only against the local copy. Playing on production would
+write a result row to the live database.
 
 ## Needs
 
