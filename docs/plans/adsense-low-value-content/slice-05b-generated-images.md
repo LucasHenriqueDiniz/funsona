@@ -1,5 +1,5 @@
 ---
-status: doing
+status: done
 ---
 
 # Slice 5b — Generated images for the core
@@ -65,6 +65,42 @@ second run wrote everything.
 Not done: the revert check (one `cover_url` emptied renders the gradient). It needs a write to
 production for no new information, because the gradient is the state 54 of the 66 were in this
 morning.
+
+### Outcome images in production (2026-10-22)
+
+**The model.** Outcome images show in a box of at most 208 px (`QuizResultScreen.tsx`). A four-image
+pilot rendered the same two prompts at `low` and `medium` quality with `openai/gpt-image-2`; at that
+size they look the same. On fal's model page the square 1024 px image costs $0.006 at `low` and $0.053
+at `medium`. The owner chose `low` for every outcome, generated rather than searched: at that price,
+licence-checking 412 files one by one saves half a cent each and loses the one-style-per-quiz set.
+Question images stay out. That is 660 more images to review, for a screen that reads fine as text.
+
+**The prompts.** Six subagents wrote one prompt per outcome, 11 quizzes each, under the skill's rules:
+the theme, never the character or a likeness, no people at all, no franchise marks, and calm symbols
+for the relationship quizzes. A character became its element or object: Tanjiro is water around a
+katana, Superman a wheat field at sunrise, a Pokémon only its element. A grep for 40 character names
+over the prompt column found none.
+
+| check | result |
+|---|---|
+| generated | **412 of 412**, 0 failed, $2.47 |
+| owner review | 11 contact sheets, approved in chat ("aprovado") |
+| export before the write | 19:16 UTC: 775 rows, 66 curated, all 66 with an editorial cover |
+| Time Travel bookmark | `00006dc5-00000000-0000510c-7d6898c4b450bf798981e595a011c5cf` |
+| the write | one `json_set(content, '$.outcomes[i].image_url', …)` per outcome, guarded by the key at that slot |
+| D1 after | **412 of 412** curated outcomes carry an editorial `image_url`; 0 rows outside the core touched |
+| every `image_url` fetched | **412 of 412** answer 200 with `image/*` |
+| a quiz played end to end on funsona.com | the weapons quiz, ten answers, result "Lança": its image loaded, 1024 px shown at 206 px |
+| `report.mjs --target remote` | still 66 of 66 meet the bar |
+
+**Spend for the slice:** $3.20 covers + $2.47 outcomes + about $0.12 of pilots = **about $5.79 of
+the $10 cap**.
+
+**A rewrite would have erased them.** `toContent` builds outcomes from the draft, and drafts carry no
+URLs, so re-applying any core quiz dropped its outcome images. `apply.mjs` now carries each
+`image_url` over by outcome key. Checked on the local D1 copy, with the weapons quiz's production row
+and a draft built from it: 8 of 8 images kept after `apply.mjs --target local`. With the previous
+`apply.mjs`, the same run left 0 of 8.
 
 ## Needs
 

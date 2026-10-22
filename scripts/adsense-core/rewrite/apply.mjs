@@ -36,10 +36,22 @@ if (refused) {
 }
 
 const slugs = drafts.map(({ draft }) => draft.slug);
-const eligible = new Set(
-  query(target, `SELECT slug FROM quizzes WHERE status = 'PUBLISHED' AND ads_eligible = 1 AND slug IN (${slugs.map(sqlString).join(",")})`)
-    .map((r) => r.slug),
-);
+const current = query(target, `SELECT slug, content FROM quizzes WHERE status = 'PUBLISHED' AND ads_eligible = 1 AND slug IN (${slugs.map(sqlString).join(",")})`);
+const eligible = new Set(current.map((r) => r.slug));
+
+// Drafts carry no URLs, so a rewrite would drop the outcome images slice 5b put on R2. Carry each
+// image_url over by outcome key: an outcome that keeps its key keeps its image, a renamed or new
+// one has none until images.mjs gives it one.
+const imagesBySlug = new Map(current.map((r) => {
+  const content = typeof r.content === "string" ? JSON.parse(r.content) : r.content;
+  return [r.slug, new Map((content?.outcomes ?? []).filter((o) => o.image_url).map((o) => [o.key, o.image_url]))];
+}));
+const withImages = (draft) => {
+  const content = toContent(draft);
+  const images = imagesBySlug.get(draft.slug) ?? new Map();
+  content.outcomes = content.outcomes.map((o) => (images.has(o.key) ? { ...o, image_url: images.get(o.key) } : o));
+  return content;
+};
 const notEligible = slugs.filter((s) => !eligible.has(s));
 if (notEligible.length) {
   console.error(`Not curated or not published on ${target}: ${notEligible.join(", ")}. Nothing was written.`);
@@ -49,7 +61,7 @@ if (notEligible.length) {
 const statements = drafts.map(({ draft }) => `UPDATE quizzes SET
   title = ${sqlString(draft.title.trim())},
   description = ${sqlString(draft.description.trim())},
-  content = ${sqlString(JSON.stringify(toContent(draft)))},
+  content = ${sqlString(JSON.stringify(withImages(draft)))},
   intro_content = ${sqlString(JSON.stringify(draft.intro_content))},
   cover_url = CASE WHEN cover_url LIKE 'https://api.funsona.com/%' THEN cover_url ELSE NULL END,
   updated_at = STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'now')

@@ -95,9 +95,12 @@ the first one of a session.
 
 ## Images (fal)
 
-**Status:** the generation and upload step is
-`docs/plans/adsense-low-value-content/slice-05b-generated-images.md`. Until that slice is built, a
-quiz goes live with no images and renders the gradient fallback.
+**Status:** done for the 66-quiz core on 2026-10-22 (slice 5b): every cover and every outcome has an
+image on R2. `scripts/adsense-core/rewrite/images.mjs` does the work: `fetch`, `generate`, `sheet`,
+`upload-covers` for covers, and `generate-outcomes`, `sheet-outcomes`, `upload-outcomes` for outcomes.
+Outcome images use `openai/gpt-image-2` at `low` quality, square, because they show at 208 px.
+`apply.mjs` keeps an outcome's image when its key survives a rewrite. A new or renamed outcome needs
+`generate-outcomes` and `upload-outcomes`.
 
 - **Access.** `FAL_KEY` in the environment serves both routes:
   - **MCP**, for discovery and one-off looks (`search_models`, `get_model_schema`, `get_pricing`,
