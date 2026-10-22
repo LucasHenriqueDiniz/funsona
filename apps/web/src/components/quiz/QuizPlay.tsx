@@ -280,24 +280,21 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
   return (
     <div className="mx-auto w-full max-w-6xl">
       <QuizExitControl href={`/quiz/${quiz.slug}`} />
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
-      <div className="space-y-5 lg:sticky lg:top-28 lg:col-start-2 lg:row-start-1">
+      {/* DOM order is the phone's order: progress, question, answers, controls, then the aside
+          with the ad, so the ad sits under the answers and nothing on a phone is sticky. From lg
+          the question spans both rows on the left; the progress bar pins at the top of the right
+          column and the aside (title card and the ad, 300 px at most) pins right under it. AdSense
+          allows sticky units on desktop only, one in view. */}
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem] lg:grid-rows-[auto_1fr] lg:items-start">
+      <div className="lg:sticky lg:top-28 lg:col-start-2 lg:row-start-1">
         <QuizProgressBar
           current={currentQuestion}
           total={questions.length}
           quizType={quizType}
         />
-        <div className="hidden rounded-[2rem] border border-white/10 bg-white/[0.05] p-5 shadow-2xl shadow-black/15 backdrop-blur-xl lg:block">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-white/40">Quiz</p>
-          <h1 className="mt-2 line-clamp-3 text-2xl font-black leading-tight text-white">{quiz.title}</h1>
-          {quiz.description && (
-            <p className="mt-3 line-clamp-4 text-sm font-medium leading-relaxed text-white/55">{quiz.description}</p>
-          )}
-        </div>
-        {quiz.ads_eligible && <AdSlot slot="quiz-play-interval" />}
       </div>
 
-      <section className="space-y-5 lg:col-start-1 lg:row-start-1">
+      <section className="space-y-5 lg:col-start-1 lg:row-span-2 lg:row-start-1">
         <QuizQuestionCard
           title={question.title}
           imageUrl={question.imageUrl}
@@ -404,6 +401,22 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
           )}
         </div>
       </section>
+
+      {/* The sticky offset clears the pinned progress bar above, so the two never overlap. */}
+      <aside className="space-y-5 lg:sticky lg:top-[14.25rem] lg:col-start-2 lg:row-start-2 lg:self-start">
+        <div className="hidden rounded-[2rem] border border-white/10 bg-white/[0.05] p-5 shadow-2xl shadow-black/15 backdrop-blur-xl lg:block">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-white/40">Quiz</p>
+          <h1 className="mt-2 line-clamp-3 text-2xl font-black leading-tight text-white">{quiz.title}</h1>
+          {quiz.description && (
+            <p className="mt-3 line-clamp-3 text-sm font-medium leading-relaxed text-white/55">{quiz.description}</p>
+          )}
+        </div>
+        {quiz.ads_eligible && (
+          <div className="mx-auto w-full lg:max-w-[300px]">
+            <AdSlot slot="quiz-play-interval" />
+          </div>
+        )}
+      </aside>
       </div>
     </div>
   );

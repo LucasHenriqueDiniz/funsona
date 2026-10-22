@@ -32,6 +32,9 @@ export default function CommentSection({ quizSlug, currentUserId }: CommentSecti
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
   const [reportedIds, setReportedIds] = useState<Set<string>>(new Set());
+  // While there is nothing to read the section is one row; "Comentar" opens the full block, and
+  // a non-empty list opens it by itself.
+  const [composing, setComposing] = useState(false);
 
   const fetchComments = useCallback(async () => {
     setLoading(true);
@@ -104,6 +107,27 @@ export default function CommentSection({ quizSlug, currentUserId }: CommentSecti
       hour: "2-digit",
       minute: "2-digit",
     });
+  }
+
+  if (!composing && !error && comments.length === 0) {
+    return (
+      <div className="flex items-center gap-3">
+        <svg className="h-6 w-6 shrink-0 text-brand-400" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z" />
+        </svg>
+        <div className="min-w-0 flex-1 leading-tight">
+          <h3 className="text-base font-black text-[var(--color-text-primary)]">Comentários</h3>
+          <p className="text-sm text-[var(--color-text-muted)]">{loading ? "Carregando…" : "Seja o primeiro a comentar"}</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setComposing(true)}
+          className="text-sm font-bold text-brand-500 transition hover:text-brand-400"
+        >
+          Comentar
+        </button>
+      </div>
+    );
   }
 
   return (
