@@ -1,5 +1,5 @@
 ---
-status: todo
+status: doing
 ---
 
 # Slice 6 — Guides that clear the bar
@@ -44,3 +44,47 @@ run from the `adsense-site-auditor` checkout prints `exit=0`.
 If a guide only reaches 1200 by padding, merge it into another one instead. The threshold is the
 auditor's heuristic, not a Google rule (no primary source gives a word count). The real bar is a
 guide worth reading.
+
+## Drafted (2026-10-22)
+
+Owner approved the drafts in chat on 2026-10-22. Measured against the local preview
+(`web-prod-api`, production API), before the deploy.
+
+| guide | before (live, 2026-10-22) | after (local) |
+|---|---|---|
+| `categorias-de-quiz-mais-populares-explicadas`, retitled "Do anime ao queijo fedido", slug kept | 861 | 1473 |
+| `como-criar-um-bom-quiz-de-personalidade` | 986 | 1334 |
+| `como-funciona-a-pontuacao-dos-quizzes` | 1050 | 1293 |
+| `as-contas-por-tras-de-um-resultado` (new) | — | 1291 |
+| `testes-de-relacionamento-o-que-medem` (new) | — | 1249 |
+| `personagem-rival-ou-par` (new) | — | 1382 |
+
+Words are the auditor's `analyze_text_depth.py --min-words 1200` main-content count; it exits 0 over
+all six.
+
+**What the new guides are built on.** The RPG class quiz's weights, a full game tallied by hand, and
+the exact outcome of all 1,048,576 answer paths, scored with the same code as `QuizPlay.tsx`; the two
+"should I break up" quizzes, where the girlfriend one weighs control, threats and fear at 3 and
+carries the safety line in all four outcomes; and how franchise quizzes map answers to characters by
+likeness, by temperament contrast (Naruto rival) and by value contrast (Harry Potter rival). The only
+percentages are computed from quiz design, labelled as random answering, never as player behaviour.
+
+**Corrected in the old guides.** Ties do not go to the outcome registered first: the first outcome to
+enter the tally wins. The trivia screen does not show the correct answers (`show_correct_answers` is
+stored and never read). "Mais populares" had no data behind it, and the categories guide linked four
+`/explore` categories that list no quiz.
+
+**Checks.**
+
+| check | result |
+|---|---|
+| `/quiz/` links in the six guides | 35 unique slugs, all among the 66 with `ads_eligible = 1` (public API), 35/35 answer 200 with no `noindex` |
+| `sitemap.xml` and `/guides` | 6 guides in each |
+| 5-gram Jaccard between guides | mean 0.349%, max 0.994% over 15 pairs; the shared grams are link titles |
+| paragraphs opening with the same three words in two guides | 0 |
+
+**Rendering.** `@tailwindcss/typography` is not installed, so the `prose` classes were inert and the
+live guides rendered every `h2` at body size, with no paragraph spacing and unstyled links. The guide
+page now uses a `.guide-body` class in `global.css`, built on the theme variables; checked at 375 px
+and on desktop, dark and light.
+
