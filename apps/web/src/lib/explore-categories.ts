@@ -13,7 +13,6 @@ export interface CategoryText {
 export interface ExploreCategory {
   slug: string;
   emoji: string;
-  image: string;
   aliases: string[];
   text: Record<ExploreLocale, CategoryText>;
 }
@@ -28,7 +27,6 @@ export const exploreCategories: ExploreCategory[] = [
   {
     slug: "personality",
     emoji: "✨",
-    image: "https://quizpanda.com/what-color-is-my-aura/feature-image.jpg",
     aliases: ["personality", "personalidade", "personality-quiz", "persona"],
     text: {
       pt: {
@@ -53,7 +51,6 @@ export const exploreCategories: ExploreCategory[] = [
   {
     slug: "trivia",
     emoji: "🧠",
-    image: "https://quizpanda.com/which-scary-story-would-you-tell-around-the-campfire/feature-image.jpg",
     aliases: ["trivia", "curiosidades", "conhecimento", "knowledge-trivia"],
     text: {
       pt: {
@@ -78,7 +75,6 @@ export const exploreCategories: ExploreCategory[] = [
   {
     slug: "love",
     emoji: "💕",
-    image: "https://res.cloudinary.com/dnql7wfjq/image/upload/v1763503932/quizhub/banners/rgdk0yyo9mgan0p5x98j.jpg",
     aliases: ["love", "amor", "romance", "crush", "relationship", "relacionamento"],
     text: {
       pt: {
@@ -103,7 +99,6 @@ export const exploreCategories: ExploreCategory[] = [
   {
     slug: "games",
     emoji: "🎮",
-    image: "https://quizpanda.com/which-one-piece-character-would-be-your-arch-enemy/feature-image.jpg",
     aliases: ["games", "game", "gaming", "jogos", "videojuegos", "juego"],
     text: {
       pt: {
@@ -128,7 +123,6 @@ export const exploreCategories: ExploreCategory[] = [
   {
     slug: "movies",
     emoji: "🎬",
-    image: "https://res.cloudinary.com/dnql7wfjq/image/upload/v1766094277/quizhub/banners/jdkwpldcd5zbkqtga6xm.jpg",
     aliases: ["movies", "movie", "filmes", "filme", "cinema", "peliculas"],
     text: {
       pt: {
@@ -153,7 +147,6 @@ export const exploreCategories: ExploreCategory[] = [
   {
     slug: "music",
     emoji: "🎵",
-    image: "https://quizpanda.com/which-phineas-and-ferb-character-are-you/feature-image.jpg",
     aliases: ["music", "musica", "songs", "song", "musica-pop"],
     text: {
       pt: {
@@ -178,7 +171,6 @@ export const exploreCategories: ExploreCategory[] = [
   {
     slug: "tv",
     emoji: "📺",
-    image: "https://quizpanda.com/which-shameless-character-are-you/feature-image.jpg",
     aliases: ["tv", "series", "serie", "television", "televisao"],
     text: {
       pt: {
@@ -203,7 +195,6 @@ export const exploreCategories: ExploreCategory[] = [
   {
     slug: "knowledge",
     emoji: "📚",
-    image: "https://quizpanda.com/which-piece-of-furniture-are-you/feature-image.jpg",
     aliases: ["knowledge", "conhecimentos", "conocimiento", "general-knowledge", "cultura-geral"],
     text: {
       pt: {
@@ -246,4 +237,32 @@ export function getExploreCategoryUrl(slug: string) {
 export function getCategoryText(category: ExploreCategory, locale?: string | null) {
   const key = (locale || "pt") as ExploreLocale;
   return category.text[key] || category.text.pt;
+}
+
+export interface CategorizableQuiz {
+  title?: string;
+  description?: string | null;
+  tags?: string[] | null;
+  type?: string;
+}
+
+const normalize = (value: string) =>
+  value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+/**
+ * Whether a quiz belongs in a category. One rule, shared by the category page, its
+ * 404 decision and the sitemap, so the three cannot disagree.
+ *
+ * A quiz with tags is placed by its tags alone. Matching aliases against the title
+ * and description, which this used to do for every quiz, is kept only for a quiz
+ * without tags: free text put a personality quiz in "trivia" because its description
+ * said "curiosidades". Every personality quiz is in the personality category by type.
+ */
+export function quizMatchesCategory(quiz: CategorizableQuiz, category: ExploreCategory): boolean {
+  if (category.slug === "personality" && quiz.type === "PERSONALITY") return true;
+  const aliases = new Set(category.aliases.map(normalize));
+  const tags = (quiz.tags || []).map((tag) => normalize(String(tag)));
+  if (tags.length > 0) return tags.some((tag) => aliases.has(tag));
+  const text = normalize(`${quiz.title || ""} ${quiz.description || ""}`);
+  return category.aliases.some((alias) => text.includes(normalize(alias)));
 }

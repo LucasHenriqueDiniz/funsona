@@ -1,8 +1,8 @@
 ---
-import ExploreEngagementRail from "@/components/explore/ExploreEngagementRail";
 import QuizCard from "@/components/QuizCard.astro";
 import { apiFetch } from "@/lib/api";
-import { exploreCategories, getCategoryText, getExploreCategoryFromAnySlug, getExploreCategoryUrl, sortOptions, type ExploreCategory } from "@/lib/explore-categories";
+import { exploreCategories, getCategoryText, getExploreCategoryFromAnySlug, getExploreCategoryUrl, quizMatchesCategory, sortOptions, type ExploreCategory } from "@/lib/explore-categories";
+import { fetchAllPublishedQuizzes } from "@/lib/published-quizzes";
 
 interface Props {
   tag?: string | null;
@@ -48,14 +48,6 @@ const matchesSearch = (quiz: any) => {
   return searchTokens.every((token) => combined.includes(token));
 };
 
-const matchesCategory = (quiz: any, aliases: string[]) => {
-  if (aliases.length === 0) return true;
-  const aliasSet = new Set(aliases.map((alias) => normalize(alias)));
-  const quizTags = (quiz.tags || []).map((value: string) => normalize(String(value)));
-  if (quizTags.some((tagValue: string) => aliasSet.has(tagValue))) return true;
-  const combined = `${normalize(quiz.title || "")} ${normalize(quiz.description || "")}`;
-  return aliases.some((alias) => combined.includes(normalize(alias)));
-};
 
 const isCategoryMode = !!selectedCategory;
 const params = new URLSearchParams();
@@ -63,12 +55,19 @@ if (sort) params.set("sort", sort);
 if (!isCategoryMode && tag) params.set("tag", tag);
 if (!isCategoryMode && search) params.set("search", search);
 if (!isCategoryMode) params.set("page", String(pageNum));
-params.set("limit", isCategoryMode ? "300" : String(limit));
+params.set("limit", String(limit));
 
-const { data: rawQuizzes, meta: apiMeta } = await apiFetch(`/quizzes?${params.toString()}`);
+// A category filters the whole catalogue, so it needs every page of it; the plain
+// listing pages through the API instead.
+const { data: rawQuizzes, meta: apiMeta } = isCategoryMode
+  ? { data: await fetchAllPublishedQuizzes<any>(sort), meta: null }
+  : await apiFetch(`/quizzes?${params.toString()}`);
 const allQuizzes = rawQuizzes || [];
+// Tabs link only categories that have a curated quiz: an empty one answers 404.
+const catalogueForTabs = isCategoryMode ? allQuizzes : await fetchAllPublishedQuizzes<any>();
+const populatedCategories = exploreCategories.filter((cat) => catalogueForTabs.some((quiz: any) => quizMatchesCategory(quiz, cat)));
 const filteredQuizzes = isCategoryMode
-  ? allQuizzes.filter((quiz: any) => matchesCategory(quiz, selectedCategory?.aliases || [])).filter(matchesSearch)
+  ? allQuizzes.filter((quiz: any) => quizMatchesCategory(quiz, selectedCategory!)).filter(matchesSearch)
   : allQuizzes;
 const offset = (pageNum - 1) * limit;
 const quizzes = isCategoryMode ? filteredQuizzes.slice(offset, offset + limit) : filteredQuizzes;
@@ -77,13 +76,9 @@ const totalPages = Math.max(1, Math.ceil(total / limit));
 
 const currentSortLabel = sortOptions.find((o) => o.value === sort)?.label || "Mais recentes";
 
-// Hero collage: up to 3 quiz covers, fallback to external images
-const fallbackCovers = [
-  "https://quizpanda.com/which-scooby-doo-character-are-you/feature-image.jpg",
-  "https://quizpanda.com/what-color-is-my-aura/feature-image.jpg",
-  "https://quizpanda.com/which-one-piece-character-would-be-your-arch-enemy/feature-image.jpg",
-];
-const heroCovers = [0, 1, 2].map((i) => allQuizzes[i]?.cover_url || fallbackCovers[i]);
+// Hero collage: up to 3 covers of the quizzes listed here. It used to fill gaps with
+// images hotlinked from quizpanda.com, where the seed catalogue came from.
+const heroCovers = (isCategoryMode ? filteredQuizzes : allQuizzes).map((quiz: any) => quiz?.cover_url).filter(Boolean).slice(0, 3);
 
 const pageNumbers = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
   if (totalPages <= 7) return i + 1;
@@ -145,7 +140,7 @@ const pageNumbers = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
         <!-- Card back-left -->
         <div class="absolute" style="left:0px;top:36px;transform:rotate(-11deg);z-index:1">
           <div class="h-[190px] w-[120px] overflow-hidden rounded-2xl border border-white/10 shadow-xl" style="opacity:0.72">
-            <img src={heroCovers[1]} alt="" class="h-full w-full object-cover" loading="lazy" />
+            {heroCovers[1] && <img src={heroCovers[1]} alt="" class="h-full w-full object-cover" loading="lazy" />}
             <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"></div>
           </div>
         </div>
@@ -153,7 +148,7 @@ const pageNumbers = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
         <!-- Card back-right -->
         <div class="absolute" style="right:0px;top:28px;transform:rotate(10deg);z-index:1">
           <div class="h-[190px] w-[120px] overflow-hidden rounded-2xl border border-white/10 shadow-xl" style="opacity:0.72">
-            <img src={heroCovers[2]} alt="" class="h-full w-full object-cover" loading="lazy" />
+            {heroCovers[2] && <img src={heroCovers[2]} alt="" class="h-full w-full object-cover" loading="lazy" />}
             <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"></div>
           </div>
         </div>
@@ -161,7 +156,7 @@ const pageNumbers = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
         <!-- Card front-center -->
         <div class="absolute" style="left:50%;top:0;transform:translateX(-50%) rotate(-1.5deg);z-index:2">
           <div class="relative h-[240px] w-[150px] overflow-hidden rounded-2xl border border-white/25 shadow-2xl shadow-black/60">
-            <img src={heroCovers[0]} alt="" class="h-full w-full object-cover" loading="lazy" />
+            {heroCovers[0] && <img src={heroCovers[0]} alt="" class="h-full w-full object-cover" loading="lazy" />}
             <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
             <div class="absolute bottom-3 left-3 right-3">
               <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-white/55">Em alta</p>
@@ -192,7 +187,7 @@ const pageNumbers = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
       <div class="h-5 w-px flex-shrink-0 bg-[var(--color-border)]"></div>
 
       <!-- Category pills — prefetch on viewport entry so clicking is instant -->
-      {exploreCategories.map((cat) => {
+      {populatedCategories.map((cat) => {
         const text = getCategoryText(cat, locale);
         const active = selectedCategory?.slug === cat.slug;
         return (
@@ -318,22 +313,16 @@ const pageNumbers = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
         Sobre o catálogo de quizzes do FunSona
       </h2>
       <p class="text-sm leading-relaxed text-[var(--color-text-secondary)]">
-        Esta página reúne todos os quizzes publicados no FunSona, de todas as categorias, em um catálogo único
-        que você pode filtrar por tema, ordenar por mais recentes, mais curtidos ou mais jogados, e pesquisar
-        por palavra-chave. Diferente de uma lista estática, o catálogo é atualizado constantemente conforme
-        novos criadores publicam seus testes — então sempre há algo novo pra descobrir, seja um teste de
-        personalidade recém-lançado, uma trivia sobre um assunto do momento, ou um clássico que voltou a bombar
-        entre os usuários. Se você já sabe o que procura, use a busca ou os filtros de categoria no topo da
-        página; se está só passeando, role pra baixo e deixe a ordenação por "Mais jogados" te mostrar o que
-        está bombando agora. Cada quiz listado aqui leva direto pra sua página própria, com descrição completa,
-        estatísticas de jogadas e curtidas, e o link pra jogar.
+        Esta página reúne o catálogo editorial do FunSona: quizzes de personalidade reescritos e revisados um a
+        um, cada um com imagens próprias. Você pode filtrar por categoria, ordenar por mais recentes, mais
+        curtidos ou mais jogados, e pesquisar por palavra-chave. Cada quiz leva para a própria página, com a
+        descrição, o que ele mede, como a pontuação funciona e o link para jogar.
       </p>
     </div>
   )}
 
-  <!-- Leaderboard rail — below the fold, less intrusive -->
-  <div class="border-t border-[var(--color-border)] pt-8">
-    <ExploreEngagementRail client:visible />
-  </div>
+  <!-- The leaderboard rail is off while the ranking holds only test accounts
+       ("abc", "dasasdasd"): a reviewer reads that as an abandoned site. Restore the
+       ExploreEngagementRail island here once real players fill the ranking. -->
 
 </div>

@@ -3,8 +3,10 @@ import Layout from "@/layouts/Layout.astro";
 import QuizCard from "@/components/QuizCard.astro";
 import { apiFetch } from "@/lib/api";
 import { publicCount } from "@/lib/public-count";
+import { getExploreCategory, quizMatchesCategory } from "@/lib/explore-categories";
+import { fetchAllPublishedQuizzes } from "@/lib/published-quizzes";
 
-const categories = [
+const allCategories = [
   { name: "Personalidade", emoji: "✨", slug: "personality", ring: "ring-amber-300/40 dark:ring-amber-500/30", bg: "bg-amber-500/10 text-amber-700 dark:text-amber-300" },
   { name: "Trivia", emoji: "🧠", slug: "trivia", ring: "ring-cyan-300/40 dark:ring-cyan-500/30", bg: "bg-cyan-500/10 text-cyan-700 dark:text-cyan-300" },
   { name: "Amor", emoji: "💕", slug: "love", ring: "ring-rose-300/40 dark:ring-rose-500/30", bg: "bg-rose-500/10 text-rose-700 dark:text-rose-300" },
@@ -14,6 +16,13 @@ const categories = [
   { name: "TV", emoji: "📺", slug: "tv", ring: "ring-indigo-300/40 dark:ring-indigo-500/30", bg: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-300" },
   { name: "Conhecimentos", emoji: "📚", slug: "knowledge", ring: "ring-lime-300/40 dark:ring-lime-500/30", bg: "bg-lime-500/10 text-lime-700 dark:text-lime-300" },
 ];
+
+// Link only categories that hold a curated quiz: an empty one answers 404.
+const catalogue = await fetchAllPublishedQuizzes<any>();
+const categories = allCategories.filter((cat) => {
+  const category = getExploreCategory(cat.slug);
+  return category && catalogue.some((quiz) => quizMatchesCategory(quiz, category));
+});
 
 // Accent colors per carousel slot — used for "Jogar" button + fallback gradient
 const CARD_ACCENTS = [
@@ -47,7 +56,7 @@ const faqs = [
   {
     question: "O que é o FunSona?",
     answer:
-      `FunSona é uma plataforma gratuita de quizzes onde você pode jogar testes de personalidade, trivia e curiosidades, além de criar e publicar seus próprios quizzes para compartilhar com amigos. Os quizzes ficam organizados em categorias como personalidade, trivia, amor, games, filmes, música, TV e conhecimentos gerais.`,
+      `FunSona é uma plataforma gratuita de quizzes onde você pode jogar testes de personalidade, além de criar e publicar seus próprios quizzes para compartilhar com amigos. Os quizzes ficam organizados em categorias como personalidade, amor, games, filmes e TV.`,
   },
   {
     question: "Preciso pagar para jogar os quizzes?",
@@ -77,7 +86,7 @@ const faqs = [
 ];
 ---
 
-<Layout title="FunSona - Crie e jogue quizzes incriveis" description="Plataforma de quizzes de personalidade e trivia. Crie seus próprios quizzes, descubra novos e compartilhe com amigos." ads>
+<Layout title="FunSona - Crie e jogue quizzes incriveis" description="Quizzes de personalidade em português, escritos e revisados à mão: anime, games, filmes, relacionamentos e mais.">
   <div class="relative isolate overflow-hidden pb-20">
 
     <!-- ══════════════════════════════ HERO ══════════════════════════════ -->
@@ -101,7 +110,7 @@ const faqs = [
             </h1>
 
             <p class="mb-8 max-w-sm text-base leading-relaxed text-slate-400">
-              Testes de personalidade, trivia e cultura pop. Rápidos, gratuitos e prontos para viralizar.
+              Testes de personalidade sobre anime, games, filmes e o dia a dia. Rápidos, gratuitos e com resultado explicado.
             </p>
 
             <div class="flex flex-wrap gap-3">

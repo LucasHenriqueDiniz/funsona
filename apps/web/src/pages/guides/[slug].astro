@@ -8,7 +8,7 @@ if (!slug) return Astro.redirect("/guides");
 
 const entry = await getEntry("guides", `${locale}/${slug}`);
 if (!entry) {
-  return Astro.redirect("/404");
+  return Astro.rewrite("/404");
 }
 
 const { Content } = await render(entry);
@@ -39,7 +39,7 @@ const image = `${Astro.url.origin}/og-default.svg`;
         </h1>
         <p class="text-lg text-[var(--color-text-secondary)]">{entry.data.description}</p>
       </header>
-      <div class="prose prose-indigo max-w-none text-[var(--color-text-secondary)]">
+      <div class="guide-body text-[var(--color-text-secondary)]">
         <Content />
       </div>
     </article>
