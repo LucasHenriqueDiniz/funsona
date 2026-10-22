@@ -1,9 +1,10 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { apiTransport } from "@/lib/api-transport";
 import { PUBLIC_API_BASE_URL } from "@/lib/public-env";
 import CheckoutButton from "@/components/premium/CheckoutButton";
 
-const { data: settings } = await fetch(`${PUBLIC_API_BASE_URL}/settings/public`).then(r => r.json()).catch(() => null);
+const { data: settings } = await apiTransport(`${PUBLIC_API_BASE_URL}/settings/public`).then(r => r.json()).catch(() => null);
 ---
 
 <Layout title="Premium | FunSona" description="Remova anúncios e desbloqueie recursos exclusivos com o FunSona Premium.">

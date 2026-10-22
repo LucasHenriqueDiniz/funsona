@@ -5,18 +5,21 @@ import clerk from "@clerk/astro";
 import { ptBR } from "@clerk/localizations";
 import tailwindcss from "@tailwindcss/vite";
 
-// Cloudflare Pages injects wrangler.toml [vars] into process.env before Vite
-// runs, and its env-var pipeline prepends a UTF-8 BOM (U+FEFF) to the value.
-// Vite's env loading keeps an already-set process.env var as-is (it doesn't
-// fall back to .env.production for a key the OS environment already has), so
-// that BOM survives straight into the client bundle. It silently fails
-// Clerk's publishable-key format check (`^pk_(test|live)_`), which made
-// Clerk construct a malformed script URL and never initialize.
-if (process.env.PUBLIC_CLERK_PUBLISHABLE_KEY) {
-  process.env.PUBLIC_CLERK_PUBLISHABLE_KEY = process.env.PUBLIC_CLERK_PUBLISHABLE_KEY.replace(
-    /^﻿/,
-    ""
-  ).trim();
+// Cloudflare Pages' Git-integration build injects the project's variables
+// (wrangler.toml [vars] and the dashboard's "Variables and secrets") into
+// process.env before Vite runs, and that pipeline prepends a UTF-8 BOM
+// (U+FEFF) to each value. Vite's loadEnv keeps an already-set process.env var
+// over .env.production (vite 6.4.2, loadEnv: the process.env loop runs after
+// the file loop), so the BOM goes straight into the bundle. It first broke
+// PUBLIC_CLERK_PUBLISHABLE_KEY (Clerk checks `^pk_(test|live)_` and never
+// initialized), then the three PUBLIC_ADSENSE_SLOT_* ids (AdSlot checks
+// `^\d+$` and rendered no ad unit in production). Every PUBLIC_ var is
+// inlined at build time, so every one is sanitized, not just the ones that
+// have already bitten. See docs/research/2026-10-20-adsense-slot-missing-in-production.
+for (const [key, value] of Object.entries(process.env)) {
+  if (key.startsWith("PUBLIC_") && typeof value === "string") {
+    process.env[key] = value.replace(/^\uFEFF/, "").trim();
+  }
 }
 
 export default defineConfig({

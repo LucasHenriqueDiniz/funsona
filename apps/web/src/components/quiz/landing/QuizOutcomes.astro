@@ -1,0 +1,49 @@
+---
+import type { LandingOutcome } from "@/lib/quiz-landing";
+
+// One closed <details> per outcome, the title in the summary and the full text inside. The text
+// is in the server HTML, which is what Search indexes and what the AdSense review reads; what the
+// reader sees before playing is the list of titles. See
+// docs/research/2026-10-20-folded-content-indexing.
+interface Props {
+  outcomes: LandingOutcome[];
+  class?: string;
+}
+
+const { outcomes, class: className = "" } = Astro.props;
+
+const paragraphs = (text: string) =>
+  text
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+---
+
+{outcomes.length > 0 && (
+  <section class={`rounded-[2rem] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-6 sm:p-8 ${className}`}>
+    <h2 class="text-xl font-black text-[var(--color-text-primary)]">
+      Os {outcomes.length} resultados possíveis
+    </h2>
+    <p class="mt-1 text-sm font-medium text-[var(--color-text-muted)]">
+      Abra um resultado para ler o perfil. O seu aparece no fim do quiz.
+    </p>
+
+    <div class="mt-4">
+      {outcomes.map((outcome) => (
+        <details class="group border-t border-[var(--color-border)] last:border-b">
+          <summary class="flex min-h-[3.25rem] cursor-pointer list-none items-center justify-between gap-4 py-3 font-black text-[var(--color-text-primary)] [&::-webkit-details-marker]:hidden">
+            {outcome.title}
+            <svg class="h-[18px] w-[18px] shrink-0 text-[var(--color-text-muted)] transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </summary>
+          {outcome.description && (
+            <div class="space-y-3 pb-5 text-[var(--color-text-secondary)]">
+              {paragraphs(outcome.description).map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+          )}
+        </details>
+      ))}
+    </div>
+  </section>
+)}

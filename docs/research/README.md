@@ -69,6 +69,14 @@ Investigations and benchmarks already done. Do not repeat research listed here u
 - No. `noindex` binds search crawlers. A page leaves AdSense's view by carrying no ad code (no slot
   and no `adsbygoogle.js` loader) and by being unlinked. 404/410 is the fallback.
 - Full note and sources: `2026-10-18-adsense-noindex-review/research.md`.
+
+## AdSense: why production rendered no ad slot on curated quizzes (2026-10-20)
+
+- The slot ids were in the deployed bundle with a leading U+FEFF: Cloudflare Pages' build injects the
+  project's variables with a BOM, Vite lets that copy win over `.env.production`, and `AdSlot` rejects
+  a non-numeric id. Fixed by sanitizing every `PUBLIC_*` variable in `apps/web/astro.config.mjs`.
+- Full note, the live chunk and the sources: `2026-10-20-adsense-slot-missing-in-production/research.md`.
+
 - **i18n SEO**: hreflang tags, one sitemap per locale, translated content (not just the UI).
 
 ## Quiz page: can the outcomes be folded? (2026-10-20)

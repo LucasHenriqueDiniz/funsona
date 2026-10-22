@@ -1,5 +1,6 @@
 import { defineMiddleware, sequence } from "astro:middleware";
 import { clerkMiddleware } from "@clerk/astro/server";
+import { setApiBinding, type ApiBinding } from "@/lib/api-transport";
 import { PUBLIC_API_ORIGIN } from "@/lib/public-env";
 
 // Astro's Cloudflare adapter builds a custom _worker.js, which puts Pages in
@@ -147,6 +148,18 @@ const canonicalQuizUrl = defineMiddleware((context, next) => {
   return next();
 });
 
+// Server-side API calls go Worker to Worker through the API service binding,
+// not across the zone's Bot Fight Mode: see lib/api-transport.ts. Only the
+// built Worker uses it; `astro dev` keeps calling PUBLIC_API_URL, so running
+// the site against a remote API does not need the API Worker running locally.
+const apiBinding = defineMiddleware((context, next) => {
+  if (import.meta.env.PROD) {
+    const runtimeEnv = (context.locals as { runtime?: { env?: Record<string, unknown> } }).runtime?.env;
+    setApiBinding(runtimeEnv?.API as ApiBinding | undefined);
+  }
+  return next();
+});
+
 const securityHeaders = defineMiddleware(async (_context, next) => {
   const response = await next();
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
@@ -155,4 +168,4 @@ const securityHeaders = defineMiddleware(async (_context, next) => {
   return response;
 });
 
-export const onRequest = sequence(canonicalHost, auth, canonicalQuizUrl, securityHeaders);
+export const onRequest = sequence(apiBinding, canonicalHost, auth, canonicalQuizUrl, securityHeaders);

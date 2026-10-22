@@ -2,12 +2,19 @@
 import Layout from "@/layouts/Layout.astro";
 import ProfileActivityTabs from "@/components/profile/ProfileActivityTabs";
 import { apiFetch } from "@/lib/api";
+import { apiUnavailableResponse, isApiUnavailable } from "@/lib/api-unavailable";
 
 const { handle } = Astro.params;
 if (!handle) return Astro.redirect("/");
 
-const { data: profile } = await apiFetch(`/profiles/${handle}`);
-if (!profile) return Astro.redirect("/404");
+const profileResult = await apiFetch(`/profiles/${handle}`);
+const profile = profileResult.data;
+if (!profile) {
+  if (isApiUnavailable(profileResult)) {
+    return apiUnavailableResponse(Astro.url.pathname, profileResult);
+  }
+  return Astro.redirect("/404");
+}
 
 const { data: activity } = await apiFetch(`/users/${profile.id}/activity`);
 const createdQuizzes = activity?.created_quizzes || [];

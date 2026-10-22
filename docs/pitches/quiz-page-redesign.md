@@ -3,7 +3,7 @@ tags:
   - pitch
   - area/web
   - area/ux
-status: draft
+status: active
 epic: quiz-page
 kanban:
 ---
@@ -161,6 +161,9 @@ None. Everything the page needs is in today's `/quizzes/:slug` payload.
 | Order against AdSense | **Before slice 7.** The owner fixes the site, this page included, then requests review | owner | Requesting review on today's page |
 | Where the player lives | **`/quiz/<slug>/play` stays.** The play ad stays on a `noindex` URL, the start rate stays measurable from pageviews, and the cost is a 0.3–0.6 s load | agent recommendation, owner asked for it | The player opening over the indexed landing page |
 | Outcomes on the landing | **Folded per outcome:** title visible, text in a closed `<details>`, full text in the server HTML | agent recommendation, owner undecided | Outcomes only on the result screen; text fetched on click |
+| Desktop layout | **Two columns from `lg`:** the reading on the left, byline and "Mais para jogar" on the right. A single column at 1024 px is 900 px of prose | owner, on the mockup | One centred column |
+| Play-screen ad on mobile | **Below the Anterior/Próxima row,** inline, not sticky | owner, on the mockup | The unit between the answers and the buttons, one tap from "Próxima" |
+| "Mais para jogar" cards | **Compact rows** (thumbnail, title, question count): three take 264 px on a phone | owner, on the mockup | Today's `QuizCard` grid, about 1,000 px for three on a phone |
 
 ## Research Needed
 
@@ -181,8 +184,12 @@ None. Everything the page needs is in today's `/quizzes/:slug` payload.
 - [x] **Outcomes on the landing at all?** Recommended: folded per outcome (see Decisions). Was:
       folded on the landing, open but under the fold, or only on the result screen. The last one is
       the best reveal and removes 1,409 words from the page AdSense reads.
-- [ ] **Mockup before code.** One mobile and one desktop mockup of the new landing for the owner to
-      pick from, before slice 1. A browser page is enough. A Figma file is not required.
+- [x] **Mockup before code.** Done 2026-10-20 as a Design canvas
+      (https://claude.ai/artifact/9JQGHHfWLKLGNbirsNrnrn, 8 boards: the mobile landing with and
+      without a cover, 1024 and 1440 in two layouts, the play screen at both widths). Measured on
+      the mock HTML at 375×812: 2,401 px (2.96 screens), Play at 468–524 px, comments at 1,807 px.
+      The owner picked the desktop two-column layout, the mobile play ad below the Anterior/Próxima
+      row, and compact rows for "Mais para jogar". Plan: `docs/plans/quiz-page-redesign/`.
 - [x] **Sequencing with AdSense.** Decided: before [[slice-07-recrawl-and-reapply]]. It touches no
       database rows, so it can ship between slice 5 batches.
 
@@ -213,9 +220,14 @@ Today's figures are the baseline in the Problem table.
   1024×768 the sidebar slot is at most 300 px wide and it is the only sticky element holding an ad.
 
 ## Success Criteria
-- [ ] Mobile page height for the 5 sampled quizzes at most a third of today's (18.3 → ≤ 6 screens)
-- [ ] Play in the first viewport on mobile and desktop, 5 of 5
-- [ ] 100% of outcome and intro text still in the server HTML of curated quizzes
-- [ ] Slice 2 flag check 20/20 after the change
+- [x] Mobile page height for the 5 sampled quizzes at most a third of today's (18.3 → ≤ 6 screens).
+      Measured 2026-10-20 on the branch: 3.48–3.61 screens, from 15.8–18.4
+      ([[quiz-page-redesign/slice-06-whole-page-against-baseline|slice 6]])
+- [x] Play in the first viewport on mobile and desktop, 5 of 5. Play ends at 520 px on 375×812 and
+      at 481 px on 1024×768, on all five (it was below the fold at 1024 on three)
+- [x] 100% of outcome and intro text still in the server HTML of curated quizzes. 10 of 10 pages,
+      and the check goes red with `QuizOutcomes` removed
+- [x] Slice 2 flag check 20/20 after the change. 20 of 20, landing and play
 - [ ] Start rate (`/play` ÷ landing pageviews, GA4) measured for the 28 days before and after. It is
-      reported, not gated, since the traffic is small (153 Search clicks in 90 days)
+      reported, not gated, since the traffic is small (153 Search clicks in 90 days). Pending the
+      deploy
