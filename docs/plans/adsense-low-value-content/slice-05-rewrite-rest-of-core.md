@@ -597,8 +597,38 @@ read:
 | `render.mjs` on the 7 pages from the local web app | **7 of 7** |
 | the Big Five quiz played end to end on the local web app, mostly first answers | "Abertura à experiência", as the tally predicts |
 
-Next, after the owner's review: write batch 7. That should bring the remote core to 67 of 67, which is
-this slice's "Done when".
+### Batch 7 in production, cocktail duplicate archived, core at 66 of 66 (2026-10-22)
+
+**Approval.** The owner answered "1 arquivar, 2 s". That meant archive the European-Portuguese
+cocktail quiz instead of publishing its non-alcoholic rewrite, and write the other six drafts as they
+were. The agent set `reviewed: true` on those six, with no owner edits. The drinks draft stays in the
+gitignored folder, unreviewed.
+
+**Before the writes:**
+- `wrangler d1 export --remote --table quizzes` at 2026-10-22 17:18 UTC, restored and counted: 775
+  rows, 79 published, 67 curated, 696 archived;
+- Time Travel bookmark `00006da6-00000000-0000510c-417d7354ba76fe32d586cec5ae52472f`.
+
+**The writes:**
+- `apply.mjs --target remote` on the six drafts, one per call;
+- `scripts/adsense-core/archive-cocktail-pt.sql`, run on the local copy first (published flagged
+  67 → 66), then on remote;
+- `core.csv` marks the quiz `drop` with the reason.
+
+| check, right after | result |
+|---|---|
+| D1 by status and flag | PUBLISHED flag=1 **66** · PUBLISHED flag=0 12 · ARCHIVED 697 |
+| `report.mjs --target remote --baseline <the 17:18 export>` on the 6 | **6 of 6** meet the bar, all changed |
+| `report.mjs --target remote` on the whole core | **66 of 66** meet the bar |
+| `render.mjs https://funsona.com` on the 6 | **6 of 6** |
+| the 6 pages fetched from a browser tab on funsona.com | **6 of 6**: new title, AdSense loader present, no robots meta, 0 third-party images above "Mais para jogar" |
+| archived cocktail quiz | 302 to `/404`; not in the sitemap |
+| `sitemap.xml` quiz URLs against D1 `PUBLISHED` and `ads_eligible = 1` | 66 = 66, the same slugs |
+
+**This slice's "Done when" holds:** `report.mjs --target remote` prints `---- 66 of 66 quizzes meet the
+bar`, and 66 is the D1 count of `PUBLISHED` with `ads_eligible = 1`. `core.csv` has 75 rows: 66
+`keep`, all rewritten, and 9 `drop`. Four of the drops were archived during this slice: waifu, DxD,
+the attraction quiz and the cocktail duplicate. The other five were dropped when the core was picked.
 
 ## Needs
 
