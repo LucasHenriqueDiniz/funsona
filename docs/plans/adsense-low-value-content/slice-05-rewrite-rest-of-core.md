@@ -630,6 +630,118 @@ bar`, and 66 is the D1 count of `PUBLISHED` with `ads_eligible = 1`. `core.csv` 
 `keep`, all rewritten, and 9 `drop`. Four of the drops were archived during this slice: waifu, DxD,
 the attraction quiz and the cocktail duplicate. The other five were dropped when the core was picked.
 
+### Boyfriend and husband quizzes: safety treatment drafted (2026-10-22)
+
+The girlfriend quiz (batch 3) weighs its fear, control and threat answers 3, and every one of its
+outcomes points to 190. The two batch 1 relationship quizzes did neither: in
+`devo-terminar-com-meu-namorado-teste-para-ajudar-na-decisao` and
+`meu-marido-me-ama-descubra-com-este-questionario`, those answers weighed 2 like any other, and 180,
+188 and 190 appeared in the last outcome only. The owner asked for both to be fixed.
+
+**Starting point.** The batch 1 drafts equal production: 0 differences in title, description, intro,
+questions, weights or outcome text. Production only adds the slice 5b `image_url` on each outcome.
+
+**What changed.** Outcome keys are unchanged, so the images carry over.
+
+| quiz | answer | before | after |
+|---|---|---|---|
+| boyfriend | q2/a4 | "Evito falar para não brigar, ou tenho medo da reação." 2 | "Há ameaças, ou eu evito falar por medo da reação." **3** |
+| boyfriend | q7/a4 | "Ciúme excessivo, controle ou desrespeito." 2 | same label, **3** |
+| boyfriend | q10/a4 | "Ansiedade ou medo do que vem." 2 | "Medo do que vem, ou de como a pessoa vai reagir se eu demorar a responder." **3** |
+| husband | q3/a4 | "Decide sem considerar o que eu penso." 2 | "Decide tudo sozinho, até o que eu posso gastar e com quem eu posso sair." **3** |
+| husband | q4/a4 | "Ele me desrespeita ou me deixa com medo." 2 | "Ele me ameaça ou me deixa com medo." **3** |
+| husband | q10/a3, a4 | "Sozinho às vezes, mesmo acompanhado." 2 · "Inseguro, triste ou com medo." 2 | sadness moves to a3 (`cuidado`, 2) · "Com medo dele, pisando em ovos." **3** |
+
+- **Outcomes.** All eight name 190, 180 and 188. The last outcome of each quiz (`terminar`,
+  `desgaste`) now opens with safety.
+- **Exceptions.** Every place that advises a conversation or couples therapy says that it does not
+  apply when there is fear, a threat or control.
+- **Reader as the one who controls.** The boyfriend quiz also addresses that reader and points them
+  to a psychologist through the UBS.
+- **Intro.** `how_scoring_works` now says that an answer scores one or two outcomes and that the
+  fear, threat and control answers weigh more.
+
+**All-fear check.** A scratch script enumerated every answer path with the tally of
+`QuizPlay.tsx` (`calculatePersonalityResult`), fixing the three fear, control and threat answers and
+varying the other seven questions:
+
+| quiz | before | after, weight 3 | weight 5, not taken |
+|---|---|---|---|
+| boyfriend | 14,099 of 16,384 (86.1%) | **16,136 of 16,384 (98.5%)** | 16,384 (100%) |
+| husband | 39,598 of 65,536 (60.4%; only 2 fear answers existed) | **16,010 of 16,384 (97.7%)** | 16,384 (100%) |
+| girlfriend, for reference | | 16,066 of 16,384 (98.1%) | |
+
+- **The misses at weight 3.** They pick all three fear answers and mostly the happiest answer
+  elsewhere. They land on an outcome that also carries the notice.
+- **Why not weight 5.** It reaches 100%, but the safety outcome's share of all answer paths would
+  rise from 35% to 46% (boyfriend). A single jealousy answer would then decide the result.
+- **The owner's choice.** Weight 3, the same as the girlfriend quiz.
+
+**Review pass.** One `general-purpose` subagent read the drafts as a hostile safety reviewer. A second
+checked every factual claim against primary sources: gov.br for 190 and the Ligue 180, cvv.org.br,
+the Ministry of Health's RAPS page, thehotline.org, and Campbell et al. 2003 (AJPH) on risk at
+separation.
+
+| found | count | example | fix |
+|---|---|---|---|
+| exception that left out control | 3 outcomes | couples therapy fine "quando não há medo nem agressão" after a control answer weighing 3 | control added to every exception |
+| a mild signal sharing a weight-3 label | 3 | "Inseguro, triste ou com medo"; "Ansiedade ou medo do que vem"; "Há gritos" | labels split or narrowed to fear and threats |
+| text for one reading only | 2 | helplines told the reader who is the jealous one to call 190 | a line for the reader who controls |
+| the same crisis block in the happy outcomes | 4 outcomes | about 60 words of helplines under "Ainda há uma base forte" | one sentence; the full block stays in the last outcome |
+| "seja claro e respeitoso" two paragraphs after "não a sós" | 1 | | "Se decidir terminar e não houver medo…" |
+| facts imprecise | 2 of 11 | "o atendimento começa no posto de saúde mais próximo"; the love-languages sentence, live since batch 1 | "o primeiro passo costuma ser a UBS do seu bairro"; "a pesquisa não confirma que combinar esses jeitos melhore a relação" |
+
+**Template signature.** No outcome shares a second- or last-paragraph opener inside its quiz. The
+maximum 5-gram Jaccard of these outcomes against every other draft fell from 11.36% to 1.53%. The old
+maximum was the helpline paragraph the two quizzes shared word for word.
+
+| check | result |
+|---|---|
+| `check.mjs` on the 2 | 2 ok: 222–253 words per outcome, 10 questions each |
+| `apply.mjs --target local` on the drafts themselves | refused, 2 of 2: `reviewed` is false |
+| local copy synced to production for the 2 rows, then `reviewed: true` copies applied | text and weights equal the draft; `image_url` kept 4/4 on each |
+| `report.mjs --target local` | 2 of 2; whole core **66 of 66** |
+| `render.mjs` on the local web app | 2 of 2 (girlfriend quiz 1 of 1 as control) |
+| a path that ends on a happy outcome in production, played locally | boyfriend `continuar` → `terminar`, husband `presente` → `desgaste`, outcome image loaded |
+
+### Boyfriend and husband quizzes: safety treatment in production (2026-10-22)
+
+**Approval.** The owner answered "vai": the drafts as they were, at weight 3. The answer reached this
+session through the session that started it. The agent set `reviewed: true`; the files are
+byte-equal, as sorted JSON, to the copies proven locally.
+
+**Before the write:**
+- `wrangler d1 export --remote --table quizzes` at 19:56 UTC, restored and counted: 775 rows, 78
+  published, 66 curated, 697 archived. Both quizzes carried 4 of 4 `image_url`.
+- Time Travel bookmark `00006dcb-00000000-0000510c-3fb3c228ea9f1a6ba6f4601d8c047677`.
+
+**The write.** The auto-mode classifier refused the agent's `apply.mjs --target remote` ("Production
+Deploy"). The owner ran it from the worktree, with this branch's `apply.mjs`, which carries
+`withImages`. Output: `---- 2 quiz(zes) written to remote`.
+
+| check, right after | result |
+|---|---|
+| D1 rows against the drafts | text and weights equal the draft on both; `image_url` kept **4/4** on each; covers kept |
+| D1 by status and flag | PUBLISHED flag=1 **66** · PUBLISHED flag=0 12 · ARCHIVED 697 |
+| core outcomes with `image_url` | **412 of 412** |
+| `report.mjs --target remote --baseline <the 19:56 export>` on the 2 | **2 of 2**, both changed |
+| `report.mjs --target remote` on the whole core | **66 of 66** |
+| `render.mjs https://funsona.com` on the 2 | **2 of 2** |
+| both played on funsona.com with the paths above | boyfriend: "Pode ser hora de considerar seguir em frente"; husband: "Amor com sinais de desgaste". Each opens with the safety paragraph, and the outcome image loads |
+| `sitemap.xml` quiz URLs | 66 = D1 66 |
+
+**Open, not part of this write:**
+- Husband q4/a2, the silent treatment ("fica quieto um tempo e depois volta como se nada tivesse
+  acontecido"), leads to "Amor sincero, do jeito dele".
+- Husband q7/a4, humiliation in front of others, still weighs 2.
+- Both quizzes keep male-default forms ("Inseguro", "Arrasado", "seguro"), most of their readers
+  being women.
+- The boyfriend quiz names no violence channel for men beyond 190. Disque 100 is a candidate, not
+  yet verified.
+- On a tie, `QuizPlay.tsx` gives the outcome that entered the tally first, never the safety one. That
+  is a code change.
+- The girlfriend quiz misses the same way: 318 of 16,384 all-abuse paths land elsewhere.
+
 ## Needs
 
 - Slice 4's scripts working and gated.
