@@ -1,50 +1,71 @@
 ---
 title: "Como funciona a pontuação dos quizzes no FunSona"
-description: "Entenda a diferença entre quizzes de trivia e de personalidade, como cada resposta é contabilizada e como o resultado final é calculado no FunSona."
+description: "Acertos na trivia, pontos por resultado nos quizzes de personalidade, respostas que valem para dois resultados e o que decide um empate: as regras exatas por trás da tela final."
 locale: "pt"
 publishedDate: 2026-07-16
+updatedDate: 2026-10-22
 tags: ["pontuacao", "trivia", "personalidade", "como-funciona"]
 ---
 
-Se você já jogou mais de um quiz no FunSona, provavelmente notou que nem todos funcionam do mesmo jeito. Alguns terminam com uma nota, tipo "você acertou 7 de 10". Outros terminam com um resultado, tipo "você é o tipo Aventureiro". Isso não é aleatório — são dois sistemas de pontuação completamente diferentes, pensados para dois tipos de experiência diferentes. Este guia explica como cada um funciona por baixo dos panos, para que você entenda melhor o que está acontecendo quando joga (e, se você cria quizzes, para que consiga desenhar perguntas e resultados melhores).
+Um quiz no FunSona termina de dois jeitos. Ou aparece um placar, como "7/10", ou aparece um resultado com nome e texto, como "Mago" ou "Página virada". A diferença vem do tipo que o criador escolheu, e cada tipo conta as suas respostas por uma regra própria. As regras abaixo são as mesmas do código que roda quando você responde a última pergunta, e os exemplos saem de quizzes do nosso catálogo editorial.
 
-## Os dois tipos de quiz
+## Trivia e Personalidade
 
-Todo quiz no FunSona pertence a um de dois tipos: **Trivia** ou **Personalidade**. Essa escolha é feita pelo criador do quiz no momento em que ele monta o conteúdo, e ela determina completamente como as respostas são processadas depois.
+Todo quiz pertence a um de dois tipos. Na **Trivia**, cada pergunta tem uma alternativa certa, marcada por quem criou o quiz, e o objetivo é acertar o máximo possível: "em que ano estreou tal filme?", "qual destes países fica na América do Sul?". Na **Personalidade**, não existe alternativa certa. Cada resposta dá pontos a um ou mais resultados possíveis, e no fim aparece o resultado que juntou mais pontos.
 
-Quizzes de **Trivia** têm resposta certa e resposta errada. Pense em perguntas de conhecimento geral, cultura pop, história, ciência ou curiosidades sobre um tema específico — do tipo "qual desses países fica na América do Sul?" ou "em que ano foi lançado tal filme?". Cada pergunta tem uma alternativa marcada como correta pelo criador, e o jogo simplesmente conta quantas você acertou.
+O tipo é escolhido na criação e define tudo o que acontece depois com as respostas. Os quizzes do catálogo editorial são todos de personalidade, então a maior parte deste texto trata deles.
 
-Quizzes de **Personalidade** não têm certo ou errado. Pense em perguntas do tipo "como você reage quando um amigo cancela um compromisso de última hora?" — não existe uma resposta "correta" para isso, existe uma resposta que combina mais com você. Cada opção de resposta, nesse tipo de quiz, está associada a um possível resultado (por exemplo, "Aventureiro", "Caseiro", "Estrategista"), e no final o quiz olha para qual desses resultados apareceu com mais frequência nas suas escolhas.
+## Como uma partida de Trivia é contada
 
-## Como a pontuação de Trivia funciona
+Cada alternativa certa vale um ponto, e cada errada vale zero. Não existe ponto parcial nem desconto por erro: errar uma pergunta só significa não somar nada nela. Ao final, a tela mostra quantas você acertou sobre o total e um título que depende apenas dessa conta:
 
-Nos bastidores, cada opção de resposta de uma pergunta de Trivia carrega uma marcação simples: ela é a correta ou não é. Quando você responde e a alternativa escolhida é a marcada como correta, isso soma um ponto ao seu placar. Se você escolhe uma alternativa errada, nenhum ponto é somado — mas o jogo segue normalmente para a próxima pergunta, sem penalidade adicional.
+- **Perfeito!**, quando você acerta todas;
+- **Muito bem!**, quando acerta mais da metade;
+- **Continue praticando**, em qualquer outro caso.
 
-No final do quiz, o FunSona soma o total de pontos que você conseguiu e compara com o número total de perguntas. É esse número — pontos conquistados sobre pontos possíveis — que define sua pontuação final, algo como "8 de 10 perguntas corretas". Não existe pontuação parcial dentro de uma única pergunta: ou você acerta a alternativa certa, ou não pontua naquela pergunta específica. Isso mantém o sistema simples e transparente: você sempre sabe exatamente por que terminou com a pontuação que terminou, e pode até revisar mentalmente quais perguntas errou.
+Num quiz de dez perguntas, seis acertos já rendem "Muito bem!", e cinco não, porque metade exata não é mais da metade. A tela final mostra o placar, mas não lista as perguntas erradas nem revela as alternativas certas. Quem quiser descobrir onde escorregou precisa jogar de novo e prestar atenção.
 
-Alguns criadores configuram os quizzes de Trivia para mostrar as respostas corretas ao final (essa é inclusive a configuração padrão), o que ajuda bastante quem quer aprender com os próprios erros, não só competir pela nota mais alta.
+## Como um quiz de personalidade chega ao resultado
 
-## Como a pontuação de Personalidade funciona
+A conta aqui é uma soma por resultado. Cada resposta carrega uma pequena tabela que diz quantos pontos ela dá a cada resultado. Pergunta após pergunta, o FunSona vai somando, e quando você responde a última aparece o resultado com o maior total.
 
-Quizzes de Personalidade usam uma lógica bem diferente, chamada de "contagem por resultado" (tally, em inglês). Em vez de cada resposta valer um ponto genérico, cada alternativa está vinculada a um resultado específico que o criador definiu ao montar o quiz. Por exemplo, num quiz sobre "qual elemento combina com você", a alternativa "prefiro resolver tudo com calma e paciência" pode estar vinculada ao resultado "Água", enquanto "gosto de agir rápido e sem medo" pode estar vinculada ao resultado "Fogo".
+O desenho mais comum no catálogo dá 2 pontos ao resultado principal de cada resposta. A partir daí, há três variações que você encontra com frequência:
 
-Conforme você vai respondendo, o FunSona conta quantas vezes cada resultado possível foi "escolhido" através das suas respostas. Ao final das perguntas, o resultado que acumulou mais escolhas é o que aparece como o seu — literalmente o resultado mais votado pelas suas próprias respostas. Se houver um empate entre dois resultados, o sistema usa a ordem em que os resultados foram cadastrados pelo criador do quiz como critério de desempate, então normalmente não existe ambiguidade sobre qual resultado você recebe.
+- **2 pontos para um resultado e 1 para outro.** No quiz [Qual classe de RPG combina com a sua personalidade?](/quiz/qual-classe-de-rpg-combina-melhor-com-voce-descubra-sua-classe-ideal), a resposta "Estudo até entender como ele funciona", diante de um problema difícil, dá 2 pontos ao Mago e 1 ao Bardo. O ponto menor vai para uma classe vizinha, que divide parte daquele traço, e ajuda a separar quem está entre dois resultados.
+- **1 ponto para cada um de dois resultados.** Quando a resposta pertence por igual a duas opções. Em [Qual cor de Magic: The Gathering combina com você?](/quiz/o-questionario-de-cores-do-gathering-qual-a-cor-do-mtg-que-eu-sou), "Estudo a regra até achar a brecha" dá 1 ponto ao azul, a cor do conhecimento, e 1 ao preto, a da ambição.
+- **3 pontos em vez de 2.** Quando uma resposta é mais grave que as outras. No teste [Devo terminar com a minha namorada?](/quiz/devo-terminar-com-minha-namorada-teste-para-tomar-a-decisao-certa), as respostas sobre controle, gritos e ameaças, e medo da reação da outra pessoa valem 3 pontos para o resultado mais sério.
 
-Isso significa que a qualidade de um quiz de personalidade depende muito de como o criador distribuiu as ligações entre respostas e resultados. Um bom quiz de personalidade tenta garantir que cada resultado possível tenha chances reais de aparecer — nenhum resultado deveria estar "escondido" atrás de combinações quase impossíveis de escolhas, e nenhum deveria dominar só porque está vinculado a respostas óbvias demais.
+Por causa desses pesos, nem toda pergunta move o placar do mesmo jeito, e um resultado pode vencer mesmo sem ter sido a escolha principal na maioria das perguntas: os pontos menores, somados, às vezes fazem a diferença.
 
-## Por que separar os dois sistemas
+## O que decide um empate
 
-Pode parecer que daria pra usar o mesmo sistema para tudo, mas misturar os dois currentemente quebraria a experiência de ambos os formatos. Se um quiz de conhecimento usasse contagem por resultado em vez de certo/errado, não haveria como saber quantas perguntas você realmente acertou — só saberia qual "tipo" de errador você é, o que não faz sentido para um teste de conhecimento. Da mesma forma, se um quiz de personalidade tentasse marcar respostas como certas ou erradas, estaria dizendo que existe um jeito "errado" de ser você mesmo, o que vai contra a própria ideia do formato.
+Dois resultados podem terminar com o mesmo total. Nesse caso, vence o que entrou primeiro na soma, ou seja, o primeiro a receber algum ponto durante a partida. Se uma resposta dá pontos a dois resultados ao mesmo tempo, conta a ordem em que eles aparecem nela, com o principal na frente.
 
-Por isso, ao criar um quiz no FunSona, a primeira decisão que você toma — Trivia ou Personalidade — não é só uma categoria visual. Ela muda completamente como o sistema interpreta cada resposta que os jogadores derem depois.
+Um exemplo concreto, de novo com o quiz de classe de RPG. Uma pessoa que respondeu pensando em estudo, música e conversa terminou com 11 pontos para o Mago e 11 para o Bardo, sem nenhuma outra classe perto disso. O resultado foi Mago. A primeira resposta dela, "Estudo até entender como ele funciona", deu 2 pontos ao Mago e 1 ao Bardo, nessa ordem, e por isso o Mago entrou na conta antes.
+
+Na prática, a ordem das suas respostas não muda nada enquanto houver um vencedor claro. Ela só pesa no empate, e aí as primeiras perguntas contam mais do que as últimas. Quem cria um quiz pode diminuir os empates com pesos secundários, como os do quiz de RPG. Quantas vezes eles acontecem, e quanto o ponto extra ajuda, está calculado em [As contas por trás de um resultado](/guides/as-contas-por-tras-de-um-resultado), que percorre todas as 1.048.576 combinações de respostas daquele quiz.
+
+## O que fica guardado quando você termina
+
+O cálculo inteiro acontece no seu navegador. Quando você responde a última pergunta, o FunSona recebe apenas o desfecho da partida, e o que acontece com ele depende de você estar ou não com login:
+
+- **Sem login**, o quiz só soma uma partida ao contador dele. Nada mais sobre o seu jogo é registrado.
+- **Com login**, fica salvo na sua conta qual foi o resultado (o placar, na trivia, ou o resultado de personalidade), junto com os pontos de experiência ganhos.
+- **Em nenhum dos dois casos** as suas respostas, uma por uma, chegam ao nosso banco de dados.
+
+Os pontos de experiência, o XP, seguem uma regra fixa. Na trivia, cada acerto vale 10 e cada pergunta do quiz soma mais 2, então sete acertos num quiz de dez perguntas dão 90 XP. Na personalidade, cada pergunta vale 5, e um quiz de dez perguntas sempre rende 50 XP, qualquer que seja o resultado. A tela final mostra esse número mesmo sem login, mas ele só fica guardado quando há uma conta para receber.
+
+## Por que os dois sistemas não se misturam
+
+Seria possível imaginar um sistema único para tudo, mas cada formato perderia o sentido. Se um quiz de conhecimento somasse pontos por resultado, ninguém saberia quantas perguntas acertou, só a que "tipo de erro" pertence, o que não serve para um teste de conhecimento. E um quiz de personalidade que marcasse respostas como certas ou erradas estaria dizendo que existe um jeito errado de ser você mesmo.
+
+Por isso a primeira decisão de quem cria um quiz, Trivia ou Personalidade, não é só um rótulo. Ela determina como cada resposta dada depois será interpretada.
 
 ## O que isso significa para quem joga
 
-Na prática, para quem só quer jogar, o importante é saber que:
+- Na **trivia**, o placar é exatamente o número de perguntas que você acertou, sem meio-termo e sem castigo por errar. Jogar de novo é o jeito de melhorar a nota.
+- Na **personalidade**, o resultado mostra para onde a maioria dos seus pontos foi. Responder de outro jeito numa segunda partida pode, e muitas vezes deve, levar a outro resultado.
+- Como os pesos variam, não adianta tentar "contar" para chegar a um resultado específico. Responder com sinceridade é o que faz o texto final falar de você.
+- Se o resultado parecer quase certo, mas não totalmente, leia os outros. A página de cada quiz do catálogo lista todos os resultados possíveis, com o texto completo de cada um. O quiz das cores de Magic sugere exatamente isso na apresentação, porque muita gente se reconhece em duas cores.
 
-- Em quizzes de **Trivia**, sua pontuação reflete exatamente quantas perguntas você acertou — não há "meio certo" nem penalidade extra por errar, e você pode tentar de novo para melhorar seu placar.
-- Em quizzes de **Personalidade**, seu resultado reflete o padrão predominante das suas respostas — não existe "nota", existe um reflexo de como você respondeu à maioria das perguntas, e jogar de novo respondendo diferente pode (e deve) te dar um resultado diferente.
-
-Entender essa diferença ajuda a aproveitar melhor cada tipo de quiz: em Trivia, vale a pena prestar atenção e tentar acertar o máximo possível; em Personalidade, vale mais a pena responder com sinceridade do que tentar "acertar" um resultado específico — afinal, não existe resultado errado.
-
-Se você quer entender melhor como criar seus próprios quizzes usando esses dois sistemas, veja nosso guia [Como criar um bom quiz de personalidade](/guides/como-criar-um-bom-quiz-de-personalidade), ou explore as [categorias de quiz mais populares do FunSona](/guides/categorias-de-quiz-mais-populares-explicadas) para ter ideias de temas.
+Para ver essas regras aplicadas na criação de um quiz, leia [Como criar um bom quiz de personalidade](/guides/como-criar-um-bom-quiz-de-personalidade). Para escolher o próximo quiz pelo tema, o guia [Do anime ao queijo fedido: os temas do catálogo do FunSona](/guides/categorias-de-quiz-mais-populares-explicadas) passa por todos os grupos.
