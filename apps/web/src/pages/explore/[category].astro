@@ -1,20 +1,34 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import ExploreCatalog from "@/components/explore/ExploreCatalog.astro";
-import { getCategoryText, getExploreCategoryFromAnySlug } from "@/lib/explore-categories";
+import { getCategoryText, getExploreCategoryFromAnySlug, quizMatchesCategory } from "@/lib/explore-categories";
+import { fetchAllPublishedQuizzes } from "@/lib/published-quizzes";
+import { apiUnavailableResponse } from "@/lib/api-unavailable";
 
 const slug = Astro.params.category;
 const category = getExploreCategoryFromAnySlug(slug);
 
 // An unknown category used to 302 to /explore, so every made-up URL under
-// /explore answered 200 — a soft 404 to crawlers. Send it where the quiz,
-// profile and guide pages already send theirs.
+// /explore answered 200, a soft 404 to crawlers. It then redirected to /404,
+// which answers 404 only after a 302. Answer 404 on this URL itself.
 if (!category) {
-  return Astro.redirect("/404");
+  return Astro.rewrite("/404");
 }
 
 if (slug !== category.slug) {
   return Astro.redirect(`/explore/${category.slug}`, 301);
+}
+
+// A category with no curated quiz is an empty indexed page: the "screen without
+// content" the AdSense policy names. It is not found until a quiz is tagged into it.
+// An empty catalogue is an outage, not an empty category (the site lists 66 quizzes):
+// answer 503 so Google retries instead of dropping every category at once.
+const catalogue = await fetchAllPublishedQuizzes<any>();
+if (catalogue.length === 0) {
+  return apiUnavailableResponse(Astro.url.pathname, { error: "empty quiz listing", status: 0 });
+}
+if (!catalogue.some((quiz) => quizMatchesCategory(quiz, category))) {
+  return Astro.rewrite("/404");
 }
 
 const sort = Astro.url.searchParams.get("sort") || "";
@@ -26,6 +40,6 @@ const title = `Quizzes de ${text.name} | FunSona`;
 const description = `${text.description} Explore quizzes de ${text.name.toLowerCase()} no FunSona.`;
 ---
 
-<Layout title={title} description={description} canonical={`/explore/${category.slug}`} ads>
+<Layout title={title} description={description} canonical={`/explore/${category.slug}`}>
   <ExploreCatalog category={category} sort={sort} page={page} search={search} locale={locale} />
 </Layout>

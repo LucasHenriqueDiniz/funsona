@@ -1,19 +1,9 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import LoginForm from "@/components/auth/LoginForm";
+import { collageCovers } from "@/lib/collage-covers";
 
-// Real quiz covers from the database for the visual collage
-const quizImages = [
-  "https://quizpanda.com/which-scary-story-would-you-tell-around-the-campfire/feature-image.jpg",
-  "https://quizpanda.com/which-scooby-doo-character-are-you/feature-image.jpg",
-  "https://quizpanda.com/which-piece-of-furniture-are-you/feature-image.jpg",
-  "https://quizpanda.com/which-shameless-character-are-you/feature-image.jpg",
-  "https://quizpanda.com/which-phineas-and-ferb-character-are-you/feature-image.jpg",
-  "https://quizpanda.com/which-one-piece-character-would-be-your-arch-enemy/feature-image.jpg",
-  "https://quizpanda.com/what-color-is-my-aura/feature-image.jpg",
-  "https://res.cloudinary.com/dnql7wfjq/image/upload/v1763503932/quizhub/banners/rgdk0yyo9mgan0p5x98j.jpg",
-  "https://res.cloudinary.com/dnql7wfjq/image/upload/v1766094277/quizhub/banners/jdkwpldcd5zbkqtga6xm.jpg",
-];
+const quizImages = collageCovers;
 ---
 
 <Layout title="Entrar | FunSona" description="Entre na sua conta FunSona para criar e jogar quizzes." hideNav={true} hideFooter={true}>

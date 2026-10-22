@@ -6,7 +6,7 @@ import { getProfile } from "@/lib/api-server";
 // Server-side gate: only is_admin profiles can view this page at all.
 const profile = await getProfile(Astro);
 if (!profile?.is_admin) {
-  return Astro.redirect("/404");
+  return Astro.rewrite("/404");
 }
 ---
 

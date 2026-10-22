@@ -412,7 +412,11 @@ export default function QuizPlay({ quiz }: QuizPlayProps) {
           )}
         </div>
         {quiz.ads_eligible && (
-          <div className="mx-auto w-full lg:max-w-[300px]">
+          // On a phone this column stacks under the answer buttons. The margin keeps the
+          // ad at least 150 px below "Próxima", which the player presses ten times: the
+          // 2026-10-22 audit measured 41 px, an accidental-click placement. On desktop the
+          // ad sits in its own column and needs no margin.
+          <div className="mx-auto mt-36 w-full lg:mt-0 lg:max-w-[300px]">
             <AdSlot slot="quiz-play-interval" />
           </div>
         )}

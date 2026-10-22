@@ -1,60 +1,13 @@
 import type { APIRoute } from "astro";
 import { getCollection, type CollectionEntry } from "astro:content";
-import { apiFetch } from "@/lib/api";
-import { exploreCategories, getExploreCategoryUrl } from "@/lib/explore-categories";
+import { fetchAllPublishedQuizzes } from "@/lib/published-quizzes";
+import { exploreCategories, getExploreCategoryUrl, quizMatchesCategory } from "@/lib/explore-categories";
 
 type QuizSitemapEntry = {
   slug: string;
   updated_at?: string;
 };
 
-// The API clamps `limit` to 50 (see apps/api/src/routes/quizzes.ts), so asking
-// for 200 silently returned 50 — and the old `pageItems.length < limit` guard
-// then read that as "last page" and stopped after page 1. The sitemap has been
-// capped at 50 quizzes ever since. Page at the real maximum instead.
-const PAGE_SIZE = 50;
-const MAX_PAGES = 400;
-
-/**
- * Walking the pages one after another took 10-13s in production, and Google
- * gave up on it — Search Console reported "couldn't fetch the sitemap" with 0
- * pages found. Cloudflare does not cache this response either
- * (cf-cache-status: DYNAMIC), so the cost was paid on every request.
- *
- * The first response carries `meta.total`, so only that one call has to happen
- * before the rest: read the total, then fetch the remaining pages at once.
- */
-async function fetchAllPublishedQuizzes() {
-  const firstResponse = await apiFetch(`/quizzes?limit=${PAGE_SIZE}&page=1`);
-  const firstPage = (firstResponse?.data || []) as QuizSitemapEntry[];
-  if (!Array.isArray(firstPage) || firstPage.length === 0) return [];
-
-  const total = firstResponse?.meta?.total;
-  const pageCount =
-    typeof total === "number" && total > 0
-      ? Math.min(Math.ceil(total / PAGE_SIZE), MAX_PAGES)
-      : 1;
-
-  const remaining = await Promise.all(
-    Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) =>
-      apiFetch(`/quizzes?limit=${PAGE_SIZE}&page=${index + 2}`).then(
-        (response) => (response?.data || []) as QuizSitemapEntry[]
-      )
-    )
-  );
-
-  // Dedupe by slug: paging a list that is being written to can repeat a row
-  // across page boundaries, and a duplicate <loc> invalidates the sitemap.
-  const seenSlugs = new Set<string>();
-  const all: QuizSitemapEntry[] = [];
-  for (const item of [firstPage, ...remaining].flat()) {
-    if (item?.slug && !seenSlugs.has(item.slug)) {
-      seenSlugs.add(item.slug);
-      all.push(item);
-    }
-  }
-  return all;
-}
 
 export const GET: APIRoute = async ({ site }) => {
   const baseUrl = site?.toString().replace(/\/$/, "") || "https://funsona.com";
@@ -65,17 +18,17 @@ export const GET: APIRoute = async ({ site }) => {
   // src/pages — every locale-prefixed URL returns 404 (verified against
   // production). This sitemap used to emit all three locales for every path,
   // so roughly two thirds of the URLs submitted to Google were dead links.
-  const quizzes = await fetchAllPublishedQuizzes();
+  const quizzes = await fetchAllPublishedQuizzes<QuizSitemapEntry & { tags?: string[]; type?: string; title?: string; description?: string }>();
   const guides = await getCollection("guides");
   const basePaths = [
     { path: "/", changefreq: "daily", priority: 1.0 },
     { path: "/explore", changefreq: "daily", priority: 0.9 },
-    ...exploreCategories.map((category) => ({
+    // A category with no curated quiz answers 404, so it is not listed either.
+    ...exploreCategories.filter((category) => quizzes.some((quiz) => quizMatchesCategory(quiz, category))).map((category) => ({
       path: getExploreCategoryUrl(category.slug),
       changefreq: "daily",
       priority: 0.8,
     })),
-    { path: "/search", changefreq: "weekly", priority: 0.5 },
     { path: "/guides", changefreq: "weekly", priority: 0.6 },
   ] as const;
 
