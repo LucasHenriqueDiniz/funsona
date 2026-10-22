@@ -126,8 +126,17 @@ quiz goes live with no images and renders the gradient fallback.
   upload.
 - **Hosting.** Approved files go to R2 bucket `funsona-quiz-images` and are referenced as
   `https://api.funsona.com/media/quiz-images/<path>`. Never store a fal URL in D1.
-- **Fallback order:** nano-banana-2 → gpt-image-2 → no image (gradient). There is no stock-photo
-  search. Per-file licences and attribution are not worth it for this.
+- **Order, by the owner's decision of 2026-10-22:**
+  1. **Find a licensed image.** Only licences that need no on-page credit (CC0, public domain, or the
+     Pexels and Unsplash licences), since the page has no credit field. Always download and rehost it
+     on R2. Never hotlink, and never use franchise character art, whatever its source. Check each
+     source's API terms before using it: some require hotlinking or attribution, which rules them out
+     here.
+  2. **Generate what search cannot find.** Use fal (`nano-banana-2`, then `gpt-image-2`). OpenRouter
+     works too if its key is in the Keychain (service `openrouter.ai`), and it has $5 of credit.
+  3. **Otherwise, no image** (the gradient).
+- **Budget.** At most **$10 on fal** for the whole core. Record the spend after each run and stop at
+  the cap. A licensed photo costs nothing, so use search first.
 
 ## Setup, once per machine
 

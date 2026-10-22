@@ -1,5 +1,5 @@
 ---
-status: todo
+status: doing
 ---
 
 # Slice 5b — Generated images for the core
@@ -16,8 +16,12 @@ media in the quiz body.
 
 The cover also feeds [[quiz-page-redesign]], whose hero is the cover banner.
 
-**Scope, owner decision pending.** Counts are extrapolated from the 20 drafts of batches 1–2 (109
-outcomes, 200 questions) to the 69-quiz core:
+**Owner decision, 2026-10-22.** Covers and outcomes. A licensed image found on the web comes first,
+downloaded and rehosted. Generation covers only what search cannot find, with **at most $10 on
+fal**. OpenRouter ($5 of credit) is a second generator if the owner stores its key. The order and
+the licence rule are in the skill. The table below was the cost estimate if every image were
+generated, extrapolated from the 20 drafts of batches 1–2 (109 outcomes, 200 questions) to the
+69-quiz core:
 
 | scope | images | at $0.08 (`fal-ai/nano-banana-2`, 1K) | at $0.037 (`openai/gpt-image-2`, 1024×768 medium) |
 |---|---|---|---|
