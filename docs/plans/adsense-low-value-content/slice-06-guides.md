@@ -1,5 +1,5 @@
 ---
-status: doing
+status: done
 ---
 
 # Slice 6 — Guides that clear the bar
@@ -88,3 +88,8 @@ live guides rendered every `h2` at body size, with no paragraph spacing and unst
 page now uses a `.guide-body` class in `global.css`, built on the theme variables; checked at 375 px
 and on desktop, dark and light.
 
+## Done (2026-10-22)
+
+#19 merged and deployed. The "Done when" command, run from the adsense-site-auditor checkout
+against the six guide URLs in the live sitemap, ended in "nothing failed": 6 checks, all at 1200+
+main-content words (1249 to 1473). The six guides link 46 quizzes and no category page.
