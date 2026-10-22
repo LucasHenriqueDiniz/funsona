@@ -31,6 +31,41 @@ generated, extrapolated from the 20 drafts of batches 1–2 (109 outcomes, 200 q
 
 Prices are from fal's model pages on 2026-10-20. Regenerations come on top.
 
+### Covers in production (2026-10-22)
+
+The owner approved the 66-cover contact sheet in chat ("1 pode").
+
+| source | covers | how | cost |
+|---|---|---|---|
+| Wikimedia Commons, `pd` or `cc0` with `AttributionRequired: false` | 26 | one query per quiz, eight landscape candidates of 1200 px or more on a numbered sheet, one picked by hand, fetched as the 1280 px thumbnail | $0 |
+| fal `fal-ai/nano-banana-2`, 1K, 4:3 | 40 | the theme, never the character: franchise quizzes, plus 8 where search gave only nudity in baroque painting (the deities), branded product shots (consoles) or the wrong city (US skylines) | $3.20 |
+
+Openverse was tried first and dropped: 5 queries in several minutes, and the `size=large` filter emptied
+some of them.
+
+**Before the write:**
+- export at 18:52 UTC, restored: 775 rows, 78 published, 66 curated, 12 of them with a cover (the
+  `api.funsona.com` covers of unknown origin, now replaced);
+- Time Travel bookmark `00006dbc-00000000-0000510c-e3c7b948894751c2d5282e395ed3cb3e`.
+
+**The write.** `images.mjs upload-covers` put each file in R2 as
+`editorial/<slug>/cover-<sha256:10>.webp`, `immutable`, then set `cover_url` with one `UPDATE` per
+slug, guarded by `status = 'PUBLISHED' AND ads_eligible = 1`. The first run passed the SQL file's
+path where `executeFile` takes SQL text. SQLite rejected it at offset 0 and nothing was written. The
+second run wrote everything.
+
+| check, right after | result |
+|---|---|
+| D1, curated and published | **66 of 66** `cover_url` under `/media/quiz-images/editorial/`, 0 empty |
+| D1, every other row | 0 with an editorial cover |
+| every `cover_url` fetched | **66 of 66** answer 200 with `image/*` |
+| every landing page on funsona.com | **66 of 66** carry their `cover_url` |
+| `report.mjs --target remote` | still 66 of 66 meet the bar, so no cover counts as third-party media |
+
+Not done: the revert check (one `cover_url` emptied renders the gradient). It needs a write to
+production for no new information, because the gradient is the state 54 of the 66 were in this
+morning.
+
 ## Needs
 
 - `FAL_KEY` set, and the fal MCP authenticated (the skill's Setup).
