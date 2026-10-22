@@ -162,3 +162,56 @@ h6 {
 ::selection {
   background: rgba(99, 102, 241, 0.3);
 }
+
+/* ── Guide articles ─────────────────────────────────────────────────────── */
+/* Guides are Markdown rendered into this container. They used to carry the
+   `prose` classes, but @tailwindcss/typography is not installed, so headings
+   rendered at body size with no spacing and tables had no borders. */
+.guide-body > * + * {
+  margin-top: 1.25rem;
+}
+.guide-body p,
+.guide-body li {
+  line-height: 1.75;
+}
+.guide-body h2 {
+  margin-top: 2.75rem;
+  font-size: 1.5rem;
+  line-height: 1.3;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+.guide-body strong,
+.guide-body th {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.guide-body a {
+  color: var(--color-brand-600);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+[data-theme="dark"] .guide-body a {
+  color: var(--color-brand-300);
+}
+.guide-body ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+.guide-body li + li {
+  margin-top: 0.5rem;
+}
+.guide-body table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.guide-body th,
+.guide-body td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: top;
+}
