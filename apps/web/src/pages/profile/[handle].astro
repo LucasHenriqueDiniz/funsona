@@ -13,7 +13,7 @@ if (!profile) {
   if (isApiUnavailable(profileResult)) {
     return apiUnavailableResponse(Astro.url.pathname, profileResult);
   }
-  return Astro.redirect("/404");
+  return Astro.rewrite("/404");
 }
 
 const { data: activity } = await apiFetch(`/users/${profile.id}/activity`);

@@ -8,7 +8,7 @@ if (!slug) return Astro.redirect("/guides");
 
 const entry = await getEntry("guides", `${locale}/${slug}`);
 if (!entry) {
-  return Astro.redirect("/404");
+  return Astro.rewrite("/404");
 }
 
 const { Content } = await render(entry);

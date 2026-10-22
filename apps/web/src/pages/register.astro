@@ -1,17 +1,9 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import RegisterForm from "@/components/auth/RegisterForm";
+import { collageCovers } from "@/lib/collage-covers";
 
-const quizImages = [
-  "https://quizpanda.com/which-scary-story-would-you-tell-around-the-campfire/feature-image.jpg",
-  "https://quizpanda.com/which-scooby-doo-character-are-you/feature-image.jpg",
-  "https://quizpanda.com/which-piece-of-furniture-are-you/feature-image.jpg",
-  "https://quizpanda.com/which-shameless-character-are-you/feature-image.jpg",
-  "https://quizpanda.com/which-phineas-and-ferb-character-are-you/feature-image.jpg",
-  "https://quizpanda.com/which-one-piece-character-would-be-your-arch-enemy/feature-image.jpg",
-  "https://quizpanda.com/what-color-is-my-aura/feature-image.jpg",
-  "https://res.cloudinary.com/dnql7wfjq/image/upload/v1772612463/quizhub/banners/dldnchkkintk9toxjhmi.jpg",
-];
+const quizImages = collageCovers;
 ---
 
 <Layout title="Criar conta | FunSona" description="Crie sua conta FunSona gratuitamente e comece a jogar e criar quizzes." hideNav={true} hideFooter={true}>

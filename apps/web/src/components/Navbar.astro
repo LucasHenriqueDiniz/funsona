@@ -30,7 +30,6 @@ const { transparent = false } = Astro.props;
       <!-- Desktop nav -->
       <nav class="hidden items-center gap-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)]/80 p-1 lg:flex">
         <a href="/explore" class="rounded-xl px-3.5 py-2 text-sm font-black text-[var(--color-text-secondary)] transition hover:bg-brand-500/10 hover:text-brand-500">Explorar</a>
-        <a href="/leaderboard" class="rounded-xl px-3.5 py-2 text-sm font-black text-[var(--color-text-secondary)] transition hover:bg-brand-500/10 hover:text-brand-500">Ranking</a>
         <a href="/about" class="rounded-xl px-3.5 py-2 text-sm font-black text-[var(--color-text-secondary)] transition hover:bg-brand-500/10 hover:text-brand-500">Sobre</a>
         <a href="/contact" class="rounded-xl px-3.5 py-2 text-sm font-black text-[var(--color-text-secondary)] transition hover:bg-brand-500/10 hover:text-brand-500">Contato</a>
         <a href="/quiz/new" class="rounded-xl px-3.5 py-2 text-sm font-black text-[var(--color-text-secondary)] transition hover:bg-brand-500/10 hover:text-brand-500">Criar</a>
@@ -142,10 +141,6 @@ const { transparent = false } = Astro.props;
         <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-surface-muted)] text-base">🔍</span>
         Explorar quizzes
       </a>
-      <a href="/leaderboard" class="drawer-link flex items-center gap-3.5 rounded-xl px-3 py-3 text-sm font-bold text-[var(--color-text-secondary)] transition hover:bg-brand-500/8 hover:text-brand-500">
-        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-surface-muted)] text-base">🏆</span>
-        Ranking
-      </a>
       <a href="/about" class="drawer-link flex items-center gap-3.5 rounded-xl px-3 py-3 text-sm font-bold text-[var(--color-text-secondary)] transition hover:bg-brand-500/8 hover:text-brand-500">
         <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-surface-muted)] text-base">ℹ️</span>
         Sobre
@@ -170,8 +165,8 @@ const { transparent = false } = Astro.props;
         <a href="/explore/personality" class="flex items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--color-text-secondary)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]">
           <span>✨</span> Personalidade
         </a>
-        <a href="/explore/trivia" class="flex items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--color-text-secondary)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]">
-          <span>🧠</span> Trivia
+        <a href="/explore/love" class="flex items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--color-text-secondary)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]">
+          <span>💕</span> Amor
         </a>
         <a href="/explore/games" class="flex items-center gap-3.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--color-text-secondary)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]">
           <span>🎮</span> Games

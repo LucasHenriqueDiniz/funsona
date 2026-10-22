@@ -29,7 +29,7 @@ if (error || !data) {
   if (isApiUnavailable(redirect)) {
     return apiUnavailableResponse(Astro.url.pathname, redirect);
   }
-  return Astro.redirect("/404");
+  return Astro.rewrite("/404");
 }
 
 const quiz: LandingQuiz = data;
