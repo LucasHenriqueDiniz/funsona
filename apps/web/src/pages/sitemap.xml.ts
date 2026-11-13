@@ -30,6 +30,12 @@ export const GET: APIRoute = async ({ site }) => {
       priority: 0.8,
     })),
     { path: "/guides", changefreq: "weekly", priority: 0.6 },
+    // The trust pages: who runs the site, how to reach them, and the policies.
+    // They are indexable, and AdSense's review reads them.
+    { path: "/about", changefreq: "monthly", priority: 0.4 },
+    { path: "/contact", changefreq: "monthly", priority: 0.3 },
+    { path: "/privacy", changefreq: "yearly", priority: 0.2 },
+    { path: "/terms", changefreq: "yearly", priority: 0.2 },
   ] as const;
 
   const staticUrls = basePaths.map((entry) => ({
