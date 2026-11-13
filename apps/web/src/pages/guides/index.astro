@@ -30,6 +30,44 @@ const descriptionByLocale = {
   es: "Guias y articulos originales de FunSona sobre puntuacion de quizzes, creacion de quizzes y categorias de la plataforma.",
 };
 const guidesPath = locale === "pt" ? "/guides" : `/${locale}/guides`;
+
+// The cards say what each guide is; this says which one to open first, keyed
+// by the question a reader brings from a quiz. Only the pt guides are routed,
+// so only pt carries it. An entry whose guide is gone drops out on its own.
+const startHereBySlug: Record<string, { question: string; answer: string }> = {
+  "como-funciona-a-pontuacao-dos-quizzes": {
+    question: "Por que eu caí neste resultado?",
+    answer: "mostra a regra de pontos de cada tipo de quiz, as respostas que valem para dois resultados e o que decide um empate.",
+  },
+  "as-contas-por-tras-de-um-resultado": {
+    question: "Quero ver uma conta feita do começo ao fim.",
+    answer: "acompanha uma partida do quiz de classe de RPG resposta por resposta e calcula o resultado de todas as combinações possíveis.",
+  },
+  "como-criar-um-bom-quiz-de-personalidade": {
+    question: "Quero montar o meu próprio quiz.",
+    answer: "traz o método do nosso catálogo: escrever os resultados antes das perguntas, equilibrar as respostas numa tabela e avisar sobre spoiler e idade.",
+  },
+  "categorias-de-quiz-mais-populares-explicadas": {
+    question: "Não sei por qual quiz começar.",
+    answer: "percorre os oito temas do catálogo e aponta os quizzes que abrem cada um.",
+  },
+  "personagem-rival-ou-par": {
+    question: "Como um quiz de anime ou de jogo escolhe o meu personagem?",
+    answer: "separa os três jeitos de ligar respostas a personagens e explica como evitamos spoilers.",
+  },
+  "testes-de-relacionamento-o-que-medem": {
+    question: "Um teste de namoro pode decidir por mim?",
+    answer: "mostra o que esses testes medem, o que nenhuma soma de pontos enxerga e onde buscar apoio.",
+  },
+};
+const guideBySlug = new Map(guides.map((guide) => [guide.id.split("/")[1], guide]));
+const startHere =
+  locale === "pt"
+    ? Object.entries(startHereBySlug).flatMap(([slug, entry]) => {
+        const guide = guideBySlug.get(slug);
+        return guide ? [{ href: `/guides/${slug}`, title: guide.data.title, ...entry }] : [];
+      })
+    : [];
 ---
 
 <Layout
@@ -47,6 +85,24 @@ const guidesPath = locale === "pt" ? "/guides" : `/${locale}/guides`;
           {subtitleByLocale[locale]}
         </p>
       </div>
+
+      {startHere.length > 0 && (
+        <section class="mb-12 rounded-2xl border border-[var(--color-border)] p-6">
+          <h2 class="mb-2 text-2xl font-bold text-[var(--color-text-primary)]">Por onde começar</h2>
+          <p class="mb-4 text-[var(--color-text-secondary)]">
+            Cada guia responde a uma pergunta que costuma aparecer depois de jogar um quiz. Procure a sua:
+          </p>
+          <ul class="space-y-3 text-[var(--color-text-secondary)]">
+            {startHere.map((entry) => (
+              <li>
+                <strong class="text-[var(--color-text-primary)]">{entry.question}</strong>{" "}
+                <a href={entry.href} class="font-semibold text-brand-500 hover:underline">{entry.title}</a>{" "}
+                {entry.answer}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div class="space-y-4">
         {guides.map((guide) => {

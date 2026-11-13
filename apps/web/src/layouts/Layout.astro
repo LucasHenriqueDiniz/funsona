@@ -35,6 +35,11 @@ const imageUrl = toAbsoluteUrl(image);
 
 const gaId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID;
 const adsenseClient = import.meta.env.PUBLIC_GOOGLE_ADSENSE_CLIENT;
+// The loader runs on the production host only. Preview deploys
+// (<hash>.funsona-web.pages.dev) and `astro dev --mode production` on localhost
+// build with the same ad client, and AdSense counted every page they served
+// as traffic from a host that is not the approved site.
+const loadsAdsense = Boolean(adsenseClient) && ads && Astro.url.hostname === Astro.site?.hostname;
 ---
 
 <!DOCTYPE html>
@@ -131,7 +136,7 @@ const adsenseClient = import.meta.env.PUBLIC_GOOGLE_ADSENSE_CLIENT;
   )}
 
   <!-- Google AdSense -->
-  {adsenseClient && ads && (
+  {loadsAdsense && (
     <script is:inline async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`} crossorigin="anonymous" />
   )}
 </head>
