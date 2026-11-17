@@ -79,6 +79,14 @@ Investigations and benchmarks already done. Do not repeat research listed here u
 
 - **i18n SEO**: hreflang tags, one sitemap per locale, translated content (not just the UI).
 
+## Search: why the quizzes vanished from Google on 2026-10-03 (2026-11-17)
+
+- Not the Bot Fight Mode → `/404` defect (#14, #15): it first reached Googlebot on 10-06 → 10-08,
+  after the drop. Nothing was deployed 09-03 → 10-18. Google moved pages it had fetched with a 200
+  into "crawled, currently not indexed", and still indexes top quizzes it does not show. The drop
+  came on day 9 of the September 2026 spam update. A verdict on the catalogue is the inference.
+- Full note and sources: `2026-11-17-search-cliff-2026-10-03/research.md`.
+
 ## Quiz page: can the outcomes be folded? (2026-10-20)
 
 - For Search, yes, if the text is in the server HTML: Google documents accordions as indexed and as
